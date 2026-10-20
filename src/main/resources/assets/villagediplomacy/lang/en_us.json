@@ -11,7 +11,7 @@
   "specialization.villagediplomacy.unassigned.resources": "not determined yet",
   "specialization.villagediplomacy.plains.resources": "wheat, wool, raw mutton",
   "specialization.villagediplomacy.mountain.resources": "coal, raw copper, raw iron, stone",
-  "specialization.villagediplomacy.forest.resources": "local logs, honeycomb, apples",
+  "specialization.villagediplomacy.forest.resources": "%s, honeycomb, apples",
 
   "relation.villagediplomacy.ally": "allied",
   "relation.villagediplomacy.friendly": "friendly",
@@ -33,7 +33,9 @@
   "message.villagediplomacy.scroll.header": "=== %s ===",
   "message.villagediplomacy.scroll.coordinates": "Coordinates: %s, %s, %s",
   "message.villagediplomacy.scroll.specialization": "Specialization: %s",
+  "message.villagediplomacy.scroll.mixed_specialization": "%s (secondary: %s)",
   "message.villagediplomacy.scroll.resources": "Main resources: %s",
+  "message.villagediplomacy.scroll.combined_resources": "%s; additionally: %s",
   "message.villagediplomacy.scroll.leader": "Leader: %s",
   "message.villagediplomacy.scroll.village_council": "Village Council",
   "message.villagediplomacy.scroll.relation": "Relations: %s",

@@ -1,6 +1,7 @@
 package com.diplomacy.villagediplomacy;
 
 import com.diplomacy.villagediplomacy.client.renderer.VillageGuardRenderer;
+import com.diplomacy.villagediplomacy.config.VillageDiplomacyConfig;
 import com.diplomacy.villagediplomacy.core.ModEntities;
 import com.diplomacy.villagediplomacy.core.ModItems;
 import com.diplomacy.villagediplomacy.entity.VillageGuardEntity;
@@ -14,6 +15,8 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -28,6 +31,11 @@ public class VillageDiplomacyMod {
 
         ModItems.ITEMS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.SERVER,
+                VillageDiplomacyConfig.SERVER_SPEC,
+                "villagediplomacy-server.toml"
+        );
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModItems::addToCreativeTab);

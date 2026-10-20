@@ -19,8 +19,9 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 
 ### Diplomacy Core
 - **`DiplomacyRelation`** — five-tier relation scale: `ALLY → FRIENDLY → NEUTRAL → TENSION → HOSTILE`
-- **`Settlement`** — per-village data: name, center, radius, leader UUID, relation scores
+- **`Settlement`** — per-village data: name, center, radius, leader UUID, specializations, local wood, warehouse, and relations
 - **`SettlementSavedData`** — world-level NBT persistence via Forge `SavedData`
+- **Terrain specialization** — one-time sampled analysis assigns plains, mountain, forest, or a mixed profile when a settlement is registered
 
 ### Items
 | Item | Action |

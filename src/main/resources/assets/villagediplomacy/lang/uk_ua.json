@@ -11,7 +11,7 @@
   "specialization.villagediplomacy.unassigned.resources": "ще не визначено",
   "specialization.villagediplomacy.plains.resources": "пшениця, вовна, сира баранина",
   "specialization.villagediplomacy.mountain.resources": "вугілля, необроблена мідь, необроблене залізо, камінь",
-  "specialization.villagediplomacy.forest.resources": "місцеві колоди, медові стільники, яблука",
+  "specialization.villagediplomacy.forest.resources": "%s, медові стільники, яблука",
 
   "relation.villagediplomacy.ally": "союзні",
   "relation.villagediplomacy.friendly": "дружні",
@@ -33,7 +33,9 @@
   "message.villagediplomacy.scroll.header": "=== %s ===",
   "message.villagediplomacy.scroll.coordinates": "Координати: %s, %s, %s",
   "message.villagediplomacy.scroll.specialization": "Спеціалізація: %s",
+  "message.villagediplomacy.scroll.mixed_specialization": "%s (додаткова: %s)",
   "message.villagediplomacy.scroll.resources": "Основні ресурси: %s",
+  "message.villagediplomacy.scroll.combined_resources": "%s; додатково: %s",
   "message.villagediplomacy.scroll.leader": "Лідер: %s",
   "message.villagediplomacy.scroll.village_council": "рада поселення",
   "message.villagediplomacy.scroll.relation": "Відносини: %s",

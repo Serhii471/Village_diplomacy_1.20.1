@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -17,6 +18,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Settlement {
+    private static final ResourceLocation DEFAULT_LOCAL_WOOD = Objects.requireNonNull(
+            ResourceLocation.tryParse("minecraft:oak_log")
+    );
+
     private final UUID id;
     private String name;
     private BlockPos center;
@@ -27,6 +32,7 @@ public class Settlement {
     private SettlementSpecialization primarySpecialization = SettlementSpecialization.UNASSIGNED;
     @Nullable
     private SettlementSpecialization secondarySpecialization;
+    private ResourceLocation localWoodResource = DEFAULT_LOCAL_WOOD;
     private long lastProductionGameTime;
     private VirtualWarehouse warehouse = new VirtualWarehouse();
     private final Map<UUID, SettlementRelationship> relationships = new LinkedHashMap<>();
@@ -116,6 +122,18 @@ public class Settlement {
         if (primarySpecialization != safePrimary || secondarySpecialization != secondary) {
             primarySpecialization = safePrimary;
             secondarySpecialization = secondary;
+            markDirty();
+        }
+    }
+
+    public ResourceLocation getLocalWoodResource() {
+        return localWoodResource;
+    }
+
+    public void setLocalWoodResource(ResourceLocation localWoodResource) {
+        ResourceLocation safeResource = Objects.requireNonNull(localWoodResource, "localWoodResource");
+        if (!this.localWoodResource.equals(safeResource)) {
+            this.localWoodResource = safeResource;
             markDirty();
         }
     }
@@ -217,6 +235,7 @@ public class Settlement {
         if (secondarySpecialization != null) {
             tag.putString("SecondarySpecialization", secondarySpecialization.getSerializedName());
         }
+        tag.putString("LocalWoodResource", localWoodResource.toString());
         tag.putLong("LastProductionGameTime", lastProductionGameTime);
         tag.put("Warehouse", warehouse.saveNBT());
 
@@ -249,6 +268,12 @@ public class Settlement {
                     tag.getString("SecondarySpecialization"));
             if (secondary != SettlementSpecialization.UNASSIGNED && secondary != settlement.primarySpecialization) {
                 settlement.secondarySpecialization = secondary;
+            }
+        }
+        if (tag.contains("LocalWoodResource", Tag.TAG_STRING)) {
+            ResourceLocation localWood = ResourceLocation.tryParse(tag.getString("LocalWoodResource"));
+            if (localWood != null) {
+                settlement.localWoodResource = localWood;
             }
         }
         settlement.lastProductionGameTime = Math.max(0L, tag.getLong("LastProductionGameTime"));

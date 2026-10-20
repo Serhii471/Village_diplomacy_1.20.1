@@ -23,6 +23,8 @@ class SettlementSavedDataTest {
         data.registerSettlement(second);
 
         first.setSpecializations(SettlementSpecialization.PLAINS, SettlementSpecialization.FOREST);
+        ResourceLocation spruceLog = Objects.requireNonNull(ResourceLocation.tryParse("minecraft:spruce_log"));
+        first.setLocalWoodResource(spruceLog);
         first.setLastProductionGameTime(24_000L);
         ResourceLocation wheat = Objects.requireNonNull(ResourceLocation.tryParse("minecraft:wheat"));
         first.getWarehouse().configureCapacity(wheat, 84);
@@ -43,6 +45,7 @@ class SettlementSavedDataTest {
         assertEquals(SettlementSavedData.CURRENT_DATA_VERSION, saved.getInt("DataVersion"));
         assertEquals(SettlementSpecialization.PLAINS, loaded.getPrimarySpecialization());
         assertEquals(SettlementSpecialization.FOREST, loaded.getSecondarySpecialization().orElseThrow());
+        assertEquals(spruceLog, loaded.getLocalWoodResource());
         assertEquals(new VirtualWarehouse.StockView(40, 16, 84), loaded.getWarehouse().getStock(wheat));
         assertTrue(loaded.getKnownSettlementIds().contains(second.getId()));
 
@@ -95,6 +98,8 @@ class SettlementSavedDataTest {
         Settlement loaded = Settlement.loadNBT(legacySettlement);
 
         assertEquals(SettlementSpecialization.UNASSIGNED, loaded.getPrimarySpecialization());
+        assertEquals(Objects.requireNonNull(ResourceLocation.tryParse("minecraft:oak_log")),
+                loaded.getLocalWoodResource());
         assertTrue(loaded.getWarehouse().getContents().isEmpty());
         assertTrue(loaded.getRelationships().isEmpty());
     }
