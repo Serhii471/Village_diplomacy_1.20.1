@@ -12,6 +12,14 @@ public enum SettlementSpecialization {
         return name().toLowerCase(Locale.ROOT);
     }
 
+    public String getTranslationKey() {
+        return "specialization.villagediplomacy." + getSerializedName();
+    }
+
+    public String getResourcesTranslationKey() {
+        return "specialization.villagediplomacy." + getSerializedName() + ".resources";
+    }
+
     public static SettlementSpecialization fromSerializedName(String value) {
         if (value == null || value.isBlank()) {
             return UNASSIGNED;

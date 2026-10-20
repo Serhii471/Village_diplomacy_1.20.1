@@ -28,6 +28,8 @@ public final class DiplomacyBalance {
     public static final int WAREHOUSE_CAPACITY_DAYS = 5;
 
     public static final int LEADER_TABLE_MAX_DISTANCE = 32;
+    public static final int LEADERSHIP_CONFIRMATION_WINDOW_TICKS = 200;
+    public static final int DIPLOMATIC_SCROLL_COOLDOWN_TICKS = 100;
     public static final int TRIAL_DELIVERIES_FOR_TRADE_AGREEMENT = 1;
     public static final int DELIVERIES_FOR_ALLIANCE = 3;
 

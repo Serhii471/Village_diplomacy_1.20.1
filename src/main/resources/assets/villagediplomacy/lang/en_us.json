@@ -2,5 +2,40 @@
   "item.villagediplomacy.diplomatic_scroll": "Diplomatic Scroll",
   "item.villagediplomacy.leadership_seal": "Leadership Seal",
   "item.villagediplomacy.village_guard_spawn_egg": "Village Guard Spawn Egg",
-  "entity.villagediplomacy.village_guard": "Village Guard"
+  "entity.villagediplomacy.village_guard": "Village Guard",
+
+  "specialization.villagediplomacy.unassigned": "not assigned",
+  "specialization.villagediplomacy.plains": "plains",
+  "specialization.villagediplomacy.mountain": "mountain",
+  "specialization.villagediplomacy.forest": "forest",
+  "specialization.villagediplomacy.unassigned.resources": "not determined yet",
+  "specialization.villagediplomacy.plains.resources": "wheat, wool, raw mutton",
+  "specialization.villagediplomacy.mountain.resources": "coal, raw copper, raw iron, stone",
+  "specialization.villagediplomacy.forest.resources": "local logs, honeycomb, apples",
+
+  "relation.villagediplomacy.ally": "allied",
+  "relation.villagediplomacy.friendly": "friendly",
+  "relation.villagediplomacy.neutral": "neutral",
+  "relation.villagediplomacy.tension": "tense",
+  "relation.villagediplomacy.hostile": "hostile",
+
+  "message.villagediplomacy.leadership.confirm": "Use the seal on the bell again within 10 seconds to become the leader of %s.",
+  "message.villagediplomacy.leadership.claimed": "You are now the leader of %s.",
+  "message.villagediplomacy.leadership.already_leader": "You are already the leader of %s.",
+  "message.villagediplomacy.leadership.claimed_by_other": "%s already has another leader.",
+  "message.villagediplomacy.leadership.leads_other": "You already lead %s and cannot lead another settlement.",
+
+  "message.villagediplomacy.scroll.cooldown": "The diplomatic scroll is still recharging.",
+  "message.villagediplomacy.scroll.requires_home": "Become the leader of your own settlement with a leadership seal first.",
+  "message.villagediplomacy.scroll.own_settlement": "%s is your own settlement.",
+  "message.villagediplomacy.scroll.discovered": "Discovered a new settlement: %s.",
+  "message.villagediplomacy.scroll.already_known": "Updated information about %s.",
+  "message.villagediplomacy.scroll.header": "=== %s ===",
+  "message.villagediplomacy.scroll.coordinates": "Coordinates: %s, %s, %s",
+  "message.villagediplomacy.scroll.specialization": "Specialization: %s",
+  "message.villagediplomacy.scroll.resources": "Main resources: %s",
+  "message.villagediplomacy.scroll.leader": "Leader: %s",
+  "message.villagediplomacy.scroll.village_council": "Village Council",
+  "message.villagediplomacy.scroll.relation": "Relations: %s",
+  "message.villagediplomacy.scroll.distance": "Distance from your settlement: approximately %s blocks"
 }

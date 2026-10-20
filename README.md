@@ -25,8 +25,8 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 ### Items
 | Item | Action |
 |---|---|
-| Diplomatic Scroll | Right-click a Bell → shows settlement name, leader, and known settlement count |
-| Leadership Seal | Right-click a Bell → claims player as settlement leader |
+| Diplomatic Scroll | Right-click a foreign Bell → discovers the settlement and shows its coordinates, specialization, resources, leader, relations, and distance |
+| Leadership Seal | Right-click a Bell twice within 10 seconds → confirms leadership; one player can lead only one settlement |
 | Village Guard Spawn Egg | Spawns a guard for testing (Creative only) |
 
 ### Entities
