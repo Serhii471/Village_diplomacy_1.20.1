@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "minecraft:block/chiseled_bookshelf_top",
+    "up": "villagediplomacy:block/diplomacy_table_top",
+    "north": "villagediplomacy:block/diplomacy_table_front",
+    "east": "villagediplomacy:block/diplomacy_table_side",
+    "south": "villagediplomacy:block/diplomacy_table_front",
+    "west": "villagediplomacy:block/diplomacy_table_side",
+    "particle": "villagediplomacy:block/diplomacy_table_side"
+  }
+}
