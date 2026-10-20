@@ -1,6 +1,8 @@
 {
   "item.villagediplomacy.diplomatic_scroll": "Дипломатичний сувій",
   "item.villagediplomacy.leadership_seal": "Печатка старости",
+  "item.villagediplomacy.sealed_trade_crate": "Запечатаний торговельний вантаж",
+  "item.villagediplomacy.trade_route_map": "Карта торговельного маршруту",
   "item.villagediplomacy.village_guard_spawn_egg": "Яйце спавну стражника села",
   "entity.villagediplomacy.village_guard": "Стражник села"
 }

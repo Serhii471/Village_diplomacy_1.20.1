@@ -17,11 +17,21 @@ public class SettlementSavedData extends SavedData {
     public SettlementSavedData() {}
 
     public static SettlementSavedData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+        SettlementSavedData data = level.getDataStorage().computeIfAbsent(
                 SettlementSavedData::load,
                 SettlementSavedData::new,
                 DATA_NAME
         );
+        data.tickProduction(level);
+        return data;
+    }
+
+    public void tickProduction(ServerLevel level) {
+        long currentDay = level.getDayTime() / 24000L;
+        for (Settlement settlement : settlements.values()) {
+            settlement.checkDailyProduction(currentDay);
+        }
+        setDirty();
     }
 
     public Collection<Settlement> getAllSettlements() {
@@ -57,13 +67,17 @@ public class SettlementSavedData extends SavedData {
         return null;
     }
 
-    public Settlement getOrCreateSettlementNear(BlockPos pos, int defaultRadius, String defaultName) {
+    public Settlement getOrCreateSettlementNear(ServerLevel level, BlockPos pos, int defaultRadius, String defaultName) {
         Settlement existing = findSettlementAt(pos);
         if (existing != null) {
             return existing;
         }
 
         Settlement newSettlement = new Settlement(UUID.randomUUID(), defaultName, pos, defaultRadius);
+        SettlementSpecialization spec = SettlementSpecialization.detectFromBiome(level.getBiome(pos));
+        newSettlement.setSpecialization(spec);
+        newSettlement.checkDailyProduction(level.getDayTime() / 24000L);
+
         registerSettlement(newSettlement);
         return newSettlement;
     }

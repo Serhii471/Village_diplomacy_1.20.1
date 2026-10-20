@@ -69,7 +69,7 @@ public class VillageDiplomacyMod {
             SettlementSavedData data = SettlementSavedData.get(serverLevel);
             ItemStack heldItem = player.getItemInHand(event.getHand());
 
-            Settlement settlement = data.getOrCreateSettlementNear(pos, 64, "Settlement #" + pos.toShortString());
+            Settlement settlement = data.getOrCreateSettlementNear(serverLevel, pos, 64, "Settlement #" + pos.toShortString());
 
             if (heldItem.is(ModItems.LEADERSHIP_SEAL.get())) {
                 settlement.setLeaderUuid(player.getUUID());
@@ -82,6 +82,8 @@ public class VillageDiplomacyMod {
                         : "Leader: Village Council (NPC)";
                 player.sendSystemMessage(Component.literal("§6=== " + settlement.getName() + " ==="));
                 player.sendSystemMessage(Component.literal("§7" + leaderInfo));
+                player.sendSystemMessage(Component.literal("§eSpecialization: " + settlement.getSpecialization().getDisplayName()));
+                player.sendSystemMessage(Component.literal("§eExport Warehouse: " + settlement.getWarehouse().getExportStock().size() + " commodity types in stock."));
                 player.sendSystemMessage(Component.literal("§7Relations registered: " + data.getAllSettlements().size() + " known settlements."));
                 event.setCanceled(true);
             }
