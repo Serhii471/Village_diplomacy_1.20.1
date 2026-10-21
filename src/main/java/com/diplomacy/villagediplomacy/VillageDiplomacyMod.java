@@ -7,6 +7,7 @@ import com.diplomacy.villagediplomacy.core.ModItems;
 import com.diplomacy.villagediplomacy.entity.VillageGuardEntity;
 import com.diplomacy.villagediplomacy.gameplay.VillageBellInteractionHandler;
 import com.diplomacy.villagediplomacy.gameplay.SettlementProductionTicker;
+import com.diplomacy.villagediplomacy.gameplay.TradeContractTicker;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -44,6 +45,7 @@ public class VillageDiplomacyMod {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new VillageBellInteractionHandler());
         MinecraftForge.EVENT_BUS.register(new SettlementProductionTicker());
+        MinecraftForge.EVENT_BUS.register(new TradeContractTicker());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

@@ -27,6 +27,9 @@ public final class DiplomacyBalance {
     public static final double INTERNAL_CONSUMPTION_SHARE = 0.30D;
     public static final double TRADE_SURPLUS_SHARE = 0.70D;
     public static final int WAREHOUSE_CAPACITY_DAYS = 5;
+    public static final int TRIAL_CONTRACT_DURATION_DAYS = 3;
+    public static final int SUCCESSFUL_DELIVERY_REPUTATION = 10;
+    public static final int FAILED_CONTRACT_REPUTATION_PENALTY = 10;
 
     public static final int LEADER_TABLE_MAX_DISTANCE = 32;
     public static final int LEADERSHIP_CONFIRMATION_WINDOW_TICKS = 200;

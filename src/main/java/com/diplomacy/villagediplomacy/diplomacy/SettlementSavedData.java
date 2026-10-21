@@ -18,9 +18,10 @@ import java.util.UUID;
 
 public class SettlementSavedData extends SavedData {
     public static final String DATA_NAME = "village_diplomacy_settlements";
-    public static final int CURRENT_DATA_VERSION = 3;
+    public static final int CURRENT_DATA_VERSION = 4;
 
     private final Map<UUID, Settlement> settlements = new LinkedHashMap<>();
+    private final Map<UUID, TradeContract> tradeContracts = new LinkedHashMap<>();
 
     public SettlementSavedData() {
     }
@@ -39,6 +40,15 @@ public class SettlementSavedData extends SavedData {
 
     public Collection<Settlement> getAllSettlements() {
         return Collections.unmodifiableCollection(settlements.values());
+    }
+
+    public Collection<TradeContract> getAllTradeContracts() {
+        return Collections.unmodifiableCollection(tradeContracts.values());
+    }
+
+    @Nullable
+    public TradeContract getTradeContract(UUID id) {
+        return tradeContracts.get(id);
     }
 
     @Nullable
@@ -63,7 +73,26 @@ public class SettlementSavedData extends SavedData {
         setDirty();
     }
 
+    public void registerTradeContract(TradeContract contract) {
+        TradeContract safeContract = Objects.requireNonNull(contract, "contract");
+        requireSettlement(safeContract.getSourceSettlementId());
+        requireOtherSettlement(safeContract.getDestinationSettlementId(), safeContract.getSourceSettlementId());
+        if (tradeContracts.containsKey(safeContract.getId())) {
+            throw new IllegalArgumentException("Duplicate trade contract: " + safeContract.getId());
+        }
+        attachDirtyTracking(safeContract);
+        tradeContracts.put(safeContract.getId(), safeContract);
+        setDirty();
+    }
+
     public void removeSettlement(UUID id) {
+        tradeContracts.values().stream()
+                .filter(contract -> contract.involves(id))
+                .filter(contract -> contract.getStatus() == TradeContractStatus.ACTIVE)
+                .forEach(contract -> TradeContractService.releaseRemainingReservations(this, contract));
+        if (tradeContracts.entrySet().removeIf(entry -> entry.getValue().involves(id))) {
+            setDirty();
+        }
         if (settlements.remove(id) != null) {
             settlements.values().forEach(settlement -> settlement.removeRelationship(id));
             setDirty();
@@ -157,6 +186,12 @@ public class SettlementSavedData extends SavedData {
                 .sorted((left, right) -> left.getId().toString().compareTo(right.getId().toString()))
                 .forEach(settlement -> list.add(settlement.saveNBT()));
         compoundTag.put("Settlements", list);
+
+        ListTag contractList = new ListTag();
+        tradeContracts.values().stream()
+                .sorted((left, right) -> left.getId().toString().compareTo(right.getId().toString()))
+                .forEach(contract -> contractList.add(contract.saveNBT()));
+        compoundTag.put("TradeContracts", contractList);
         return compoundTag;
     }
 
@@ -187,6 +222,28 @@ public class SettlementSavedData extends SavedData {
                 data.settlements.put(settlement.getId(), settlement);
             }
         }
+        if (compoundTag.contains("TradeContracts", Tag.TAG_LIST)) {
+            ListTag list = compoundTag.getList("TradeContracts", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundTag contractTag = list.getCompound(i);
+                if (!contractTag.hasUUID("Id")
+                        || !contractTag.hasUUID("SourceSettlement")
+                        || !contractTag.hasUUID("DestinationSettlement")) {
+                    continue;
+                }
+                try {
+                    TradeContract contract = TradeContract.loadNBT(contractTag);
+                    if (data.settlements.containsKey(contract.getSourceSettlementId())
+                            && data.settlements.containsKey(contract.getDestinationSettlementId())
+                            && !data.tradeContracts.containsKey(contract.getId())) {
+                        data.attachDirtyTracking(contract);
+                        data.tradeContracts.put(contract.getId(), contract);
+                    }
+                } catch (IllegalArgumentException exception) {
+                    VillageDiplomacyMod.LOGGER.warn("Skipping invalid trade contract data", exception);
+                }
+            }
+        }
         if (storedDataVersion < CURRENT_DATA_VERSION) {
             data.setDirty();
         }
@@ -214,5 +271,9 @@ public class SettlementSavedData extends SavedData {
 
     private void attachDirtyTracking(Settlement settlement) {
         settlement.setDirtyCallback(this::setDirty);
+    }
+
+    private void attachDirtyTracking(TradeContract contract) {
+        contract.setDirtyCallback(this::setDirty);
     }
 }

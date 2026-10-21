@@ -28,6 +28,10 @@ public final class VillageDiplomacyConfig {
         public final ForgeConfigSpec.DoubleValue secondaryProductionMultiplier;
         public final ForgeConfigSpec.IntValue warehouseCapacityDays;
         public final ForgeConfigSpec.IntValue productionCheckIntervalTicks;
+        public final ForgeConfigSpec.IntValue trialContractDurationDays;
+        public final ForgeConfigSpec.IntValue successfulDeliveryReputation;
+        public final ForgeConfigSpec.IntValue failedContractReputationPenalty;
+        public final ForgeConfigSpec.IntValue contractCheckIntervalTicks;
 
         private Server(ForgeConfigSpec.Builder builder) {
             builder.comment("One-time settlement specialization analysis")
@@ -69,6 +73,27 @@ public final class VillageDiplomacyConfig {
                     .defineInRange("warehouseCapacityDays", DiplomacyBalance.WAREHOUSE_CAPACITY_DAYS, 1, 30);
             productionCheckIntervalTicks = builder
                     .comment("How often the server checks settlement production; production itself remains day-based")
+                    .defineInRange("checkIntervalTicks", 200, 20, 2_400);
+
+            builder.pop();
+
+            builder.comment("Trial delivery contracts")
+                    .push("contracts");
+
+            trialContractDurationDays = builder
+                    .comment("Game days before a trial contract expires")
+                    .defineInRange("trialDurationDays",
+                            DiplomacyBalance.TRIAL_CONTRACT_DURATION_DAYS, 1, 30);
+            successfulDeliveryReputation = builder
+                    .comment("Reputation granted to both settlements after a successful delivery")
+                    .defineInRange("successfulDeliveryReputation",
+                            DiplomacyBalance.SUCCESSFUL_DELIVERY_REPUTATION, 0, 100);
+            failedContractReputationPenalty = builder
+                    .comment("Reputation removed from both settlements when an active contract expires")
+                    .defineInRange("failedContractReputationPenalty",
+                            DiplomacyBalance.FAILED_CONTRACT_REPUTATION_PENALTY, 0, 100);
+            contractCheckIntervalTicks = builder
+                    .comment("How often the server expires overdue contracts")
                     .defineInRange("checkIntervalTicks", 200, 20, 2_400);
 
             builder.pop();
