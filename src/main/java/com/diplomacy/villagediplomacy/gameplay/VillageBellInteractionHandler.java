@@ -35,14 +35,17 @@ public final class VillageBellInteractionHandler {
         ItemStack heldItem = event.getEntity().getItemInHand(event.getHand());
         boolean usesLeadershipSeal = heldItem.is(ModItems.LEADERSHIP_SEAL.get());
         boolean usesDiplomaticScroll = heldItem.is(ModItems.DIPLOMATIC_SCROLL.get());
-        if (!usesLeadershipSeal && !usesDiplomaticScroll) {
+        boolean usesTradeHandover = heldItem.isEmpty();
+        if (!usesLeadershipSeal && !usesDiplomaticScroll && !usesTradeHandover) {
             return;
         }
 
-        // Prevent the vanilla bell action on both logical sides. Every state
-        // change below still runs exclusively on the server.
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!usesTradeHandover) {
+            // Prevent the vanilla bell action on both logical sides for explicit
+            // mod items. Every state change below still runs on the server.
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
 
         if (!(event.getLevel() instanceof ServerLevel serverLevel)
                 || !(event.getEntity() instanceof ServerPlayer player)) {
@@ -51,6 +54,26 @@ public final class VillageBellInteractionHandler {
 
         BlockPos bellPos = event.getPos();
         SettlementSavedData data = SettlementSavedData.get(serverLevel);
+
+        if (usesTradeHandover) {
+            Settlement representativeSettlement = data.findSettlementAt(bellPos);
+            if (representativeSettlement == null || !representativeSettlement.getCenter().equals(bellPos)) {
+                return;
+            }
+            TradeHandoverService.HandoverSummary summary = TradeHandoverService.handleAtSettlement(
+                    data,
+                    representativeSettlement.getId(),
+                    player,
+                    serverLevel.getGameTime()
+            );
+            if (!summary.handled()) {
+                return;
+            }
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            sendHandoverResult(player, summary);
+            return;
+        }
 
         if (usesLeadershipSeal) {
             Settlement target = data.getOrCreateSettlementNear(bellPos, defaultSettlementName(bellPos));
@@ -233,6 +256,44 @@ public final class VillageBellInteractionHandler {
 
     private static Component info(String key, Object... arguments) {
         return Component.translatable(key, arguments).withStyle(ChatFormatting.GRAY);
+    }
+
+    private static void sendHandoverResult(ServerPlayer player,
+                                           TradeHandoverService.HandoverSummary summary) {
+        if (summary.totalIssued() > 0) {
+            player.sendSystemMessage(
+                    Component.translatable(
+                                    "message.villagediplomacy.handover.issued",
+                                    summary.totalIssued()
+                            )
+                            .withStyle(ChatFormatting.GOLD)
+            );
+        }
+        if (summary.totalDelivered() > 0) {
+            player.sendSystemMessage(
+                    Component.translatable(
+                                    "message.villagediplomacy.handover.delivered",
+                                    summary.totalDelivered()
+                            )
+                            .withStyle(ChatFormatting.GREEN)
+            );
+        }
+        if (summary.completedContracts() > 0) {
+            player.sendSystemMessage(
+                    Component.translatable(
+                                    "message.villagediplomacy.handover.completed",
+                                    summary.completedContracts(),
+                                    summary.rewardEmeralds()
+                            )
+                            .withStyle(ChatFormatting.GREEN)
+            );
+        }
+        if (summary.totalIssued() == 0 && summary.totalDelivered() == 0) {
+            player.sendSystemMessage(
+                    Component.translatable("message.villagediplomacy.handover.nothing")
+                            .withStyle(ChatFormatting.GRAY)
+            );
+        }
     }
 
     private static String defaultSettlementName(BlockPos bellPos) {

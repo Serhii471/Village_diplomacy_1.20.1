@@ -112,10 +112,35 @@ public final class TradeContractService {
                                  int requestedAmount,
                                  long currentGameTime) {
         requirePositive(requestedAmount, "requestedAmount");
-        TradeContract contract = requireActiveCarrierContract(data, contractId, carrierId, currentGameTime);
+        TradeContract contract = validateActiveCarrierContract(data, contractId, carrierId);
+        if (isPastDeadline(contract, currentGameTime)) {
+            expireContract(data, contract, currentGameTime, currentRules());
+            return 0;
+        }
+        return issueGoods(data, contract, itemId, requestedAmount);
+    }
+
+    public static int issueGoods(SettlementSavedData data,
+                                 UUID contractId,
+                                 UUID carrierId,
+                                 ResourceLocation itemId,
+                                 int requestedAmount,
+                                 long currentGameTime,
+                                 ContractRules rules) {
+        requirePositive(requestedAmount, "requestedAmount");
+        Objects.requireNonNull(rules, "rules");
+        TradeContract contract = requireActiveCarrierContract(
+                data, contractId, carrierId, currentGameTime, rules);
         if (contract == null) {
             return 0;
         }
+        return issueGoods(data, contract, itemId, requestedAmount);
+    }
+
+    private static int issueGoods(SettlementSavedData data,
+                                  TradeContract contract,
+                                  ResourceLocation itemId,
+                                  int requestedAmount) {
         requireContractItem(contract, itemId);
         int amount = Math.min(requestedAmount, contract.getRemainingToIssue(itemId));
         if (amount <= 0) {
@@ -240,18 +265,6 @@ public final class TradeContractService {
     private static TradeContract requireActiveCarrierContract(SettlementSavedData data,
                                                               UUID contractId,
                                                               UUID carrierId,
-                                                              long currentGameTime) {
-        TradeContract contract = validateActiveCarrierContract(data, contractId, carrierId);
-        if (isPastDeadline(contract, currentGameTime)) {
-            expireContract(data, contract, currentGameTime, currentRules());
-            return null;
-        }
-        return contract;
-    }
-
-    private static TradeContract requireActiveCarrierContract(SettlementSavedData data,
-                                                              UUID contractId,
-                                                              UUID carrierId,
                                                               long currentGameTime,
                                                               ContractRules rules) {
         TradeContract contract = validateActiveCarrierContract(data, contractId, carrierId);
@@ -349,7 +362,7 @@ public final class TradeContractService {
         }
     }
 
-    private static ContractRules currentRules() {
+    public static ContractRules currentRules() {
         return new ContractRules(
                 (long) VillageDiplomacyConfig.SERVER.trialContractDurationDays.get()
                         * DiplomacyBalance.MINECRAFT_DAY_TICKS,

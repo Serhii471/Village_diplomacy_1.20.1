@@ -39,5 +39,10 @@
   "message.villagediplomacy.scroll.leader": "Leader: %s",
   "message.villagediplomacy.scroll.village_council": "Village Council",
   "message.villagediplomacy.scroll.relation": "Relations: %s",
-  "message.villagediplomacy.scroll.distance": "Distance from your settlement: approximately %s blocks"
+  "message.villagediplomacy.scroll.distance": "Distance from your settlement: approximately %s blocks",
+
+  "message.villagediplomacy.handover.issued": "The settlement representative handed you %s contract items.",
+  "message.villagediplomacy.handover.delivered": "Delivered %s contract items to the settlement.",
+  "message.villagediplomacy.handover.completed": "Completed %s contract(s). Reward: %s emerald(s).",
+  "message.villagediplomacy.handover.nothing": "No contract goods can be transferred right now."
 }

@@ -11,7 +11,9 @@ import net.minecraft.world.level.saveddata.SavedData;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -49,6 +51,21 @@ public class SettlementSavedData extends SavedData {
     @Nullable
     public TradeContract getTradeContract(UUID id) {
         return tradeContracts.get(id);
+    }
+
+    public List<TradeContract> getTradeContractsForHandover(UUID carrierId, UUID settlementId) {
+        UUID safeCarrierId = Objects.requireNonNull(carrierId, "carrierId");
+        UUID safeSettlementId = Objects.requireNonNull(settlementId, "settlementId");
+        return tradeContracts.values().stream()
+                .filter(contract -> safeCarrierId.equals(contract.getCarrierId()))
+                .filter(contract -> (contract.getStatus() == TradeContractStatus.ACTIVE
+                        && contract.involves(safeSettlementId))
+                        || (contract.getStatus() == TradeContractStatus.COMPLETED
+                        && !contract.isRewardClaimed()
+                        && contract.getDestinationSettlementId().equals(safeSettlementId)))
+                .sorted(Comparator.comparingLong(TradeContract::getCreatedGameTime)
+                        .thenComparing(contract -> contract.getId().toString()))
+                .toList();
     }
 
     @Nullable

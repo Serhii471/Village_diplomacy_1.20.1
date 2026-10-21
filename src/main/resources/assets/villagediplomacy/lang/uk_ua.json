@@ -39,5 +39,10 @@
   "message.villagediplomacy.scroll.leader": "Лідер: %s",
   "message.villagediplomacy.scroll.village_council": "рада поселення",
   "message.villagediplomacy.scroll.relation": "Відносини: %s",
-  "message.villagediplomacy.scroll.distance": "Відстань до вашого поселення: приблизно %s блоків"
+  "message.villagediplomacy.scroll.distance": "Відстань до вашого поселення: приблизно %s блоків",
+
+  "message.villagediplomacy.handover.issued": "Представник поселення передав вам %s контрактних предметів.",
+  "message.villagediplomacy.handover.delivered": "Поселенню передано %s контрактних предметів.",
+  "message.villagediplomacy.handover.completed": "Завершено контрактів: %s. Винагорода: %s смарагдів.",
+  "message.villagediplomacy.handover.nothing": "Зараз немає контрактних товарів, які можна передати."
 }

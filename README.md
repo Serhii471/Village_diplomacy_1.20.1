@@ -24,6 +24,7 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 - **Terrain specialization** — one-time sampled analysis assigns plains, mountain, forest, or a mixed profile when a settlement is registered
 - **Virtual production** — day-based resources accrue into a capped five-day trade warehouse, including catch-up while settlement chunks are unloaded
 - **Trial delivery contracts** — persisted offers reserve warehouse stock, track partial handover, expire safely, and prevent duplicate rewards
+- **Physical contract handover** — an assigned carrier uses an empty hand on each settlement's central Bell to receive, partially deliver, and redeem ordinary Minecraft item stacks
 
 ### Items
 | Item | Action |
