@@ -1,9 +1,12 @@
 package com.diplomacy.villagediplomacy;
 
 import com.diplomacy.villagediplomacy.client.renderer.VillageGuardRenderer;
+import com.diplomacy.villagediplomacy.client.screen.DiplomacyTableScreen;
 import com.diplomacy.villagediplomacy.config.VillageDiplomacyConfig;
 import com.diplomacy.villagediplomacy.core.ModEntities;
+import com.diplomacy.villagediplomacy.core.ModBlocks;
 import com.diplomacy.villagediplomacy.core.ModItems;
+import com.diplomacy.villagediplomacy.core.ModMenus;
 import com.diplomacy.villagediplomacy.entity.VillageGuardEntity;
 import com.diplomacy.villagediplomacy.gameplay.VillageBellInteractionHandler;
 import com.diplomacy.villagediplomacy.gameplay.SettlementProductionTicker;
@@ -11,6 +14,7 @@ import com.diplomacy.villagediplomacy.gameplay.TradeContractTicker;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -20,6 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -31,8 +36,10 @@ public class VillageDiplomacyMod {
     public VillageDiplomacyMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
+        ModMenus.MENUS.register(modEventBus);
         ModLoadingContext.get().registerConfig(
                 ModConfig.Type.SERVER,
                 VillageDiplomacyConfig.SERVER_SPEC,
@@ -67,6 +74,14 @@ public class VillageDiplomacyMod {
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> MenuScreens.register(
+                    ModMenus.DIPLOMACY_TABLE.get(),
+                    DiplomacyTableScreen::new
+            ));
+        }
+
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.VILLAGE_GUARD.get(), VillageGuardRenderer::new);

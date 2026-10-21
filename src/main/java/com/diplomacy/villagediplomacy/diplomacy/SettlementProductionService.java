@@ -206,7 +206,7 @@ public final class SettlementProductionService {
         return Math.abs(value - nearestInteger) < 1.0E-9D ? nearestInteger : value;
     }
 
-    private static ProductionSettings currentSettings() {
+    public static ProductionSettings currentSettings() {
         return new ProductionSettings(
                 VillageDiplomacyConfig.SERVER.tradeSurplusShare.get(),
                 VillageDiplomacyConfig.SERVER.secondaryProductionMultiplier.get(),

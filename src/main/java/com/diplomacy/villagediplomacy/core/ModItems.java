@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy.core;
 
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -20,6 +21,9 @@ public class ModItems {
     public static final RegistryObject<Item> LEADERSHIP_SEAL = ITEMS.register("leadership_seal",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
+    public static final RegistryObject<Item> DIPLOMACY_TABLE = ITEMS.register("diplomacy_table",
+            () -> new BlockItem(ModBlocks.DIPLOMACY_TABLE.get(), new Item.Properties()));
+
     public static final RegistryObject<Item> VILLAGE_GUARD_SPAWN_EGG = ITEMS.register("village_guard_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.VILLAGE_GUARD, 0x4f5d73, 0x8b3a3a, new Item.Properties()));
 
@@ -27,6 +31,9 @@ public class ModItems {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(DIPLOMATIC_SCROLL.get());
             event.accept(LEADERSHIP_SEAL.get());
+        }
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(DIPLOMACY_TABLE.get());
         }
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(VILLAGE_GUARD_SPAWN_EGG.get());
