@@ -33,7 +33,9 @@ public class Settlement {
     @Nullable
     private SettlementSpecialization secondarySpecialization;
     private ResourceLocation localWoodResource = DEFAULT_LOCAL_WOOD;
+    private boolean productionInitialized;
     private long lastProductionGameTime;
+    private final Map<ResourceLocation, Double> productionRemainders = new LinkedHashMap<>();
     private VirtualWarehouse warehouse = new VirtualWarehouse();
     private final Map<UUID, SettlementRelationship> relationships = new LinkedHashMap<>();
     private Runnable dirtyCallback = () -> { };
@@ -142,10 +144,49 @@ public class Settlement {
         return lastProductionGameTime;
     }
 
+    public boolean isProductionInitialized() {
+        return productionInitialized;
+    }
+
+    public void initializeProduction(long gameTime) {
+        long safeGameTime = Math.max(0L, gameTime);
+        if (!productionInitialized || lastProductionGameTime != safeGameTime) {
+            productionInitialized = true;
+            lastProductionGameTime = safeGameTime;
+            markDirty();
+        }
+    }
+
     public void setLastProductionGameTime(long gameTime) {
         long safeGameTime = Math.max(0L, gameTime);
-        if (lastProductionGameTime != safeGameTime) {
+        if (!productionInitialized || lastProductionGameTime != safeGameTime) {
+            productionInitialized = true;
             lastProductionGameTime = safeGameTime;
+            markDirty();
+        }
+    }
+
+    public double getProductionRemainder(ResourceLocation itemId) {
+        return productionRemainders.getOrDefault(Objects.requireNonNull(itemId, "itemId"), 0.0D);
+    }
+
+    public Map<ResourceLocation, Double> getProductionRemainders() {
+        return Collections.unmodifiableMap(productionRemainders);
+    }
+
+    public void setProductionRemainder(ResourceLocation itemId, double remainder) {
+        ResourceLocation safeItemId = Objects.requireNonNull(itemId, "itemId");
+        if (!Double.isFinite(remainder) || remainder < 0.0D || remainder >= 1.0D) {
+            throw new IllegalArgumentException("Production remainder must be finite and in the range [0, 1)");
+        }
+
+        double previous = productionRemainders.getOrDefault(safeItemId, 0.0D);
+        if (remainder < 1.0E-9D) {
+            if (productionRemainders.remove(safeItemId) != null) {
+                markDirty();
+            }
+        } else if (Double.compare(previous, remainder) != 0) {
+            productionRemainders.put(safeItemId, remainder);
             markDirty();
         }
     }
@@ -236,7 +277,19 @@ public class Settlement {
             tag.putString("SecondarySpecialization", secondarySpecialization.getSerializedName());
         }
         tag.putString("LocalWoodResource", localWoodResource.toString());
+        tag.putBoolean("ProductionInitialized", productionInitialized);
         tag.putLong("LastProductionGameTime", lastProductionGameTime);
+
+        ListTag remainderList = new ListTag();
+        productionRemainders.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey((left, right) -> left.toString().compareTo(right.toString())))
+                .forEach(entry -> {
+                    CompoundTag remainderTag = new CompoundTag();
+                    remainderTag.putString("Item", entry.getKey().toString());
+                    remainderTag.putDouble("Remainder", entry.getValue());
+                    remainderList.add(remainderTag);
+                });
+        tag.put("ProductionRemainders", remainderList);
         tag.put("Warehouse", warehouse.saveNBT());
 
         ListTag relationshipList = new ListTag();
@@ -276,7 +329,19 @@ public class Settlement {
                 settlement.localWoodResource = localWood;
             }
         }
+        settlement.productionInitialized = tag.getBoolean("ProductionInitialized");
         settlement.lastProductionGameTime = Math.max(0L, tag.getLong("LastProductionGameTime"));
+        if (tag.contains("ProductionRemainders", Tag.TAG_LIST)) {
+            ListTag list = tag.getList("ProductionRemainders", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundTag remainderTag = list.getCompound(i);
+                ResourceLocation itemId = ResourceLocation.tryParse(remainderTag.getString("Item"));
+                double remainder = remainderTag.getDouble("Remainder");
+                if (itemId != null && Double.isFinite(remainder) && remainder > 0.0D && remainder < 1.0D) {
+                    settlement.productionRemainders.put(itemId, remainder);
+                }
+            }
+        }
 
         if (tag.contains("Warehouse", Tag.TAG_COMPOUND)) {
             settlement.warehouse = VirtualWarehouse.loadNBT(tag.getCompound("Warehouse"));

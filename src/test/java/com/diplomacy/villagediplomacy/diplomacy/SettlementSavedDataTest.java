@@ -30,6 +30,7 @@ class SettlementSavedDataTest {
         first.getWarehouse().configureCapacity(wheat, 84);
         first.getWarehouse().add(wheat, 40);
         first.getWarehouse().tryReserve(wheat, 16);
+        first.setProductionRemainder(wheat, 0.4D);
 
         data.discoverSettlement(first.getId(), second.getId());
         data.adjustReputationBetween(first.getId(), second.getId(), 25);
@@ -47,6 +48,8 @@ class SettlementSavedDataTest {
         assertEquals(SettlementSpecialization.FOREST, loaded.getSecondarySpecialization().orElseThrow());
         assertEquals(spruceLog, loaded.getLocalWoodResource());
         assertEquals(new VirtualWarehouse.StockView(40, 16, 84), loaded.getWarehouse().getStock(wheat));
+        assertTrue(loaded.isProductionInitialized());
+        assertEquals(0.4D, loaded.getProductionRemainder(wheat), 1.0E-9D);
         assertTrue(loaded.getKnownSettlementIds().contains(second.getId()));
 
         SettlementRelationship relationship = loaded.findRelationship(second.getId()).orElseThrow();

@@ -22,6 +22,7 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 - **`Settlement`** — per-village data: name, center, radius, leader UUID, specializations, local wood, warehouse, and relations
 - **`SettlementSavedData`** — world-level NBT persistence via Forge `SavedData`
 - **Terrain specialization** — one-time sampled analysis assigns plains, mountain, forest, or a mixed profile when a settlement is registered
+- **Virtual production** — day-based resources accrue into a capped five-day trade warehouse, including catch-up while settlement chunks are unloaded
 
 ### Items
 | Item | Action |

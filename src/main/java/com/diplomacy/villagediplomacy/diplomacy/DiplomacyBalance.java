@@ -8,6 +8,7 @@ package com.diplomacy.villagediplomacy.diplomacy;
  * constants.</p>
  */
 public final class DiplomacyBalance {
+    public static final int MINECRAFT_DAY_TICKS = 24_000;
     public static final int DEFAULT_SETTLEMENT_RADIUS = 64;
     public static final int SPECIALIZATION_SCAN_RADIUS = 48;
     public static final double SECONDARY_SPECIALIZATION_MULTIPLIER = 0.5D;

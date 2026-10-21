@@ -37,12 +37,14 @@ public final class SettlementSpecializationAnalyzer {
         Objects.requireNonNull(level, "level");
         Objects.requireNonNull(settlement, "settlement");
         if (settlement.getPrimarySpecialization() != SettlementSpecialization.UNASSIGNED) {
+            SettlementProductionService.initializeSettlement(settlement, level.getGameTime());
             return false;
         }
 
         AnalysisResult result = analyze(level, settlement.getCenter(), currentSettings());
         settlement.setSpecializations(result.primary(), result.secondary());
         settlement.setLocalWoodResource(result.localWoodResource());
+        SettlementProductionService.initializeSettlement(settlement, level.getGameTime());
         VillageDiplomacyMod.LOGGER.info(
                 "Assigned {} specialization{} to settlement {} at {} (scores: {})",
                 result.primary().getSerializedName(),

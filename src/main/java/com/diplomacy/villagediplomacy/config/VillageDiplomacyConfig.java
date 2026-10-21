@@ -24,6 +24,10 @@ public final class VillageDiplomacyConfig {
         public final ForgeConfigSpec.DoubleValue minimumSecondarySpecializationScore;
         public final ForgeConfigSpec.IntValue mountainAltitude;
         public final ForgeConfigSpec.IntValue mountainRelief;
+        public final ForgeConfigSpec.DoubleValue tradeSurplusShare;
+        public final ForgeConfigSpec.DoubleValue secondaryProductionMultiplier;
+        public final ForgeConfigSpec.IntValue warehouseCapacityDays;
+        public final ForgeConfigSpec.IntValue productionCheckIntervalTicks;
 
         private Server(ForgeConfigSpec.Builder builder) {
             builder.comment("One-time settlement specialization analysis")
@@ -47,6 +51,25 @@ public final class VillageDiplomacyConfig {
             mountainRelief = builder
                     .comment("Height difference across the scan treated as strong mountain evidence")
                     .defineInRange("mountainRelief", 32, 4, 192);
+
+            builder.pop();
+
+            builder.comment("Settlement resource production and virtual warehouse")
+                    .push("production");
+
+            tradeSurplusShare = builder
+                    .comment("Share of gross production placed into the trade warehouse; the remainder is consumed internally")
+                    .defineInRange("tradeSurplusShare", DiplomacyBalance.TRADE_SURPLUS_SHARE, 0.05D, 1.0D);
+            secondaryProductionMultiplier = builder
+                    .comment("Production multiplier applied to a secondary specialization")
+                    .defineInRange("secondarySpecializationMultiplier",
+                            DiplomacyBalance.SECONDARY_SPECIALIZATION_MULTIPLIER, 0.05D, 1.0D);
+            warehouseCapacityDays = builder
+                    .comment("Number of daily trade-surplus batches that fit in the virtual warehouse")
+                    .defineInRange("warehouseCapacityDays", DiplomacyBalance.WAREHOUSE_CAPACITY_DAYS, 1, 30);
+            productionCheckIntervalTicks = builder
+                    .comment("How often the server checks settlement production; production itself remains day-based")
+                    .defineInRange("checkIntervalTicks", 200, 20, 2_400);
 
             builder.pop();
         }
