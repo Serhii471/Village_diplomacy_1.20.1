@@ -43,8 +43,10 @@ public final class VirtualWarehouse {
         int previousStored = entry.stored;
         int previousReserved = entry.reserved;
 
-        entry.capacity = capacity;
-        entry.stored = Math.min(entry.stored, capacity);
+        // A balance/config change must never delete goods that were already
+        // accepted through a trade contract. Capacity can shrink further once
+        // those goods leave the warehouse.
+        entry.capacity = Math.max(capacity, entry.stored);
         entry.reserved = Math.min(entry.reserved, entry.stored);
 
         if (previousCapacity != entry.capacity || previousStored != entry.stored || previousReserved != entry.reserved) {
@@ -67,6 +69,28 @@ public final class VirtualWarehouse {
             entry.stored += accepted;
             markDirty();
         }
+        return accepted;
+    }
+
+    /**
+     * Stores goods physically delivered by a carrier. An accepted contract
+     * allocates enough virtual space for the delivered stacks, while ordinary
+     * production remains limited by its configured capacity.
+     */
+    public int addDelivered(ResourceLocation itemId, int amount) {
+        requirePositive(amount, "amount");
+        StockEntry entry = entries.computeIfAbsent(
+                Objects.requireNonNull(itemId, "itemId"),
+                ignored -> new StockEntry()
+        );
+        int accepted = (int) Math.min((long) amount, (long) Integer.MAX_VALUE - entry.stored);
+        if (accepted <= 0) {
+            return 0;
+        }
+
+        entry.stored += accepted;
+        entry.capacity = Math.max(entry.capacity, entry.stored);
+        markDirty();
         return accepted;
     }
 

@@ -183,11 +183,16 @@ public final class TradeContractService {
             return new DeliveryResult(0, false);
         }
         requireContractItem(contract, itemId);
-        int accepted = Math.min(offeredAmount, contract.getRemainingToDeliver(itemId));
-        if (accepted <= 0) {
+        int requested = Math.min(offeredAmount, contract.getRemainingToDeliver(itemId));
+        if (requested <= 0) {
             return new DeliveryResult(0, false);
         }
 
+        Settlement destination = requireSettlement(data, contract.getDestinationSettlementId());
+        int accepted = destination.getWarehouse().addDelivered(itemId, requested);
+        if (accepted <= 0) {
+            return new DeliveryResult(0, false);
+        }
         contract.recordDelivered(itemId, accepted);
         if (!contract.isDeliveryComplete()) {
             return new DeliveryResult(accepted, false);

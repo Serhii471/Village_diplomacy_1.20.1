@@ -58,6 +58,8 @@ class TradeHandoverServiceTest {
         assertEquals(3, inventory.count(EMERALD));
         assertEquals(TradeContractStatus.COMPLETED, fixture.contract().getStatus());
         assertTrue(fixture.contract().isRewardClaimed());
+        assertEquals(new VirtualWarehouse.StockView(16, 0, 16),
+                fixture.destination().getWarehouse().getStock(WHEAT));
     }
 
     @Test

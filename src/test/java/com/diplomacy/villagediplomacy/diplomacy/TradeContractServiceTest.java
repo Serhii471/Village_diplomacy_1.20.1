@@ -51,6 +51,8 @@ class TradeContractServiceTest {
                 fixture.source().getWarehouse().getStock(WHEAT));
         assertEquals(1, relation(fixture.source(), fixture.destination()).getSuccessfulDeliveries());
         assertEquals(10, relation(fixture.source(), fixture.destination()).getReputation());
+        assertEquals(new VirtualWarehouse.StockView(16, 0, 16),
+                fixture.destination().getWarehouse().getStock(WHEAT));
         assertEquals(3, TradeContractService.claimReward(fixture.data(), contract.getId(), carrierId));
         assertEquals(0, TradeContractService.claimReward(fixture.data(), contract.getId(), carrierId));
         assertTrue(contract.isRewardClaimed());
@@ -149,9 +151,13 @@ class TradeContractServiceTest {
         assertEquals(3, loadedContract.getDeliveredAmount(WHEAT));
         assertFalse(loadedContract.isRewardClaimed());
         Settlement loadedSource = loaded.getSettlement(fixture.source().getId());
+        Settlement loadedDestination = loaded.getSettlement(fixture.destination().getId());
         assertNotNull(loadedSource);
+        assertNotNull(loadedDestination);
         assertEquals(new VirtualWarehouse.StockView(35, 11, 100),
                 loadedSource.getWarehouse().getStock(WHEAT));
+        assertEquals(new VirtualWarehouse.StockView(3, 0, 3),
+                loadedDestination.getWarehouse().getStock(WHEAT));
         assertEquals(4, saved.getInt("DataVersion"));
     }
 

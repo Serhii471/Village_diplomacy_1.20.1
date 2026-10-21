@@ -46,4 +46,15 @@ class VirtualWarehouseTest {
         assertEquals(new VirtualWarehouse.StockView(35, 12, 50), loaded.getStock(WHEAT));
         assertThrows(IllegalArgumentException.class, () -> loaded.add(WHEAT, 0));
     }
+
+    @Test
+    void deliveredGoodsAllocateSpaceAndAreNotDeletedByLowerProductionCapacity() {
+        VirtualWarehouse warehouse = new VirtualWarehouse();
+
+        assertEquals(16, warehouse.addDelivered(WHEAT, 16));
+        warehouse.configureCapacity(WHEAT, 10);
+
+        assertEquals(new VirtualWarehouse.StockView(16, 0, 16), warehouse.getStock(WHEAT));
+        assertEquals(16, VirtualWarehouse.loadNBT(warehouse.saveNBT()).getStock(WHEAT).stored());
+    }
 }
