@@ -1,72 +1,34 @@
 package com.diplomacy.villagediplomacy.diplomacy;
 
-import net.minecraft.core.Holder;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.biome.Biome;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Locale;
 
 public enum SettlementSpecialization {
-    PLAINS("Plains", 0.70f, 0.30f),
-    MOUNTAIN("Mountain", 0.70f, 0.30f),
-    FOREST("Forest", 0.70f, 0.30f);
+    UNASSIGNED,
+    PLAINS,
+    MOUNTAIN,
+    FOREST;
 
-    private final String displayName;
-    private final float exportShare;
-    private final float internalShare;
-
-    SettlementSpecialization(String displayName, float exportShare, float internalShare) {
-        this.displayName = displayName;
-        this.exportShare = exportShare;
-        this.internalShare = internalShare;
+    public String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getTranslationKey() {
+        return "specialization.villagediplomacy." + getSerializedName();
     }
 
-    public float getExportShare() {
-        return exportShare;
+    public String getResourcesTranslationKey() {
+        return "specialization.villagediplomacy." + getSerializedName() + ".resources";
     }
 
-    public float getInternalShare() {
-        return internalShare;
-    }
-
-    public Map<Item, Integer> getDailyYield() {
-        Map<Item, Integer> yield = new LinkedHashMap<>();
-        switch (this) {
-            case PLAINS -> {
-                yield.put(Items.WHEAT, 24);
-                yield.put(Items.WHITE_WOOL, 6);
-                yield.put(Items.MUTTON, 4);
-            }
-            case MOUNTAIN -> {
-                yield.put(Items.COAL, 12);
-                yield.put(Items.RAW_COPPER, 6);
-                yield.put(Items.RAW_IRON, 3);
-                yield.put(Items.STONE, 48);
-            }
-            case FOREST -> {
-                yield.put(Items.OAK_LOG, 24);
-                yield.put(Items.HONEYCOMB, 4);
-                yield.put(Items.APPLE, 3);
-            }
+    public static SettlementSpecialization fromSerializedName(String value) {
+        if (value == null || value.isBlank()) {
+            return UNASSIGNED;
         }
-        return Collections.unmodifiableMap(yield);
-    }
 
-    public static SettlementSpecialization detectFromBiome(Holder<Biome> biome) {
-        if (biome.is(BiomeTags.IS_FOREST) || biome.is(BiomeTags.IS_TAIGA) || biome.is(BiomeTags.IS_JUNGLE)) {
-            return FOREST;
+        try {
+            return valueOf(value.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return UNASSIGNED;
         }
-        if (biome.is(BiomeTags.IS_MOUNTAIN) || biome.is(BiomeTags.IS_HILL)) {
-            return MOUNTAIN;
-        }
-        return PLAINS;
     }
 }

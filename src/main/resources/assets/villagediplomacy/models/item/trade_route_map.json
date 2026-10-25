@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecraft:item/filled_map"
+    "layer0": "villagediplomacy:item/trade_route_map"
   }
 }

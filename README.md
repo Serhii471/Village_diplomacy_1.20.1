@@ -19,14 +19,18 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 
 ### Diplomacy Core
 - **`DiplomacyRelation`** — five-tier relation scale: `ALLY → FRIENDLY → NEUTRAL → TENSION → HOSTILE`
-- **`Settlement`** — per-village data: name, center, radius, leader UUID, relation scores
+- **`Settlement`** — per-village data: name, center, radius, leader UUID, specializations, local wood, warehouse, and relations
 - **`SettlementSavedData`** — world-level NBT persistence via Forge `SavedData`
+- **Terrain specialization** — one-time sampled analysis assigns plains, mountain, forest, or a mixed profile when a settlement is registered
+- **Virtual production** — day-based resources accrue into a capped five-day trade warehouse, including catch-up while settlement chunks are unloaded
+- **Trial delivery contracts** — persisted offers reserve warehouse stock, track partial handover, expire safely, and prevent duplicate rewards
+- **Physical contract handover** — an assigned carrier uses an empty hand on each settlement's central Bell to receive, partially deliver, and redeem ordinary Minecraft item stacks
 
 ### Items
 | Item | Action |
 |---|---|
-| Diplomatic Scroll | Right-click a Bell → shows settlement name, leader, and known settlement count |
-| Leadership Seal | Right-click a Bell → claims player as settlement leader |
+| Diplomatic Scroll | Right-click a foreign Bell → discovers the settlement and shows its coordinates, specialization, resources, leader, relations, and distance |
+| Leadership Seal | Right-click a Bell twice within 10 seconds → confirms leadership; one player can lead only one settlement |
 | Village Guard Spawn Egg | Spawns a guard for testing (Creative only) |
 
 ### Entities
