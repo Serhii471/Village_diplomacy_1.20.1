@@ -23,3 +23,16 @@
 - Shared diplomacy/gameplay/menu/screen sources match `origin/test` at `41653db`. Active Java changes relative to that base are confined to the guard entity and renderer.
 - Existing `run/saves` worlds were not opened. Client appearance/animations remain visually unverified; the renderer uses the confirmed built-in Steve texture as a temporary fallback.
 - Work is local to **`2nd-test`**. No push was performed; local `test` remains `01b33f7` and `origin/test` remains `41653db`.
+
+## 2026-10-26 — hostile mobs must initiate attacks on guards
+
+- User report: hostile mobs do not attack guards proactively. Root cause confirmed in local mapped Minecraft sources: their target selectors name players/villagers/golems but do not include `VillageGuardEntity`.
+- Add an automatically registered Forge entity-join handler under `entity/ai`, so existing loaded mobs as well as newly spawned mobs receive the guard target goal. Do not edit shared diplomacy/trade code or `test`.
+- Keep existing retaliation/player priorities and neutral-mob rules. Spider acquisition retains the vanilla brightness check; piglins, anger-based neutral mobs and wardens retain their native conditional hostility.
+- Brain-based hostile mobs require attack memory as well as Mob target state; slimes/magma cubes additionally require contact damage because vanilla collision code only recognizes players and iron golems.
+- Existing unrelated changes in `.idea/runConfigurations/runClient.xml` and `run-data/logs/*` predate this fix and must remain untouched.
+- Verification: **all 21 required server GameTests passed** (the original 9 plus 12 hostile-mob regressions). The new tests disable the guard's AI and prove unprovoked melee/ranged damage, creeper fuse activation, slime/magma contact damage, hoglin/piglin-brute brain combat, neutral/light behavior, and targeting after NBT reload. Separate batches prevent higher-priority villagers from another test from diverting zombies.
+- `gradlew.bat test build --offline`: **43 JUnit tests passed**, no failures/errors/skips, and the regular release build succeeded.
+- Release JAR: `build/libs/villagediplomacy-0.1.0.jar` (169,401 bytes at verification). Both hostility classes are present; GameTest classes and the arena are absent.
+- Logs: `build/hostile-guard-gametest-output.log`, `build/hostile-guard-release-build-output.log`. Existing user worlds were not opened; visual client gameplay was not automated.
+- Manual retest: restart the client and summon `minecraft:husk` near a guard **without** `{NoAI:1b}`. The earlier manual command deliberately disabled the husk's AI and therefore could only test the guard's attack, not mutual combat.

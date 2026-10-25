@@ -35,6 +35,13 @@ histories and uses `test` commit `41653db` for the shared settlement/trade core.
 - The renderer references the built-in Minecraft Steve texture as a temporary
   fallback for the missing custom texture. No Minecraft texture is copied into
   the mod jar. A custom guard skin is a separate visual task.
+- Hostile mobs receive a guard-targeting goal when they enter the server level,
+  including after chunk/world reload. Existing retaliation and player/villager
+  targets retain their higher priorities. Brain-driven hostile mobs also receive
+  the corresponding attack memory; slimes and magma cubes can deal contact
+  damage to a guard they are chasing.
+- Spider acquisition still requires darkness. Endermen, zombified piglins,
+  ordinary piglins and wardens retain their existing anger/gold/sensory rules.
 
 ## Verification commands
 
@@ -53,6 +60,17 @@ The server scenarios exercise spawn/equipment, NBT reload, center/radius
 updates, friendly retaliation, changing diplomacy during combat, protected
 leaders/civilians, an escaping enemy, return navigation, actual monster damage,
 and cleanup after deleting a settlement.
+
+The hostile-mob regression scenarios use a guard with AI disabled, so damage
+proves the monster initiated combat instead of merely retaliating. They cover
+melee, ranged attacks, creeper fuse activation, spiders in dark/bright conditions,
+slime/magma contact damage, hoglin and piglin-brute brains, neutral endermen,
+and reloaded mobs.
+
+For a manual mutual-combat check, restart the client with the updated code, then
+spawn a guard and run `/summon minecraft:husk ~4 ~ ~` near it on Normal difficulty.
+Do not add `{NoAI:1b}` to the hostile mob: that deliberately disables its movement
+and attacks. No replacement of existing guards is required.
 
 Headless tests verify server behavior. Client rendering, attack animation and
 player interaction still need a visual check in an isolated client world.
