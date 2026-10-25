@@ -17,6 +17,8 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,6 +35,7 @@ public class VillageGuardEntity extends PathfinderMob {
 
     public VillageGuardEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
+        setPersistenceRequired();
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -53,8 +56,8 @@ public class VillageGuardEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.25D, false));
-        this.goalSelector.addGoal(2, new MoveTowardsRestrictionGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new MoveTowardsRestrictionGoal(this, 1.0D));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.25D, false));
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
@@ -72,6 +75,86 @@ public class VillageGuardEntity extends PathfinderMob {
 
     public void setSettlementId(@Nullable UUID id) {
         this.entityData.set(SETTLEMENT_ID, Optional.ofNullable(id));
+        refreshSettlementRestriction();
+        clearInvalidTarget();
+    }
+
+    @Nullable
+    private Settlement getHomeSettlement() {
+        if (level() instanceof ServerLevel serverLevel) {
+            return getSettlementId().map(SettlementSavedData.get(serverLevel)::getSettlement).orElse(null);
+        }
+        return null;
+    }
+
+    private void refreshSettlementRestriction() {
+        if (level().isClientSide()) {
+            return;
+        }
+        Settlement home = getHomeSettlement();
+        if (home == null) {
+            clearRestriction();
+            // A removed settlement must not leave a stale combat affiliation.
+            this.entityData.set(SETTLEMENT_ID, Optional.empty());
+        } else {
+            restrictTo(home.getCenter(), home.getRadius());
+        }
+    }
+
+    @Override
+    public void aiStep() {
+        if (!level().isClientSide()) {
+            if (tickCount % 20 == 0) {
+                refreshSettlementRestriction();
+            }
+            clearInvalidTarget();
+        }
+        super.aiStep();
+    }
+
+    private void clearInvalidTarget() {
+        LivingEntity target = getTarget();
+        if (target != null && (!target.isAlive() || !canAttack(target))) {
+            setTarget(null);
+            getNavigation().stop();
+        }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        if (!super.canAttack(target) || target == this
+                || !isWithinRestriction() || !isWithinRestriction(target.blockPosition())) {
+            return false;
+        }
+        if (target instanceof VillageGuardEntity) {
+            // Retaliation follows the same diplomacy rules as proactive targeting.
+            return isHostileSettlementGuard(target);
+        }
+        if (target instanceof AbstractVillager || target instanceof IronGolem) {
+            return false;
+        }
+        if (target instanceof Player player && level() instanceof ServerLevel serverLevel) {
+            Settlement home = getHomeSettlement();
+            if (home != null) {
+                if (home.isPlayerLeader(player.getUUID())) {
+                    return false;
+                }
+                Settlement playerHome = SettlementSavedData.get(serverLevel).findSettlementLedBy(player.getUUID());
+                if (playerHome != null) {
+                    DiplomacyRelation relation = home.getRelationWith(playerHome.getId());
+                    if (relation == DiplomacyRelation.ALLY || relation == DiplomacyRelation.FRIENDLY) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        return target instanceof LivingEntity livingTarget && canAttack(livingTarget)
+                && super.doHurtTarget(target);
     }
 
     private boolean isHostileSettlementGuard(LivingEntity entity) {
@@ -85,7 +168,7 @@ public class VillageGuardEntity extends PathfinderMob {
         if (this.level() instanceof ServerLevel serverLevel) {
             SettlementSavedData data = SettlementSavedData.get(serverLevel);
             Settlement mine = data.getSettlement(mySettlement.get());
-            if (mine != null) {
+            if (mine != null && data.getSettlement(otherSettlement.get()) != null) {
                 return mine.getRelationWith(otherSettlement.get()) == DiplomacyRelation.HOSTILE;
             }
         }
@@ -108,7 +191,6 @@ public class VillageGuardEntity extends PathfinderMob {
             Settlement nearby = savedData.findSettlementAt(this.blockPosition());
             if (nearby != null) {
                 setSettlementId(nearby.getId());
-                this.restrictTo(nearby.getCenter(), nearby.getRadius());
             }
         }
 
@@ -124,8 +206,6 @@ public class VillageGuardEntity extends PathfinderMob {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.hasUUID("SettlementId")) {
-            setSettlementId(tag.getUUID("SettlementId"));
-        }
+        setSettlementId(tag.hasUUID("SettlementId") ? tag.getUUID("SettlementId") : null);
     }
 }

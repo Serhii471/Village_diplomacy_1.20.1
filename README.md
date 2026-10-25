@@ -36,6 +36,12 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 ### Entities
 - **Village Guard** — patrols its settlement, fights monsters and guards from `HOSTILE` settlements; spawns equipped with iron sword + chainmail
 
+Guards restore their patrol area after reload, return home before pursuing enemies,
+and stop combat when diplomacy changes. Friendly guards, village civilians and
+friendly leaders are protected from retaliation. Rendering currently uses a built-in
+Minecraft skin until a custom guard texture is ready.
+See [guard development and verification](docs/development/guard-patrol.md).
+
 ## Project Structure
 
 ```
