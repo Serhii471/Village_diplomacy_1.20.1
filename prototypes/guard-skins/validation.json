@@ -1,0 +1,31 @@
+{
+  "source": "guard_base.png",
+  "model": "Minecraft wide / Steve",
+  "variants": [
+    {
+      "id": "plains",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1362,
+      "headPreserved": true,
+      "alphaPreserved": true
+    },
+    {
+      "id": "mountain",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1362,
+      "headPreserved": true,
+      "alphaPreserved": true
+    },
+    {
+      "id": "forest",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1364,
+      "headPreserved": true,
+      "alphaPreserved": true
+    }
+  ],
+  "verification": "PNG round trip; client and multiplayer evidence is recorded separately in docs/development/guard-skins-verification.json"
+}

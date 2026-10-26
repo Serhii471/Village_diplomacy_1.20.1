@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-26",
+  "minecraft": "1.20.1",
+  "forge": "47.4.28",
+  "branch": "2nd-test",
+  "assets": [
+    {
+      "type": "base",
+      "resource": "assets/villagediplomacy/textures/entity/guard/guard_base.png",
+      "sha256": "a2ff66cdb82520898dd3cade0f254409af58bdbff32bebe7a6d8913601bf9fe9",
+      "width": 64,
+      "height": 64,
+      "headPreserved": true,
+      "alphaPreserved": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "type": "plains",
+      "resource": "assets/villagediplomacy/textures/entity/guard/guard_plains.png",
+      "sha256": "f5f30fdf74d418db581bc6bbfc6c9d6cc2773495dc26b713624baad729401f08",
+      "width": 64,
+      "height": 64,
+      "headPreserved": true,
+      "alphaPreserved": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "type": "mountain",
+      "resource": "assets/villagediplomacy/textures/entity/guard/guard_mountain.png",
+      "sha256": "423c683641cfcad5f491e6e515cf47c79dbb67a237678040b7c3d747b9d2bfa9",
+      "width": 64,
+      "height": 64,
+      "headPreserved": true,
+      "alphaPreserved": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "type": "forest",
+      "resource": "assets/villagediplomacy/textures/entity/guard/guard_forest.png",
+      "sha256": "ca519a926d3a375c82ef943ff0f8fb28fb6530473d431d8eed77f12813c4e213",
+      "width": 64,
+      "height": 64,
+      "headPreserved": true,
+      "alphaPreserved": true,
+      "embeddedTextureMatches": true
+    }
+  ],
+  "junit": {
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "requiredGameTests": 25,
+  "multiplayer": {
+    "passed": true,
+    "viewers": 2,
+    "fullServerRestart": true,
+    "markers": [
+      "SkinViewerOne-changed.txt",
+      "SkinViewerOne-initial.txt",
+      "SkinViewerOne-reloaded.txt",
+      "SkinViewerOne-removed.txt",
+      "SkinViewerTwo-changed.txt",
+      "SkinViewerTwo-initial.txt",
+      "SkinViewerTwo-reloaded.txt",
+      "SkinViewerTwo-removed.txt"
+    ]
+  },
+  "clientRun": "build/guard-skin-client-check-04",
+  "screenshots": [
+    "docs/development/images/guard-skins-in-game.png",
+    "docs/development/images/guard-skins-after-server-reload.png"
+  ],
+  "release": {
+    "path": "build/libs/villagediplomacy-0.1.0.jar",
+    "bytes": 181683,
+    "sha256": "9bd2d6625c0b3d2f51d094b5763aac1503a81689be651bb81bb139b7bafba5b0",
+    "allTexturesMatch": true,
+    "testClassesAndArenaAbsent": true
+  },
+  "limitations": [
+    "Client gallery verifies rendering, live entity synchronization and full save/reload; combat animations and ordinary player interaction were not exercised."
+  ]
+}
