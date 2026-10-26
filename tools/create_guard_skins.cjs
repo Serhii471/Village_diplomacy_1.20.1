@@ -97,6 +97,19 @@ function skinPreview(data, cx, cy, back=false) {
       }
       put(24,25,s.trim);put(25,25,s.trim);
     }
+    // The supplied skin includes an opaque outer cuirass. Carry the regional
+    // tabard and insignia onto it so enabling the jacket does not hide the design.
+    for(const u of [20,32])for(let j=0;j<9;j++)for(let i=1;i<7;i++){
+      const shade=.73+((i+j)%3)*.07;
+      put(u+i,36+j,s.cloth.map(n=>n*shade));
+    }
+    badges[id].forEach((line,j)=>[...line].forEach((v,i)=>{if(v==='1')put(22+i,38+j,s.trim);}));
+    if(id==='plains')for(let j=0;j<9;j++)for(const u of [21,26,33,38])put(u,36+j,s.trim.map(n=>n*.78));
+    if(id==='mountain')for(let x=20;x<28;x++)for(let y=36;y<38;y++)put(x,y,[167+(x%2)*16,158+(x%2)*16,140+(x%2)*16]);
+    if(id==='forest')for(let j=0;j<9;j++)for(let w=0;w<2;w++){
+      put(26-Math.floor(j*.58)+w,36+j,w?[111,80,47]:[65,48,31]);
+      put(32+Math.floor(j*.58)+w,36+j,w?[111,80,47]:[65,48,31]);
+    }
     const png=await sharp(raw,{raw:{width:64,height:64,channels:4}}).png().toBuffer();
     const decoded=await sharp(png).ensureAlpha().raw().toBuffer();
     let changed=0;
@@ -114,6 +127,6 @@ function skinPreview(data, cx, cy, back=false) {
   }
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="595"><rect width="1380" height="595" fill="#111a22"/><g font-family="Segoe UI,Arial,sans-serif"><text x="50" y="49" fill="#f1eee6" font-size="28" font-weight="600">Варта поселень — варіанти скіна</text><text x="50" y="73" fill="#a5b3bd" font-size="14">Спільна основа · індивідуальні кольори та деталі · 64 × 64</text>${cards}<text x="50" y="567" fill="#92a4af" font-size="14">Концепти для погодження. PNG + редаговані проєкти Blockbench. Зовнішні шари вимкнено, як у вихідному перегляді.</text></g></svg>`;
   await sharp(Buffer.from(svg)).png().toFile(path.join(out,'guard_skins_comparison.png'));
-  fs.writeFileSync(path.join(out,'validation.json'),JSON.stringify({source:'guard_base.png',model:'Minecraft wide / Steve',variants:stats,verification:'PNG round trip; native Blockbench opening checked separately; no gameplay verification'},null,2));
+  fs.writeFileSync(path.join(out,'validation.json'),JSON.stringify({source:'guard_base.png',model:'Minecraft wide / Steve',variants:stats,verification:'PNG round trip; client and multiplayer evidence is recorded separately in docs/development/guard-skins-verification.json'},null,2));
   console.log(JSON.stringify(stats,null,2));
 })();

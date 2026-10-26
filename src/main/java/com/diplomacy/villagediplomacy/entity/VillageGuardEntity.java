@@ -3,6 +3,7 @@ package com.diplomacy.villagediplomacy.entity;
 import com.diplomacy.villagediplomacy.diplomacy.DiplomacyRelation;
 import com.diplomacy.villagediplomacy.diplomacy.Settlement;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
+import com.diplomacy.villagediplomacy.diplomacy.SettlementSpecialization;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +33,8 @@ import java.util.UUID;
 public class VillageGuardEntity extends PathfinderMob {
     private static final EntityDataAccessor<Optional<UUID>> SETTLEMENT_ID =
             SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<String> UNIFORM_SPECIALIZATION =
+            SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.STRING);
 
     public VillageGuardEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
@@ -51,6 +54,7 @@ public class VillageGuardEntity extends PathfinderMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(SETTLEMENT_ID, Optional.empty());
+        this.entityData.define(UNIFORM_SPECIALIZATION, SettlementSpecialization.UNASSIGNED.getSerializedName());
     }
 
     @Override
@@ -71,6 +75,10 @@ public class VillageGuardEntity extends PathfinderMob {
 
     public Optional<UUID> getSettlementId() {
         return this.entityData.get(SETTLEMENT_ID);
+    }
+
+    public SettlementSpecialization getUniformSpecialization() {
+        return SettlementSpecialization.fromSerializedName(this.entityData.get(UNIFORM_SPECIALIZATION));
     }
 
     public void setSettlementId(@Nullable UUID id) {
@@ -96,8 +104,12 @@ public class VillageGuardEntity extends PathfinderMob {
             clearRestriction();
             // A removed settlement must not leave a stale combat affiliation.
             this.entityData.set(SETTLEMENT_ID, Optional.empty());
+            this.entityData.set(UNIFORM_SPECIALIZATION, SettlementSpecialization.UNASSIGNED.getSerializedName());
         } else {
             restrictTo(home.getCenter(), home.getRadius());
+            // Clients cannot read settlement SavedData. Send the primary type with
+            // normal entity metadata, including to players who start tracking later.
+            this.entityData.set(UNIFORM_SPECIALIZATION, home.getPrimarySpecialization().getSerializedName());
         }
     }
 

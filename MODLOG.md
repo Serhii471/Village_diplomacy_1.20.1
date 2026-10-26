@@ -1,5 +1,17 @@
 # Village Diplomacy development log
 
+## 2026-10-26 — active guard uniforms and real multiplayer verification
+
+- Route: retain the existing Forge 1.20.1 / 47.4.28 renderer and settlement API. Read the primary specialization on the server and synchronize its serialized name using entity metadata. Do not introduce a new settlement save schema. Recalculate the uniform alongside the patrol restriction on binding/load and every 20 ticks; missing or unassigned homes use the supplied base skin.
+- Replace the temporary Steve texture with four mod-owned resource paths and use the wide PlayerModel so jacket/sleeves/trouser/hat overlays render and follow the body. Preserve ordinary chainmail equipment, stats and drop chances.
+- Blockbench inspection exposed an opaque outer cuirass that hid the original regional details. Extend the deterministic authoring script to carry the tabard, insignia, collar and baldric onto this layer. Reopen all three updated projects in Blockbench and confirm their outer layers. Preserve source head pixels and alpha; keep runtime PNGs identical to the editable prototype exports.
+- Add four guarded server GameTests covering spawn/reassignment, primary-versus-secondary selection, reload and missing-home fallback, periodic type/removal changes and real encoded entity metadata snapshots/deltas. All **25 required GameTests passed** in `build/guard-skin-gametest-output.log`.
+- Add an opt-in `-PguardSkinCheck` harness under `src/skincheck/java`. The default release source set excludes it. It starts a dedicated localhost-only server and two independent dev clients in fresh directories, verifies eight tracked guards per viewer, renders front/back views with all overlays and actual chainmail, then checks live specialization changes, home removal, full server save/restart and reconnect. Both clients passed every stage; all processes exited normally. Full artifacts: `build/guard-skin-client-check-04`.
+- Regular `gradlew.bat test build --offline` passed all **43 JUnit tests** with no failures/errors/skips. Final regular JAR assembly also succeeded after the client run; package inspection confirms four exact texture PNGs and no GameTest/client-harness classes or arena resources. Release hashes and machine-readable evidence are recorded in `docs/development/guard-skins-verification.json`.
+- Visually inspect the raw screenshots and retain clean initial/reloaded captures in `docs/development/images`. Chainmail partially obscures insignia, as ordinary equipped armor should, while regional colors remain distinguishable. The test gallery does not establish combat-animation or ordinary player-interaction coverage.
+- Launch gotcha: ForgeGradle 6.0.54 fills JavaExec arguments in its exec action, not prepareRun tasks. The optional launch-manifest task resolves ForgeGradle's own lazy tokens and uses its configured Java launcher and isolated working directory. An initial bad launch manifest was corrected before the real client run. `um kb search` could not initialize its uv cache in the restricted runtime; implementation relied on the local mapped game/Forge sources and live client evidence.
+- Existing `run/saves`, IDE configuration and runtime-log modifications were not used for tests and remain outside this change. All repository work stays on `2nd-test`; `test` is read-only.
+
 ## 2026-10-26 — settlement guard skin prototypes
 
 - Save three user-requested adaptations of the supplied 64x64 wide-player skin for the existing PLAINS, MOUNTAIN and FOREST settlement types.

@@ -123,6 +123,53 @@ if (providers.gradleProperty('guardGameTests').isPresent()) {
     }
 }
 
+// Optional real-client verification. Never includes the harness in release builds
+// and never uses the normal run/saves directory or the player's configuration.
+if (providers.gradleProperty('guardSkinCheck').isPresent()) {
+    sourceSets.main.java.srcDir 'src/skincheck/java'
+    def checkRoot = project.file(providers.gradleProperty('guardSkinCheckDir').getOrElse('build/guard-skin-client-check'))
+    minecraft.runs.client {
+        workingDirectory new File(checkRoot, 'client-template')
+        property 'villagediplomacy.skinCheckRoot', checkRoot.absolutePath
+        property 'forge.logging.console.level', 'info'
+        args '--username', 'SkinViewerOne', '--width', '1440', '--height', '960'
+        jvmArgs '-Xmx2G'
+    }
+    minecraft.runs.server {
+        workingDirectory new File(checkRoot, 'server')
+        property 'villagediplomacy.skinCheckRoot', checkRoot.absolutePath
+        property 'forge.logging.console.level', 'info'
+        jvmArgs '-Xmx1G'
+    }
+    tasks.register('writeGuardSkinCheckLaunch') {
+        dependsOn 'prepareRunClient', 'prepareRunServer', 'classes'
+        doLast {
+            checkRoot.mkdirs()
+            ['client', 'server'].each { role ->
+                def run = tasks.named(role == 'client' ? 'runClient' : 'runServer', JavaExec).get()
+                // ForgeGradle configures JavaExec inside exec(), rather than in
+                // prepareRun*. Resolve its own lazy launch tokens without launching.
+                def config = run.runConfig.get()
+                def generator = net.minecraftforge.gradle.common.util.runs.RunConfigGenerator
+                def tokens = generator.configureTokensLazy(project, config,
+                    generator.mapModClassesToGradle(project, config),
+                    run.minecraftArtifacts, run.runtimeClasspathArtifacts)
+                def vmArgs = config.jvmArgs.collect { config.replace(tokens, it) }
+                if (role == 'client') vmArgs.addAll(run.additionalClientArgs.get().collect { config.replace(tokens, it) })
+                config.properties.each { key, value -> vmArgs.add("-D${key}=" + config.replace(tokens, value)) }
+                def environment = new LinkedHashMap(System.getenv())
+                config.environment.each { key, value -> environment[key] = config.replace(tokens, value) }
+                def classpath = project.files(config.allSources.collect { it.runtimeClasspath }).asPath
+                def launch = [executable: run.javaLauncher.get().executablePath.asFile.absolutePath,
+                    args: vmArgs + ['-cp', classpath, run.mainClass.get()] + generator.getArgsStream(config, tokens, false).toList(),
+                    environment: environment,
+                    directory: project.file(config.workingDirectory).absolutePath]
+                new File(checkRoot, "${role}-launch.json").text = groovy.json.JsonOutput.toJson(launch)
+            }
+        }
+    }
+}
+
 repositories {
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you

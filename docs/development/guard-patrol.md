@@ -32,9 +32,14 @@ histories and uses `test` commit `41653db` for the shared settlement/trade core.
 - A guard will not attack villagers, iron golems, its leader, or leaders of
   friendly/allied settlements. Other players are not acquired proactively;
   the existing retaliation goal may target them if they attack the guard.
-- The renderer references the built-in Minecraft Steve texture as a temporary
-  fallback for the missing custom texture. No Minecraft texture is copied into
-  the mod jar. A custom guard skin is a separate visual task.
+- Guards use the custom base/plains/mountain/forest textures in
+  `assets/villagediplomacy/textures/entity/guard`. The primary specialization of
+  the home settlement selects the uniform; unbound/unassigned guards use base.
+  Standard entity metadata synchronizes the type to newly tracking players and
+  existing viewers. It is derived again from the saved home on entity load.
+- The wide `PlayerModel` draws the hat, jacket, sleeves and trouser overlays.
+  Regional details also appear on the opaque outer cuirass. Actual equipped
+  chainmail stays visible and retains its original protection and drop chance.
 - Hostile mobs receive a guard-targeting goal when they enter the server level,
   including after chunk/world reload. Existing retaliation and player/villager
   targets retain their higher priorities. Brain-driven hostile mobs also receive
@@ -72,7 +77,47 @@ spawn a guard and run `/summon minecraft:husk ~4 ~ ~` near it on Normal difficul
 Do not add `{NoAI:1b}` to the hostile mob: that deliberately disables its movement
 and attacks. No replacement of existing guards is required.
 
-Headless tests verify server behavior. Client rendering, attack animation and
-player interaction still need a visual check in an isolated client world.
+The four skin GameTests additionally verify spawn/reassignment, primary versus
+secondary type, reload/fallback, changed/deleted homes and encoded entity
+tracking/update packets. There are 25 required guard GameTests in total.
+
+For a real multiplayer rendering check, use a fresh directory each time:
+
+```powershell
+.\gradlew.bat -PguardSkinCheck -PguardSkinCheckDir=build/guard-skin-check-new writeGuardSkinCheckLaunch --offline
+node tools/run_guard_skin_check.cjs build/guard-skin-check-new
+```
+
+This opt-in harness starts a server bound to `127.0.0.1:25579` and two dev
+clients with separate game directories. It uses an offline local server, eight
+real tracked guards, the production renderer, and all skin layers. It captures
+front/back views without and with actual spawn chainmail, checks live home-type
+changes/removal, saves and fully restarts the server, then reconnects both
+viewers and verifies persisted uniforms. Both clients and the server exit
+automatically. The runner refuses to reuse an existing test world. The optional
+sources are under `src/skincheck/java` and are not part of a normal release.
+
+The client gallery verifies rendering and network/save behavior, not animated
+combat or ordinary player interaction. Those are separate gameplay checks.
 Build a regular release after GameTests; test classes and arena resources must
 not be present in the release jar.
+
+## Verified appearance, 2026-10-26
+
+Two independent Minecraft 1.20.1 / Forge 47.4.28 dev clients completed the
+scenario above against the same local server. All eight entity metadata checks
+passed in each client before and after live updates and a full server restart.
+The raw screenshots below were visually inspected. The first image preserves
+the initial four types. Column labels identify the original test groups;
+the top row has no equipped chestplate and the bottom row has normal chainmail.
+Each pair shows front and back. After reconnecting to the restarted server,
+the originally plains guards correctly wear forest uniforms, and the originally
+forest guards use base because their home was deleted during the test.
+
+![All initial uniforms with and without chainmail](images/guard-skins-in-game.png)
+
+![Uniform state after a full server restart](images/guard-skins-after-server-reload.png)
+
+Machine-readable results, asset hashes and release checks are in
+`guard-skins-verification.json`. Full local run artifacts are retained under
+`build/guard-skin-client-check-04`; these ignored runtime files are not shipped.
