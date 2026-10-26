@@ -38,6 +38,15 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
     }
 
     @Override
+    public boolean clickMenuButton(Player player, int button) {
+        if (button == GarrisonMenu.OPEN && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer && stillValid(player)) {
+            GarrisonMenu.open(serverPlayer, tablePos, "");
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean stillValid(Player player) {
         if (!AbstractContainerMenu.stillValid(
                 ContainerLevelAccess.create(player.level(), tablePos),

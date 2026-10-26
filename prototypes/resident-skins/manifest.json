@@ -1,0 +1,223 @@
+{
+  "source": "source/civilian-generated.png",
+  "method": "Built-in ImageGen edit, nearest-neighbour UV fitting, source-head preservation and deterministic palette/outfit variants",
+  "headSource": "../guard-skins/guard_base.png",
+  "variants": [
+    {
+      "name": "plains_worker_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "worker",
+      "face": 0
+    },
+    {
+      "name": "plains_worker_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "worker",
+      "face": 1
+    },
+    {
+      "name": "plains_worker_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "worker",
+      "face": 2
+    },
+    {
+      "name": "plains_smith_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "smith",
+      "face": 0
+    },
+    {
+      "name": "plains_smith_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "smith",
+      "face": 1
+    },
+    {
+      "name": "plains_smith_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "smith",
+      "face": 2
+    },
+    {
+      "name": "plains_scholar_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "scholar",
+      "face": 0
+    },
+    {
+      "name": "plains_scholar_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "scholar",
+      "face": 1
+    },
+    {
+      "name": "plains_scholar_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "scholar",
+      "face": 2
+    },
+    {
+      "name": "mountain_worker_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "worker",
+      "face": 0
+    },
+    {
+      "name": "mountain_worker_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "worker",
+      "face": 1
+    },
+    {
+      "name": "mountain_worker_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "worker",
+      "face": 2
+    },
+    {
+      "name": "mountain_smith_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "smith",
+      "face": 0
+    },
+    {
+      "name": "mountain_smith_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "smith",
+      "face": 1
+    },
+    {
+      "name": "mountain_smith_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "smith",
+      "face": 2
+    },
+    {
+      "name": "mountain_scholar_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "scholar",
+      "face": 0
+    },
+    {
+      "name": "mountain_scholar_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "scholar",
+      "face": 1
+    },
+    {
+      "name": "mountain_scholar_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "scholar",
+      "face": 2
+    },
+    {
+      "name": "forest_worker_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "worker",
+      "face": 0
+    },
+    {
+      "name": "forest_worker_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "worker",
+      "face": 1
+    },
+    {
+      "name": "forest_worker_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "worker",
+      "face": 2
+    },
+    {
+      "name": "forest_smith_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "smith",
+      "face": 0
+    },
+    {
+      "name": "forest_smith_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "smith",
+      "face": 1
+    },
+    {
+      "name": "forest_smith_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "smith",
+      "face": 2
+    },
+    {
+      "name": "forest_scholar_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "scholar",
+      "face": 0
+    },
+    {
+      "name": "forest_scholar_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "scholar",
+      "face": 1
+    },
+    {
+      "name": "forest_scholar_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "scholar",
+      "face": 2
+    }
+  ]
+}

@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const {spawn} = require('child_process');
 const root = path.resolve(process.argv[2] || 'build/guard-skin-client-check');
+const language = process.argv[3] === 'uk_ua' ? 'uk_ua' : 'en_us';
 const wait = ms => new Promise(resolve => setTimeout(resolve,ms));
 const children = [];
 function start(spec, name, directory, username) {
@@ -50,7 +51,7 @@ async function until(test, label, timeout=360000) {
     const directory=path.join(root,username);
     fs.mkdirSync(directory,{recursive:true});
     fs.writeFileSync(path.join(directory,'options.txt'),[
-      'version:3465','guiScale:2','renderDistance:4','simulationDistance:5','maxFps:30',
+      'version:3465','lang:'+language,'guiScale:2','renderDistance:4','simulationDistance:5','maxFps:30',
       'pauseOnLostFocus:false','tutorialStep:none','soundCategory_master:0.0','fullscreen:false',
       'gamma:1.0','onboardAccessibility:false','skipMultiplayerWarning:true'
     ].join('\n')+'\n');

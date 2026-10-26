@@ -126,7 +126,8 @@ if (providers.gradleProperty('guardGameTests').isPresent()) {
 // Optional real-client verification. Never includes the harness in release builds
 // and never uses the normal run/saves directory or the player's configuration.
 if (providers.gradleProperty('guardSkinCheck').isPresent()) {
-    sourceSets.main.java.srcDir 'src/skincheck/java'
+    sourceSets.main.java.srcDir providers.gradleProperty('residentCheck').isPresent()
+            ? 'src/residentcheck/java' : 'src/skincheck/java'
     def checkRoot = project.file(providers.gradleProperty('guardSkinCheckDir').getOrElse('build/guard-skin-client-check'))
     minecraft.runs.client {
         workingDirectory new File(checkRoot, 'client-template')

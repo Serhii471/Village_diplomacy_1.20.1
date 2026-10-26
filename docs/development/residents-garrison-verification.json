@@ -1,0 +1,272 @@
+{
+  "date": "2026-10-26",
+  "version": "0.2.0",
+  "minecraft": "1.20.1",
+  "forge": "47.4.28",
+  "branch": "2nd-test",
+  "junit": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "requiredServerGameTests": 30,
+  "assets": [
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_worker_0.png",
+      "sha256": "72f187a41027658d536ca077ef7a0518be4fd0db9e4f0e4f8417eb9e5d81f4c4",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_worker_1.png",
+      "sha256": "b4454dad63e52c5ef41ae1fd9ee49ce2339ab023c0231dbe15cda7b19dd9e962",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_worker_2.png",
+      "sha256": "badff93ddd10ea9da7b57dd19e67bcc7fe806b2eb87c86c05062f304e8a76ea1",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_smith_0.png",
+      "sha256": "a81af1c392de85e0ae35ad312ab171dd861704860e522e29ea7b4dc7b3307be0",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_smith_1.png",
+      "sha256": "0641e9283760fec5b246ab61f1df2dc1a6acba551a025b046b58078a24850193",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_smith_2.png",
+      "sha256": "32c1ba3e453c5024ddb98f0f6e11036f23adecf0c8e3b79f33e9ce89bfd8c289",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_scholar_0.png",
+      "sha256": "961290db371ac787b164553578a752aec3f61b6843b4e503661b6c8cfee5062f",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_scholar_1.png",
+      "sha256": "b235f5bd579434d2bc1c7b250f69cf8d8cbcf4684703316e6e124e49cfb0c949",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/plains_scholar_2.png",
+      "sha256": "e7257568666abffb7cb8b91c01feb4ceed73227660d6fa38bb3dbfef7e426078",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_worker_0.png",
+      "sha256": "980f625b2b5cceaa5295132f44fab99a49bcf1bfdb70bbadd3d809adda87ee37",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_worker_1.png",
+      "sha256": "ccce36c28cec42b2bbf4861c2df912c6a60f6af32e1983836ffff5563a749545",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_worker_2.png",
+      "sha256": "12bdb2bef80e3a77767cfafdc259ed435ce1f89d4c6dbcd6a6f7c95a4be6775d",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_smith_0.png",
+      "sha256": "e1821e3a5437546b611c3aca4f86cc182dffda02b3fe016436f6164d85b1039a",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_smith_1.png",
+      "sha256": "c73f9f3c7196fff5ed24336e6049d061d7e84010cfe8e6b61b6966b9e3dbfac7",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_smith_2.png",
+      "sha256": "b8c12ee95ee8ccf3a9e9c6b1b938480e5646520541be60f884ef26fe407d01a8",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_scholar_0.png",
+      "sha256": "3ef59c23b7918d4bcc5326417444d687ec1332ecf4727144412280345eb2af9b",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_scholar_1.png",
+      "sha256": "99b3e905da11d8049e093ff53ff811d3c337b81b0783072989e8982083562d05",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/mountain_scholar_2.png",
+      "sha256": "46b587411bdb49033b425e4bb87c924fe7b83b7a5005e2881481e0d3633a5d5d",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_worker_0.png",
+      "sha256": "39edcfde1071b5a14ca947ae014dc6bda2a45a5e4c1e98a2136cab8fccc24d8e",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_worker_1.png",
+      "sha256": "a310f4511aaa8e07392ea47d2a1afafadbfb5ed8f521ac4703052535eeac497c",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_worker_2.png",
+      "sha256": "412f2f45c064232082d97ace32a7955ccb90302d43dc9012516e1c6e8cd811ec",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_smith_0.png",
+      "sha256": "f65eb3f1bf098a99f1b104cb92a87ed32b83efd6ac920ea8ae1d89089376b32a",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_smith_1.png",
+      "sha256": "d103bb77d1f17fa8f885a042b7a81471d91787675ee85455c0520d62788e5643",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_smith_2.png",
+      "sha256": "b7f989e8121e98d045d5ad8a8d7c0544bebed8f358177aede996d9c063177bac",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_scholar_0.png",
+      "sha256": "fa140c5d70bd453b391dda34f2809315a0df479478f5fdd6dbce795b01355966",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_scholar_1.png",
+      "sha256": "5f928d864bf4c16300808ab886f2f930e17bee06ebb0b3d1b4baa54fbd87034e",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    },
+    {
+      "resource": "assets/villagediplomacy/textures/entity/resident/forest_scholar_2.png",
+      "sha256": "92e264e5287c9cdb973033686cd771640eaa3be481e199083ab9cb0c39ec4c73",
+      "width": 64,
+      "height": 64,
+      "matchingSoldierHead": true,
+      "embeddedTextureMatches": true
+    }
+  ],
+  "multiplayer": {
+    "passed": true,
+    "viewers": 2,
+    "fullServerRestart": true,
+    "markers": [
+      "SkinViewerOne-changed.txt",
+      "SkinViewerOne-converted.txt",
+      "SkinViewerOne-initial.txt",
+      "SkinViewerOne-reloaded.txt",
+      "SkinViewerOne-removed.txt",
+      "SkinViewerTwo-changed.txt",
+      "SkinViewerTwo-converted.txt",
+      "SkinViewerTwo-initial.txt",
+      "SkinViewerTwo-reloaded.txt",
+      "SkinViewerTwo-removed.txt"
+    ],
+    "run": "build/resident-client-check-03",
+    "features": [
+      "27 human villager appearances",
+      "leader versus unauthorized viewer",
+      "actual inventory shift-click packets",
+      "menu-scoped recruitment action packet",
+      "reserved equipment and training after full restart",
+      "original UUID and head palette retained by soldier",
+      "demobilization and exact equipment/population restoration"
+    ]
+  },
+  "release": {
+    "path": "build/libs/villagediplomacy-0.2.0.jar",
+    "bytes": 389354,
+    "sha256": "f9d012e668b1cabd1c133086b38e2ac7a52552ce1e0e175439a98c166bcf0051",
+    "texturesMatch": true,
+    "testCodeAbsent": true,
+    "residentTextureCount": 27,
+    "guardTextureCount": 12
+  },
+  "limitations": [
+    "Vanilla villager type/brain/trades/breeding retained; extended gameplay of all professions and breeding was not exercised.",
+    "First version supports leader-managed recruitment; neutral-settlement automatic recruitment and economy/morale extensions are not included."
+  ]
+}

@@ -79,7 +79,9 @@ and attacks. No replacement of existing guards is required.
 
 The four skin GameTests additionally verify spawn/reassignment, primary versus
 secondary type, reload/fallback, changed/deleted homes and encoded entity
-tracking/update packets. There are 25 required guard GameTests in total.
+tracking/update packets. There are 25 guard tests plus five resident recruitment
+tests, for 30 required server GameTests. Each hostile-mob scenario runs in its
+own batch so the normal targeting radius cannot reach another test's guard.
 
 For a real multiplayer rendering check, use a fresh directory each time:
 

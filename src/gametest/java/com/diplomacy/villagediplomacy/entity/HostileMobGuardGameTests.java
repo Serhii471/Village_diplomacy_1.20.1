@@ -34,16 +34,54 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 public final class HostileMobGuardGameTests {
     private static final String ARENA = "guard_arena";
 
-    @BeforeBatch(batch = "hostile_guards")
     public static void clearPreviousBatchMobs(ServerLevel level) {
         // A villager from another scenario legitimately outranks a guard in zombie AI.
         // Keep this isolated dev batch free of entities left by earlier scenarios.
         java.util.stream.StreamSupport.stream(level.getAllEntities().spliterator(), false)
-                .filter(entity -> entity instanceof LivingEntity)
+                .filter(entity -> entity instanceof LivingEntity || entity instanceof net.minecraft.world.entity.item.ItemEntity
+                        || entity instanceof net.minecraft.world.entity.projectile.Projectile)
                 .toList().forEach(net.minecraft.world.entity.Entity::discard);
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    // Normal targeting ranges reach adjacent arenas. Run each hostile scenario
+    // in its own batch so another monster cannot invalidate a neutral-mob check.
+    @BeforeBatch(batch = "hostile_guards_huskInitiatesMeleeAgainstPassiveGuard")
+    public static void prepare_huskInitiatesMeleeAgainstPassiveGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_skeletonShootsPassiveGuard")
+    public static void prepare_skeletonShootsPassiveGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_creeperApproachesAndStartsFuse")
+    public static void prepare_creeperApproachesAndStartsFuse(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_vindicatorInitiatesMelee")
+    public static void prepare_vindicatorInitiatesMelee(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_spiderAttacksGuardInDarkness")
+    public static void prepare_spiderAttacksGuardInDarkness(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_brightSpiderDoesNotBecomeAggressive")
+    public static void prepare_brightSpiderDoesNotBecomeAggressive(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_slimeChasesAndDealsContactDamage")
+    public static void prepare_slimeChasesAndDealsContactDamage(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_magmaCubeChasesAndDealsContactDamage")
+    public static void prepare_magmaCubeChasesAndDealsContactDamage(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_hoglinUsesBrainToAttackGuard")
+    public static void prepare_hoglinUsesBrainToAttackGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_piglinBruteUsesBrainToAttackGuard")
+    public static void prepare_piglinBruteUsesBrainToAttackGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_neutralEndermanDoesNotAcquireGuard")
+    public static void prepare_neutralEndermanDoesNotAcquireGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @BeforeBatch(batch = "hostile_guards_reloadedHostileMobStillTargetsGuard")
+    public static void prepare_reloadedHostileMobStillTargetsGuard(ServerLevel level) { clearPreviousBatchMobs(level); }
+
+    @GameTest(batch = "hostile_guards_huskInitiatesMeleeAgainstPassiveGuard", template = ARENA, timeoutTicks = 160)
     public static void huskInitiatesMeleeAgainstPassiveGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Mob husk = helper.spawn(EntityType.HUSK, 6, 2, 3);
@@ -52,7 +90,7 @@ public final class HostileMobGuardGameTests {
                         + ", position=" + husk.position() + ", guard=" + guard.position()));
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 240)
+    @GameTest(batch = "hostile_guards_skeletonShootsPassiveGuard", template = ARENA, timeoutTicks = 240)
     public static void skeletonShootsPassiveGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Skeleton skeleton = helper.spawn(EntityType.SKELETON, 9, 2, 3);
@@ -60,7 +98,7 @@ public final class HostileMobGuardGameTests {
         succeedsWhenGuardIsHurt(helper, guard, "Skeleton must shoot and hurt a guard without provocation");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 120)
+    @GameTest(batch = "hostile_guards_creeperApproachesAndStartsFuse", template = ARENA, timeoutTicks = 120)
     public static void creeperApproachesAndStartsFuse(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Creeper creeper = helper.spawn(EntityType.CREEPER, 7, 2, 3);
@@ -68,21 +106,21 @@ public final class HostileMobGuardGameTests {
                 "Creeper must approach a guard and start its normal fuse"));
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    @GameTest(batch = "hostile_guards_vindicatorInitiatesMelee", template = ARENA, timeoutTicks = 160)
     public static void vindicatorInitiatesMelee(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         helper.spawn(EntityType.VINDICATOR, 6, 2, 3);
         succeedsWhenGuardIsHurt(helper, guard, "Raider must initiate an attack against a guard");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    @GameTest(batch = "hostile_guards_spiderAttacksGuardInDarkness", template = ARENA, timeoutTicks = 160)
     public static void spiderAttacksGuardInDarkness(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         helper.spawn(EntityType.SPIDER, 7, 2, 3);
         succeedsWhenGuardIsHurt(helper, guard, "Darkness must allow a spider to approach and bite a guard");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 100)
+    @GameTest(batch = "hostile_guards_brightSpiderDoesNotBecomeAggressive", template = ARENA, timeoutTicks = 100)
     public static void brightSpiderDoesNotBecomeAggressive(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         helper.setBlock(6, 3, 3, Blocks.GLOWSTONE);
@@ -102,7 +140,7 @@ public final class HostileMobGuardGameTests {
         });
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 200)
+    @GameTest(batch = "hostile_guards_slimeChasesAndDealsContactDamage", template = ARENA, timeoutTicks = 200)
     public static void slimeChasesAndDealsContactDamage(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Slime slime = helper.spawn(EntityType.SLIME, 6, 2, 3);
@@ -110,7 +148,7 @@ public final class HostileMobGuardGameTests {
         succeedsWhenGuardIsHurt(helper, guard, "Slime must both chase a guard and deal contact damage");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 240)
+    @GameTest(batch = "hostile_guards_magmaCubeChasesAndDealsContactDamage", template = ARENA, timeoutTicks = 240)
     public static void magmaCubeChasesAndDealsContactDamage(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         MagmaCube cube = helper.spawn(EntityType.MAGMA_CUBE, 6, 2, 3);
@@ -118,7 +156,7 @@ public final class HostileMobGuardGameTests {
         succeedsWhenGuardIsHurt(helper, guard, "Magma cube must chase a guard and deal contact damage");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    @GameTest(batch = "hostile_guards_hoglinUsesBrainToAttackGuard", template = ARENA, timeoutTicks = 160)
     public static void hoglinUsesBrainToAttackGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Hoglin hoglin = helper.spawn(EntityType.HOGLIN, 6, 2, 3);
@@ -126,7 +164,7 @@ public final class HostileMobGuardGameTests {
         succeedsWhenGuardIsHurt(helper, guard, "Adult hoglin brain must approach and attack a guard");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    @GameTest(batch = "hostile_guards_piglinBruteUsesBrainToAttackGuard", template = ARENA, timeoutTicks = 160)
     public static void piglinBruteUsesBrainToAttackGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         PiglinBrute brute = helper.spawn(EntityType.PIGLIN_BRUTE, 6, 2, 3);
@@ -134,7 +172,7 @@ public final class HostileMobGuardGameTests {
         succeedsWhenGuardIsHurt(helper, guard, "Piglin brute brain must approach and attack a guard");
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 100)
+    @GameTest(batch = "hostile_guards_neutralEndermanDoesNotAcquireGuard", template = ARENA, timeoutTicks = 100)
     public static void neutralEndermanDoesNotAcquireGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         EnderMan enderman = helper.spawn(EntityType.ENDERMAN, 6, 2, 3);
@@ -145,7 +183,7 @@ public final class HostileMobGuardGameTests {
         });
     }
 
-    @GameTest(batch = "hostile_guards", template = ARENA, timeoutTicks = 160)
+    @GameTest(batch = "hostile_guards_reloadedHostileMobStillTargetsGuard", template = ARENA, timeoutTicks = 160)
     public static void reloadedHostileMobStillTargetsGuard(GameTestHelper helper) {
         VillageGuardEntity guard = passiveGuard(helper);
         Mob original = helper.spawn(EntityType.HUSK, 6, 2, 3);

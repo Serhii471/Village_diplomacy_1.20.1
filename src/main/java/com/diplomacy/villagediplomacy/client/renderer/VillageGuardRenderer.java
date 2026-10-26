@@ -1,6 +1,7 @@
 package com.diplomacy.villagediplomacy.client.renderer;
 
 import com.diplomacy.villagediplomacy.entity.VillageGuardEntity;
+import com.diplomacy.villagediplomacy.garrison.ResidentData;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -34,11 +35,14 @@ public class VillageGuardRenderer extends HumanoidMobRenderer<VillageGuardEntity
 
     @Override
     public ResourceLocation getTextureLocation(VillageGuardEntity entity) {
-        return switch (entity.getUniformSpecialization()) {
+        ResourceLocation uniform = switch (entity.getUniformSpecialization()) {
             case PLAINS -> PLAINS;
             case MOUNTAIN -> MOUNTAIN;
             case FOREST -> FOREST;
             case UNASSIGNED -> BASE;
         };
+        int face = entity.getResidentIdentity().map(ResidentData::face).orElse(0);
+        return face == 0 ? uniform : Objects.requireNonNull(ResourceLocation.tryParse(
+                uniform.toString().replace(".png", "_face_" + face + ".png")));
     }
 }

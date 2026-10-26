@@ -35,6 +35,9 @@ public class VillageGuardEntity extends PathfinderMob {
             SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<String> UNIFORM_SPECIALIZATION =
             SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Optional<UUID>> RESIDENT_IDENTITY =
+            SynchedEntityData.defineId(VillageGuardEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private CompoundTag residentSnapshot = new CompoundTag();
 
     public VillageGuardEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
@@ -55,6 +58,7 @@ public class VillageGuardEntity extends PathfinderMob {
         super.defineSynchedData();
         this.entityData.define(SETTLEMENT_ID, Optional.empty());
         this.entityData.define(UNIFORM_SPECIALIZATION, SettlementSpecialization.UNASSIGNED.getSerializedName());
+        this.entityData.define(RESIDENT_IDENTITY, Optional.empty());
     }
 
     @Override
@@ -79,6 +83,14 @@ public class VillageGuardEntity extends PathfinderMob {
 
     public SettlementSpecialization getUniformSpecialization() {
         return SettlementSpecialization.fromSerializedName(this.entityData.get(UNIFORM_SPECIALIZATION));
+    }
+
+    public Optional<UUID> getResidentIdentity() { return entityData.get(RESIDENT_IDENTITY); }
+    public CompoundTag getResidentSnapshot() { return residentSnapshot.copy(); }
+    public void setResidentSnapshot(CompoundTag snapshot) {
+        residentSnapshot = snapshot.copy();
+        entityData.set(RESIDENT_IDENTITY, snapshot.hasUUID("UUID")
+                ? Optional.of(snapshot.getUUID("UUID")) : Optional.empty());
     }
 
     public void setSettlementId(@Nullable UUID id) {
@@ -213,11 +225,13 @@ public class VillageGuardEntity extends PathfinderMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         getSettlementId().ifPresent(uuid -> tag.putUUID("SettlementId", uuid));
+        if (!residentSnapshot.isEmpty()) tag.put("ResidentSnapshot", residentSnapshot.copy());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setSettlementId(tag.hasUUID("SettlementId") ? tag.getUUID("SettlementId") : null);
+        setResidentSnapshot(tag.getCompound("ResidentSnapshot"));
     }
 }

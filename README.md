@@ -33,13 +33,20 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 | Leadership Seal | Right-click a Bell twice within 10 seconds → confirms leadership; one player can lead only one settlement |
 | Village Guard Spawn Egg | Spawns a guard for testing (Creative only) |
 
+### Residents and garrison (0.2.0)
+- **Human residents** — vanilla villagers retain their professions, trading and breeding while using human models, regional clothing and stable identity palettes.
+- **Resident recruitment** — open the diplomacy table's Garrison, supply a chosen sword, chestplate and six bread, and train an adult unemployed resident for one game day. Queued recruits count toward the 25% military cap; at least four adult civilians must remain.
+- **Reversible service** — the soldier retains the original resident's name and face. Cancel training to refund supplies, or demobilize a recruited soldier to restore the original villager and return current equipment once. Training and origin data survive saving/loading.
+
+See [resident and garrison behavior, screenshots and verification](docs/development/residents-garrison.md).
+
 ### Entities
-- **Village Guard** — patrols its settlement, fights monsters and guards from `HOSTILE` settlements; spawns equipped with iron sword + chainmail
+- **Village Guard** — patrols its settlement, fights monsters and guards from `HOSTILE` settlements. Creative spawn eggs provide iron sword + chainmail; recruited soldiers use the equipment actually supplied by the player.
 
 Guards restore their patrol area after reload, return home before pursuing enemies,
 and stop combat when diplomacy changes. Friendly guards, village civilians and
-friendly leaders are protected from retaliation. Rendering currently uses a built-in
-Minecraft skin until a custom guard texture is ready.
+friendly leaders are protected from retaliation. Regional guard uniforms include
+all skin layers and retain the civilian's identity face after recruitment.
 See [guard development and verification](docs/development/guard-patrol.md).
 
 ## Project Structure

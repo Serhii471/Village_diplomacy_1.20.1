@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy.core;
 
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
+import com.diplomacy.villagediplomacy.menu.GarrisonMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,4 +20,6 @@ public final class ModMenus {
 
     private ModMenus() {
     }
+    public static final RegistryObject<MenuType<GarrisonMenu>> GARRISON = MENUS.register(
+            "garrison", () -> IForgeMenuType.create(GarrisonMenu::fromNetwork));
 }

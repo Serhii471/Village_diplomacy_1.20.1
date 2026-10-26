@@ -28,13 +28,17 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     public DiplomacyTableScreen(DiplomacyTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 300;
-        imageHeight = 220;
+        imageHeight = 240;
         inventoryLabelY = 10_000;
     }
 
     @Override
     protected void init() {
         super.init();
+        addRenderableWidget(Button.builder(Component.translatable("screen.villagediplomacy.garrison"),
+                        ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId,
+                                com.diplomacy.villagediplomacy.menu.GarrisonMenu.OPEN))
+                .bounds(leftPos + 8, topPos + 216, 284, 18).build());
         int tabWidth = 68;
         for (int index = 0; index < Tab.values().length; index++) {
             Tab tab = Tab.values()[index];
@@ -57,7 +61,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         guiGraphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, PANEL_DARK);
         guiGraphics.fill(leftPos + 3, topPos + 3, leftPos + imageWidth - 3, topPos + imageHeight - 3, PANEL_COLOR);
-        guiGraphics.fill(leftPos + 7, topPos + 52, leftPos + imageWidth - 7, topPos + imageHeight - 8, 0x55FFFFFF);
+        guiGraphics.fill(leftPos + 7, topPos + 52, leftPos + imageWidth - 7, topPos + 212, 0x55FFFFFF);
     }
 
     @Override
