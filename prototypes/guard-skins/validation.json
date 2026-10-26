@@ -1,0 +1,31 @@
+{
+  "source": "guard_base.png",
+  "model": "Minecraft wide / Steve",
+  "variants": [
+    {
+      "id": "plains",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1350,
+      "headPreserved": true,
+      "alphaPreserved": true
+    },
+    {
+      "id": "mountain",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1350,
+      "headPreserved": true,
+      "alphaPreserved": true
+    },
+    {
+      "id": "forest",
+      "width": 64,
+      "height": 64,
+      "changedPixels": 1352,
+      "headPreserved": true,
+      "alphaPreserved": true
+    }
+  ],
+  "verification": "PNG round trip; native Blockbench opening checked separately; no gameplay verification"
+}

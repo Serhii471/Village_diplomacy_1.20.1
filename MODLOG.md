@@ -1,5 +1,13 @@
 # Village Diplomacy development log
 
+## 2026-10-26 — settlement guard skin prototypes
+
+- Save three user-requested adaptations of the supplied 64x64 wide-player skin for the existing PLAINS, MOUNTAIN and FOREST settlement types.
+- Keep the original PNG, standalone PNG variants, embedded-texture Blockbench projects, a front/back comparison and validation results under `prototypes/guard-skins`.
+- Include the reproducible authoring script at `tools/create_guard_skins.cjs` and document provenance and editing instructions in the prototype README.
+- Verification: exported PNGs were read back; dimensions, unchanged head pixels and unchanged alpha were checked. The comparison image was visually inspected. Opening the finished Blockbench projects was interrupted by the user; those projects and client rendering remain unverified.
+- These are visual prototypes, not an active renderer change. Existing guard AI fixes remain in their earlier commits on `2nd-test`. Existing IDE configuration and runtime-log changes are unrelated and excluded from this asset commit.
+
 ## 2026-10-25 — guard patrol on Arthur's shared core
 
 - Authorized scope: use Arthur's `test` as the shared settlement/trade foundation; work on guards without building a second trade implementation.
