@@ -163,6 +163,57 @@ class TradeHandoverServiceTest {
     }
 
     @Test
+    void selectedHandoverProcessesOnlyRequestedContract() {
+        Fixture fixture = fixture(16, 3);
+        TradeContract second = TradeContractService.createTrialDeliveryOffer(
+                fixture.data(),
+                fixture.source().getId(),
+                fixture.destination().getId(),
+                Map.of(WHEAT, 4),
+                2,
+                2L,
+                RULES
+        );
+        TradeContractService.acceptContract(fixture.data(), second.getId(), fixture.carrierId(), 3L);
+        FakeInventory inventory = new FakeInventory(64);
+
+        TradeHandoverService.HandoverSummary result = TradeHandoverService.handleContractAtSettlement(
+                fixture.data(),
+                fixture.source().getId(),
+                fixture.contract().getId(),
+                fixture.carrierId(),
+                100L,
+                inventory,
+                RULES
+        );
+
+        assertTrue(result.handled());
+        assertEquals(16, result.totalIssued());
+        assertEquals(16, fixture.contract().getIssuedAmount(WHEAT));
+        assertEquals(0, second.getIssuedAmount(WHEAT));
+    }
+
+    @Test
+    void selectedHandoverRejectsDifferentCarrier() {
+        Fixture fixture = fixture(16, 3);
+        FakeInventory inventory = new FakeInventory(64);
+
+        TradeHandoverService.HandoverSummary result = TradeHandoverService.handleContractAtSettlement(
+                fixture.data(),
+                fixture.source().getId(),
+                fixture.contract().getId(),
+                UUID.randomUUID(),
+                100L,
+                inventory,
+                RULES
+        );
+
+        assertFalse(result.handled());
+        assertEquals(0, inventory.count(WHEAT));
+        assertEquals(0, fixture.contract().getIssuedAmount(WHEAT));
+    }
+
+    @Test
     void exchangeHandoverCarriesOrdinaryGoodsOutAndBack() {
         SettlementSavedData data = new SettlementSavedData();
         Settlement source = new Settlement(UUID.randomUUID(), "Source", BlockPos.ZERO, 64);

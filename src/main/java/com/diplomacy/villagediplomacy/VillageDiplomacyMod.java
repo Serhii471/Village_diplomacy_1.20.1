@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy;
 
 import com.diplomacy.villagediplomacy.client.renderer.VillageGuardRenderer;
 import com.diplomacy.villagediplomacy.client.screen.DiplomacyTableScreen;
+import com.diplomacy.villagediplomacy.client.screen.TradeHandoverScreen;
 import com.diplomacy.villagediplomacy.config.VillageDiplomacyConfig;
 import com.diplomacy.villagediplomacy.core.ModEntities;
 import com.diplomacy.villagediplomacy.core.ModBlocks;
@@ -76,10 +77,10 @@ public class VillageDiplomacyMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(() -> MenuScreens.register(
-                    ModMenus.DIPLOMACY_TABLE.get(),
-                    DiplomacyTableScreen::new
-            ));
+            event.enqueueWork(() -> {
+                MenuScreens.register(ModMenus.DIPLOMACY_TABLE.get(), DiplomacyTableScreen::new);
+                MenuScreens.register(ModMenus.TRADE_HANDOVER.get(), TradeHandoverScreen::new);
+            });
         }
 
         @SubscribeEvent

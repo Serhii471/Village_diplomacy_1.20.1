@@ -8,6 +8,7 @@ import com.diplomacy.villagediplomacy.diplomacy.SettlementRelationship;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSpecialization;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSpecializationAnalyzer;
+import com.diplomacy.villagediplomacy.menu.TradeHandoverMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -60,18 +61,11 @@ public final class VillageBellInteractionHandler {
             if (representativeSettlement == null || !representativeSettlement.getCenter().equals(bellPos)) {
                 return;
             }
-            TradeHandoverService.HandoverSummary summary = TradeHandoverService.handleAtSettlement(
-                    data,
-                    representativeSettlement.getId(),
-                    player,
-                    serverLevel.getGameTime()
-            );
-            if (!summary.handled()) {
+            if (!TradeHandoverMenu.openFor(player, representativeSettlement, bellPos)) {
                 return;
             }
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-            sendHandoverResult(player, summary);
             return;
         }
 
@@ -256,44 +250,6 @@ public final class VillageBellInteractionHandler {
 
     private static Component info(String key, Object... arguments) {
         return Component.translatable(key, arguments).withStyle(ChatFormatting.GRAY);
-    }
-
-    private static void sendHandoverResult(ServerPlayer player,
-                                           TradeHandoverService.HandoverSummary summary) {
-        if (summary.totalIssued() > 0) {
-            player.sendSystemMessage(
-                    Component.translatable(
-                                    "message.villagediplomacy.handover.issued",
-                                    summary.totalIssued()
-                            )
-                            .withStyle(ChatFormatting.GOLD)
-            );
-        }
-        if (summary.totalDelivered() > 0) {
-            player.sendSystemMessage(
-                    Component.translatable(
-                                    "message.villagediplomacy.handover.delivered",
-                                    summary.totalDelivered()
-                            )
-                            .withStyle(ChatFormatting.GREEN)
-            );
-        }
-        if (summary.completedContracts() > 0) {
-            player.sendSystemMessage(
-                    Component.translatable(
-                                    "message.villagediplomacy.handover.completed",
-                                    summary.completedContracts(),
-                                    summary.rewardEmeralds()
-                            )
-                            .withStyle(ChatFormatting.GREEN)
-            );
-        }
-        if (summary.totalIssued() == 0 && summary.totalDelivered() == 0) {
-            player.sendSystemMessage(
-                    Component.translatable("message.villagediplomacy.handover.nothing")
-                            .withStyle(ChatFormatting.GRAY)
-            );
-        }
     }
 
     private static String defaultSettlementName(BlockPos bellPos) {

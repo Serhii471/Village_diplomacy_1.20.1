@@ -5,7 +5,9 @@ import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContractService;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContractStatus;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContractType;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -61,71 +63,146 @@ public final class TradeHandoverService {
             return HandoverSummary.empty();
         }
 
+        HandoverSummary result = HandoverSummary.empty();
+        for (TradeContract contract : contracts) {
+            result = result.merge(handleContract(
+                    data, settlementId, carrierId, currentGameTime, inventory, rules, contract));
+        }
+        return result;
+    }
+
+    public static HandoverSummary handleContractAtSettlement(SettlementSavedData data,
+                                                             UUID settlementId,
+                                                             UUID contractId,
+                                                             ServerPlayer player,
+                                                             long currentGameTime) {
+        return handleContractAtSettlement(
+                data, settlementId, contractId, player.getUUID(), currentGameTime,
+                new PlayerInventoryPort(player), TradeContractService.currentRules());
+    }
+
+    static HandoverSummary handleContractAtSettlement(SettlementSavedData data,
+                                                      UUID settlementId,
+                                                      UUID contractId,
+                                                      UUID carrierId,
+                                                      long currentGameTime,
+                                                      TradeInventoryPort inventory,
+                                                      TradeContractService.ContractRules rules) {
+        Objects.requireNonNull(data, "data");
+        Objects.requireNonNull(settlementId, "settlementId");
+        Objects.requireNonNull(contractId, "contractId");
+        Objects.requireNonNull(carrierId, "carrierId");
+        Objects.requireNonNull(inventory, "inventory");
+        Objects.requireNonNull(rules, "rules");
+        TradeContractService.expireDueContracts(data, currentGameTime, rules);
+        TradeContract contract = data.getTradeContract(contractId);
+        if (contract == null || !carrierId.equals(contract.getCarrierId())
+                || !isAvailableAt(contract, settlementId)) {
+            return HandoverSummary.empty();
+        }
+        return handleContract(data, settlementId, carrierId, currentGameTime, inventory, rules, contract);
+    }
+
+    private static HandoverSummary handleContract(SettlementSavedData data,
+                                                  UUID settlementId,
+                                                  UUID carrierId,
+                                                  long currentGameTime,
+                                                  TradeInventoryPort inventory,
+                                                  TradeContractService.ContractRules rules,
+                                                  TradeContract contract) {
         Map<ResourceLocation, Integer> issued = new LinkedHashMap<>();
         Map<ResourceLocation, Integer> delivered = new LinkedHashMap<>();
         int completedContracts = 0;
         int rewardEmeralds = 0;
 
-        for (TradeContract contract : contracts) {
-            if (contract.getStatus().isTerminal()) {
-                int reward = TradeContractService.claimReward(data, contract.getId(), carrierId);
-                if (reward > 0) {
-                    giveOrDrop(inventory, EMERALD, reward);
-                    rewardEmeralds += reward;
-                    completedContracts++;
-                }
-                continue;
+        if (contract.getStatus().isTerminal()) {
+            int reward = TradeContractService.claimReward(data, contract.getId(), carrierId);
+            if (reward > 0) {
+                giveOrDrop(inventory, EMERALD, reward);
+                rewardEmeralds = reward;
+                completedContracts = 1;
             }
-            boolean atSource = contract.getSourceSettlementId().equals(settlementId);
-            if (atSource) {
-                contract.getRequiredGoods().keySet().forEach(itemId -> {
-                    int transferred = issueIntoInventory(
-                            data, contract, carrierId, itemId, currentGameTime, inventory, rules);
-                    if (transferred > 0) {
-                        issued.merge(itemId, transferred, Integer::sum);
-                    }
-                });
-                if (contract.getType() == TradeContractType.EXCHANGE
-                        && contract.isOutboundDeliveryComplete()) {
-                    for (ResourceLocation itemId : contract.getReturnGoods().keySet()) {
-                        int transferred = deliverReturnFromInventory(
-                                data, contract, carrierId, itemId, currentGameTime, inventory, rules);
-                        if (transferred > 0) {
-                            delivered.merge(itemId, transferred, Integer::sum);
-                        }
-                    }
+            return new HandoverSummary(true, issued, delivered, completedContracts, rewardEmeralds);
+        }
+
+        boolean atSource = contract.getSourceSettlementId().equals(settlementId);
+        if (atSource) {
+            contract.getRequiredGoods().keySet().forEach(itemId -> {
+                int transferred = issueIntoInventory(
+                        data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                if (transferred > 0) {
+                    issued.merge(itemId, transferred, Integer::sum);
                 }
-            } else {
-                for (ResourceLocation itemId : contract.getRequiredGoods().keySet()) {
-                    int transferred = deliverFromInventory(
+            });
+            if (contract.getType() == TradeContractType.EXCHANGE && contract.isOutboundDeliveryComplete()) {
+                for (ResourceLocation itemId : contract.getReturnGoods().keySet()) {
+                    int transferred = deliverReturnFromInventory(
                             data, contract, carrierId, itemId, currentGameTime, inventory, rules);
                     if (transferred > 0) {
                         delivered.merge(itemId, transferred, Integer::sum);
                     }
                 }
-                if (contract.getType() == TradeContractType.EXCHANGE
-                        && contract.isOutboundDeliveryComplete()) {
-                    contract.getReturnGoods().keySet().forEach(itemId -> {
-                        int transferred = issueReturnIntoInventory(
-                                data, contract, carrierId, itemId, currentGameTime, inventory, rules);
-                        if (transferred > 0) {
-                            issued.merge(itemId, transferred, Integer::sum);
-                        }
-                    });
+            }
+        } else {
+            for (ResourceLocation itemId : contract.getRequiredGoods().keySet()) {
+                int transferred = deliverFromInventory(
+                        data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                if (transferred > 0) {
+                    delivered.merge(itemId, transferred, Integer::sum);
                 }
             }
-
-            if (contract.getStatus() == TradeContractStatus.COMPLETED) {
-                completedContracts++;
-                int reward = TradeContractService.claimReward(data, contract.getId(), carrierId);
-                if (reward > 0) {
-                    giveOrDrop(inventory, EMERALD, reward);
-                    rewardEmeralds += reward;
-                }
+            if (contract.getType() == TradeContractType.EXCHANGE && contract.isOutboundDeliveryComplete()) {
+                contract.getReturnGoods().keySet().forEach(itemId -> {
+                    int transferred = issueReturnIntoInventory(
+                            data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                    if (transferred > 0) {
+                        issued.merge(itemId, transferred, Integer::sum);
+                    }
+                });
             }
         }
 
+        if (contract.getStatus() == TradeContractStatus.COMPLETED) {
+            completedContracts = 1;
+            int reward = TradeContractService.claimReward(data, contract.getId(), carrierId);
+            if (reward > 0) {
+                giveOrDrop(inventory, EMERALD, reward);
+                rewardEmeralds = reward;
+            }
+        }
         return new HandoverSummary(true, issued, delivered, completedContracts, rewardEmeralds);
+    }
+
+    private static boolean isAvailableAt(TradeContract contract, UUID settlementId) {
+        return contract.getStatus() == TradeContractStatus.ACTIVE && contract.involves(settlementId)
+                || contract.getStatus() == TradeContractStatus.COMPLETED
+                && !contract.isRewardClaimed()
+                && contract.getRewardSettlementId().equals(settlementId);
+    }
+
+    public static void sendResult(ServerPlayer player, HandoverSummary summary) {
+        if (!summary.handled()) {
+            player.displayClientMessage(
+                    Component.translatable("message.villagediplomacy.handover.unavailable"), true);
+            return;
+        }
+        if (summary.totalIssued() > 0) {
+            player.sendSystemMessage(Component.translatable(
+                    "message.villagediplomacy.handover.issued", summary.totalIssued()).withStyle(ChatFormatting.GOLD));
+        }
+        if (summary.totalDelivered() > 0) {
+            player.sendSystemMessage(Component.translatable(
+                    "message.villagediplomacy.handover.delivered", summary.totalDelivered()).withStyle(ChatFormatting.GREEN));
+        }
+        if (summary.completedContracts() > 0) {
+            player.sendSystemMessage(Component.translatable(
+                    "message.villagediplomacy.handover.completed",
+                    summary.completedContracts(), summary.rewardEmeralds()).withStyle(ChatFormatting.GREEN));
+        }
+        if (summary.totalIssued() == 0 && summary.totalDelivered() == 0
+                && summary.completedContracts() == 0) {
+            player.displayClientMessage(Component.translatable("message.villagediplomacy.handover.nothing"), true);
+        }
     }
 
     private static int issueIntoInventory(SettlementSavedData data,
@@ -309,6 +386,20 @@ public final class TradeHandoverService {
 
         private static HandoverSummary empty() {
             return new HandoverSummary(false, Map.of(), Map.of(), 0, 0);
+        }
+
+        private HandoverSummary merge(HandoverSummary other) {
+            Map<ResourceLocation, Integer> mergedIssued = new LinkedHashMap<>(issued);
+            other.issued.forEach((itemId, amount) -> mergedIssued.merge(itemId, amount, Integer::sum));
+            Map<ResourceLocation, Integer> mergedDelivered = new LinkedHashMap<>(delivered);
+            other.delivered.forEach((itemId, amount) -> mergedDelivered.merge(itemId, amount, Integer::sum));
+            return new HandoverSummary(
+                    handled || other.handled,
+                    mergedIssued,
+                    mergedDelivered,
+                    completedContracts + other.completedContracts,
+                    rewardEmeralds + other.rewardEmeralds
+            );
         }
 
         public int totalIssued() {
