@@ -7,6 +7,7 @@ public enum TradeContractStatus {
     ACTIVE,
     COMPLETED,
     EXPIRED,
+    FAILED,
     CANCELLED;
 
     public String getSerializedName() {
@@ -14,7 +15,7 @@ public enum TradeContractStatus {
     }
 
     public boolean isTerminal() {
-        return this == COMPLETED || this == EXPIRED || this == CANCELLED;
+        return this == COMPLETED || this == EXPIRED || this == FAILED || this == CANCELLED;
     }
 
     public static TradeContractStatus fromSerializedName(String value) {

@@ -107,7 +107,7 @@ class TradeContractServiceTest {
         assertEquals(1, TradeContractService.expireDueContracts(fixture.data(), overdue, RULES));
         assertEquals(0, TradeContractService.expireDueContracts(fixture.data(), overdue + 1L, RULES));
 
-        assertEquals(TradeContractStatus.EXPIRED, contract.getStatus());
+        assertEquals(TradeContractStatus.FAILED, contract.getStatus());
         assertEquals(new VirtualWarehouse.StockView(34, 0, 100),
                 fixture.source().getWarehouse().getStock(WHEAT));
         assertEquals(1, relation(fixture.source(), fixture.destination()).getFailedContracts());
@@ -158,7 +158,7 @@ class TradeContractServiceTest {
                 loadedSource.getWarehouse().getStock(WHEAT));
         assertEquals(new VirtualWarehouse.StockView(3, 0, 3),
                 loadedDestination.getWarehouse().getStock(WHEAT));
-        assertEquals(4, saved.getInt("DataVersion"));
+        assertEquals(SettlementSavedData.CURRENT_DATA_VERSION, saved.getInt("DataVersion"));
     }
 
     @Test

@@ -36,6 +36,7 @@ public record DiplomacyTableSnapshot(
         List<ContractEntry> contracts
 ) {
     private static final int MAX_NETWORK_ENTRIES = 256;
+    private static final int MAX_VISIBLE_CONTRACT_HISTORY = 128;
 
     public DiplomacyTableSnapshot {
         settlementName = Objects.requireNonNull(settlementName, "settlementName");
@@ -121,7 +122,8 @@ public record DiplomacyTableSnapshot(
                 .sorted(Comparator.comparingLong(TradeContract::getCreatedGameTime)
                         .reversed()
                         .thenComparing(contract -> contract.getId().toString()))
-                .map(contract -> ContractEntry.from(data, settlement, contract, gameTime))
+                .limit(MAX_VISIBLE_CONTRACT_HISTORY)
+                .map(contract -> ContractEntry.from(data, settlement, contract, gameTime, leaderNameResolver))
                 .toList();
 
         return new DiplomacyTableSnapshot(
@@ -262,30 +264,44 @@ public record DiplomacyTableSnapshot(
         }
     }
 
-    public record ContractEntry(String sourceName,
+    public record ContractEntry(UUID contractId,
+                                String sourceName,
                                 String destinationName,
+                                String type,
                                 String status,
+                                String carrierName,
                                 boolean trial,
                                 long remainingTicks,
                                 int rewardEmeralds,
                                 long distanceBlocks,
                                 int successfulDeliveries,
                                 String tradeAgreement,
-                                List<GoodsEntry> goods) {
+                                List<GoodsEntry> goods,
+                                List<GoodsEntry> returnGoods) {
         public ContractEntry {
             goods = List.copyOf(goods);
+            returnGoods = List.copyOf(returnGoods);
         }
 
         static ContractEntry from(SettlementSavedData data,
                                   Settlement viewedSettlement,
                                   TradeContract contract,
-                                  long gameTime) {
+                                  long gameTime,
+                                  Function<UUID, String> playerNameResolver) {
             List<GoodsEntry> goods = contract.getRequiredGoods().entrySet().stream()
                     .map(entry -> new GoodsEntry(
                             entry.getKey().toString(),
                             entry.getValue(),
                             contract.getIssuedAmount(entry.getKey()),
                             contract.getDeliveredAmount(entry.getKey())
+                    ))
+                    .toList();
+            List<GoodsEntry> returnGoods = contract.getReturnGoods().entrySet().stream()
+                    .map(entry -> new GoodsEntry(
+                            entry.getKey().toString(),
+                            entry.getValue(),
+                            contract.getReturnIssuedAmount(entry.getKey()),
+                            contract.getReturnDeliveredAmount(entry.getKey())
                     ))
                     .toList();
             Settlement source = data.getSettlement(contract.getSourceSettlementId());
@@ -295,9 +311,12 @@ public record DiplomacyTableSnapshot(
                     : contract.getSourceSettlementId();
             SettlementRelationship relationship = viewedSettlement.findRelationship(otherId).orElse(null);
             return new ContractEntry(
+                    contract.getId(),
                     settlementName(data, contract.getSourceSettlementId()),
                     settlementName(data, contract.getDestinationSettlementId()),
+                    contract.getType().getSerializedName(),
                     contract.getStatus().getSerializedName(),
+                    contract.getCarrierId() == null ? "" : playerNameResolver.apply(contract.getCarrierId()),
                     contract.isTrial(),
                     Math.max(0L, contract.getDeadlineGameTime() - gameTime),
                     contract.getRewardEmeralds(),
@@ -308,14 +327,18 @@ public record DiplomacyTableSnapshot(
                     relationship == null
                             ? "none"
                             : relationship.getTradeAgreementStatus().getSerializedName(),
-                    goods
+                    goods,
+                    returnGoods
             );
         }
 
         void write(FriendlyByteBuf buffer) {
+            buffer.writeUUID(contractId);
             buffer.writeUtf(sourceName);
             buffer.writeUtf(destinationName);
+            buffer.writeUtf(type);
             buffer.writeUtf(status);
+            buffer.writeUtf(carrierName);
             buffer.writeBoolean(trial);
             buffer.writeLong(remainingTicks);
             buffer.writeVarInt(rewardEmeralds);
@@ -324,12 +347,17 @@ public record DiplomacyTableSnapshot(
             buffer.writeUtf(tradeAgreement);
             buffer.writeVarInt(goods.size());
             goods.forEach(entry -> entry.write(buffer));
+            buffer.writeVarInt(returnGoods.size());
+            returnGoods.forEach(entry -> entry.write(buffer));
         }
 
         static ContractEntry read(FriendlyByteBuf buffer) {
+            UUID contractId = buffer.readUUID();
             String source = buffer.readUtf();
             String destination = buffer.readUtf();
+            String type = buffer.readUtf();
             String status = buffer.readUtf();
+            String carrier = buffer.readUtf();
             boolean trial = buffer.readBoolean();
             long remaining = buffer.readLong();
             int reward = buffer.readVarInt();
@@ -337,8 +365,9 @@ public record DiplomacyTableSnapshot(
             int deliveries = buffer.readVarInt();
             String agreement = buffer.readUtf();
             List<GoodsEntry> goods = readEntries(buffer, GoodsEntry::read);
-            return new ContractEntry(source, destination, status, trial, remaining, reward,
-                    distance, deliveries, agreement, goods);
+            List<GoodsEntry> returnGoods = readEntries(buffer, GoodsEntry::read);
+            return new ContractEntry(contractId, source, destination, type, status, carrier,
+                    trial, remaining, reward, distance, deliveries, agreement, goods, returnGoods);
         }
     }
 

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TradeHandoverServiceTest {
     private static final ResourceLocation WHEAT = id("minecraft:wheat");
+    private static final ResourceLocation COAL = id("minecraft:coal");
     private static final ResourceLocation EMERALD = id("minecraft:emerald");
     private static final TradeContractService.ContractRules RULES =
             new TradeContractService.ContractRules(3L * DiplomacyBalance.MINECRAFT_DAY_TICKS, 10, 10);
@@ -93,7 +94,7 @@ class TradeHandoverServiceTest {
 
         assertFalse(result.handled());
         assertEquals(16, inventory.count(WHEAT));
-        assertEquals(TradeContractStatus.EXPIRED, fixture.contract().getStatus());
+        assertEquals(TradeContractStatus.FAILED, fixture.contract().getStatus());
         assertEquals(new VirtualWarehouse.StockView(40, 0, 100),
                 fixture.source().getWarehouse().getStock(WHEAT));
     }
@@ -159,6 +160,40 @@ class TradeHandoverServiceTest {
         assertFalse(result.handled());
         assertEquals(0, inventory.count(WHEAT));
         assertEquals(0, fixture.contract().getIssuedAmount(WHEAT));
+    }
+
+    @Test
+    void exchangeHandoverCarriesOrdinaryGoodsOutAndBack() {
+        SettlementSavedData data = new SettlementSavedData();
+        Settlement source = new Settlement(UUID.randomUUID(), "Source", BlockPos.ZERO, 64);
+        Settlement destination = new Settlement(UUID.randomUUID(), "Destination", new BlockPos(200, 64, 0), 64);
+        data.registerSettlement(source);
+        data.registerSettlement(destination);
+        data.discoverSettlement(source.getId(), destination.getId());
+        source.getWarehouse().configureCapacity(WHEAT, 100);
+        source.getWarehouse().add(WHEAT, 40);
+        destination.getWarehouse().configureCapacity(COAL, 100);
+        destination.getWarehouse().add(COAL, 30);
+        UUID carrier = UUID.randomUUID();
+        TradeContract contract = TradeContractService.createTrialExchangeOffer(
+                data, source.getId(), destination.getId(),
+                Map.of(WHEAT, 16), Map.of(COAL, 8), 3, 0L, RULES);
+        TradeContractService.acceptContract(data, contract.getId(), carrier, 1L);
+        Fixture fixture = new Fixture(data, source, destination, contract, carrier);
+        FakeInventory inventory = new FakeInventory(64);
+
+        TradeHandoverService.HandoverSummary pickup = handle(fixture, source.getId(), inventory, 10L);
+        TradeHandoverService.HandoverSummary exchange = handle(fixture, destination.getId(), inventory, 20L);
+        TradeHandoverService.HandoverSummary returnTrip = handle(fixture, source.getId(), inventory, 30L);
+
+        assertEquals(16, pickup.totalIssued());
+        assertEquals(16, exchange.totalDelivered());
+        assertEquals(8, exchange.totalIssued());
+        assertEquals(8, returnTrip.totalDelivered());
+        assertEquals(1, returnTrip.completedContracts());
+        assertEquals(3, returnTrip.rewardEmeralds());
+        assertEquals(TradeContractStatus.COMPLETED, contract.getStatus());
+        assertEquals(3, inventory.count(EMERALD));
     }
 
     private static TradeHandoverService.HandoverSummary handle(Fixture fixture,

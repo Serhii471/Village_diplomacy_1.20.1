@@ -36,6 +36,10 @@ public final class DiplomacyBalance {
     public static final int DIPLOMATIC_SCROLL_COOLDOWN_TICKS = 100;
     public static final int TRIAL_DELIVERIES_FOR_TRADE_AGREEMENT = 1;
     public static final int DELIVERIES_FOR_ALLIANCE = 3;
+    public static final int MAX_OPEN_TRIAL_OFFERS = 3;
+    public static final int TRIAL_OFFER_MAX_ITEM_AMOUNT = 16;
+    public static final int TRIAL_OFFER_BASE_REWARD_EMERALDS = 3;
+    public static final int TRIAL_OFFER_MAX_REWARD_EMERALDS = 12;
 
     private DiplomacyBalance() {
     }

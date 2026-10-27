@@ -3,6 +3,7 @@ package com.diplomacy.villagediplomacy.block;
 import com.diplomacy.villagediplomacy.diplomacy.DiplomacyTableAccess;
 import com.diplomacy.villagediplomacy.diplomacy.Settlement;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
+import com.diplomacy.villagediplomacy.diplomacy.TradeOfferGenerator;
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableSnapshot;
 import net.minecraft.core.BlockPos;
@@ -66,16 +67,21 @@ public final class DiplomacyTableBlock extends Block {
             return InteractionResult.CONSUME;
         }
 
-        DiplomacyTableAccess.Result access = DiplomacyTableAccess.evaluate(
-                SettlementSavedData.get(serverLevel),
-                pos
-        );
+        openFor(serverPlayer, pos);
+        return InteractionResult.CONSUME;
+    }
+
+    public static boolean openFor(ServerPlayer serverPlayer, BlockPos pos) {
+        ServerLevel serverLevel = serverPlayer.serverLevel();
+        SettlementSavedData data = SettlementSavedData.get(serverLevel);
+        DiplomacyTableAccess.Result access = DiplomacyTableAccess.evaluate(data, pos);
         if (!access.allowed()) {
             serverPlayer.displayClientMessage(Component.translatable(messageKey(access.failure())), true);
-            return InteractionResult.CONSUME;
+            return false;
         }
 
         Settlement settlement = access.settlement();
+        TradeOfferGenerator.ensureOffers(data, settlement.getId(), serverLevel.getGameTime());
         DiplomacyTableSnapshot snapshot = DiplomacyTableSnapshot.create(serverLevel, serverPlayer, settlement);
         MenuProvider provider = new SimpleMenuProvider(
                 (containerId, inventory, ignored) ->
@@ -86,7 +92,7 @@ public final class DiplomacyTableBlock extends Block {
             buffer.writeBlockPos(pos);
             snapshot.write(buffer);
         });
-        return InteractionResult.CONSUME;
+        return true;
     }
 
     private static String messageKey(DiplomacyTableAccess.Failure failure) {

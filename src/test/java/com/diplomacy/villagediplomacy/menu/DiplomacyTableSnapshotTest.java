@@ -5,6 +5,7 @@ import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSpecialization;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementProductionService;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
+import com.diplomacy.villagediplomacy.diplomacy.TradeContractType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,6 +33,7 @@ class DiplomacyTableSnapshotTest {
         data.registerSettlement(neighbor);
 
         ResourceLocation wheat = Objects.requireNonNull(ResourceLocation.tryParse("minecraft:wheat"));
+        ResourceLocation coal = Objects.requireNonNull(ResourceLocation.tryParse("minecraft:coal"));
         home.getWarehouse().configureCapacity(wheat, 100);
         home.getWarehouse().add(wheat, 40);
         home.getWarehouse().tryReserve(wheat, 10);
@@ -39,8 +41,8 @@ class DiplomacyTableSnapshotTest {
         data.adjustReputationBetween(home.getId(), neighbor.getId(), 25);
 
         TradeContract contract = new TradeContract(
-                UUID.randomUUID(), home.getId(), neighbor.getId(), Map.of(wheat, 16),
-                true, 1_000L, 73_000L, 5
+                UUID.randomUUID(), home.getId(), neighbor.getId(), TradeContractType.EXCHANGE,
+                Map.of(wheat, 16), Map.of(coal, 8), true, 1_000L, 73_000L, 5
         );
         data.registerTradeContract(contract);
 
@@ -55,6 +57,9 @@ class DiplomacyTableSnapshotTest {
         assertEquals(1, snapshot.relations().size());
         assertEquals(190L, snapshot.relations().get(0).distanceBlocks());
         assertEquals(1, snapshot.contracts().size());
+        assertEquals(contract.getId(), snapshot.contracts().get(0).contractId());
+        assertEquals("exchange", snapshot.contracts().get(0).type());
+        assertEquals(1, snapshot.contracts().get(0).returnGoods().size());
         assertEquals(190L, snapshot.contracts().get(0).distanceBlocks());
         assertEquals(48_000L, snapshot.contracts().get(0).remainingTicks());
 

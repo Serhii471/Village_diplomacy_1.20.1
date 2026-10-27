@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy.client.screen;
 
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableSnapshot;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -24,11 +25,15 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
 
     private Tab selectedTab = Tab.SETTLEMENT;
     private int scrollOffset;
+    private int selectedOfferIndex;
+    private Button previousOfferButton;
+    private Button acceptOfferButton;
+    private Button nextOfferButton;
 
     public DiplomacyTableScreen(DiplomacyTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 300;
-        imageHeight = 220;
+        imageHeight = 236;
         inventoryLabelY = 10_000;
     }
 
@@ -44,6 +49,20 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
                     .bounds(leftPos + 8 + index * (tabWidth + 4), topPos + 28, tabWidth, 20)
                     .build());
         }
+        previousOfferButton = addRenderableWidget(Button.builder(
+                        Component.literal("<"), ignored -> changeOffer(-1))
+                .bounds(leftPos + 82, topPos + 207, 24, 20)
+                .build());
+        acceptOfferButton = addRenderableWidget(Button.builder(
+                        Component.translatable("screen.villagediplomacy.table.contract.accept"),
+                        ignored -> acceptSelectedOffer())
+                .bounds(leftPos + 110, topPos + 207, 104, 20)
+                .build());
+        nextOfferButton = addRenderableWidget(Button.builder(
+                        Component.literal(">"), ignored -> changeOffer(1))
+                .bounds(leftPos + 218, topPos + 207, 24, 20)
+                .build());
+        updateOfferControls();
     }
 
     @Override
@@ -120,6 +139,52 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     private void selectTab(Tab tab) {
         selectedTab = tab;
         scrollOffset = 0;
+        updateOfferControls();
+    }
+
+    private List<DiplomacyTableSnapshot.ContractEntry> offeredContracts() {
+        return menu.getSnapshot().contracts().stream()
+                .filter(contract -> "offered".equals(contract.status()))
+                .toList();
+    }
+
+    private void changeOffer(int delta) {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        if (offers.isEmpty()) {
+            selectedOfferIndex = 0;
+        } else {
+            selectedOfferIndex = Math.floorMod(selectedOfferIndex + delta, offers.size());
+        }
+        updateOfferControls();
+    }
+
+    private void updateOfferControls() {
+        if (acceptOfferButton == null) {
+            return;
+        }
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        boolean tradeTab = selectedTab == Tab.TRADE;
+        selectedOfferIndex = offers.isEmpty() ? 0 : Math.min(selectedOfferIndex, offers.size() - 1);
+        previousOfferButton.visible = tradeTab && offers.size() > 1;
+        nextOfferButton.visible = tradeTab && offers.size() > 1;
+        acceptOfferButton.visible = tradeTab;
+        acceptOfferButton.active = tradeTab && menu.getSnapshot().canManage() && !offers.isEmpty();
+        acceptOfferButton.setMessage(offers.isEmpty()
+                ? Component.translatable("screen.villagediplomacy.table.contract.no_offers")
+                : Component.translatable("screen.villagediplomacy.table.contract.accept_number",
+                        selectedOfferIndex + 1, offers.size()));
+    }
+
+    private void acceptSelectedOffer() {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        if (offers.isEmpty() || Minecraft.getInstance().gameMode == null) {
+            return;
+        }
+        int buttonId = menu.buttonIdForContract(offers.get(selectedOfferIndex).contractId());
+        if (buttonId >= 0) {
+            acceptOfferButton.active = false;
+            Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, buttonId);
+        }
     }
 
     private List<Component> settlementLines(DiplomacyTableSnapshot snapshot) {
@@ -191,10 +256,19 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         } else {
             snapshot.contracts().forEach(contract -> {
                 lines.add(Component.translatable("screen.villagediplomacy.table.contract",
-                        contract.sourceName(), contract.destinationName(), contractStatus(contract.status()),
+                        contract.sourceName(), contract.destinationName(), contractType(contract.type()),
+                        contractStatus(contract.status()),
                         contract.rewardEmeralds()));
+                lines.add(Component.translatable("screen.villagediplomacy.table.contract.carrier",
+                        contract.carrierName().isBlank()
+                                ? Component.translatable("screen.villagediplomacy.table.none")
+                                : Component.literal(contract.carrierName())));
                 for (DiplomacyTableSnapshot.GoodsEntry goods : contract.goods()) {
                     lines.add(Component.translatable("screen.villagediplomacy.table.goods",
+                            itemName(goods.itemId()), goods.issued(), goods.delivered(), goods.required()));
+                }
+                for (DiplomacyTableSnapshot.GoodsEntry goods : contract.returnGoods()) {
+                    lines.add(Component.translatable("screen.villagediplomacy.table.goods.return",
                             itemName(goods.itemId()), goods.issued(), goods.delivered(), goods.required()));
                 }
             });
@@ -236,6 +310,10 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
 
     private static Component contractStatus(String serializedName) {
         return Component.translatable("status.villagediplomacy.contract." + serializedName);
+    }
+
+    private static Component contractType(String serializedName) {
+        return Component.translatable("type.villagediplomacy.contract." + serializedName);
     }
 
     private static Component itemName(String itemId) {

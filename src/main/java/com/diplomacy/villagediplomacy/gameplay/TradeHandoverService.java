@@ -3,6 +3,8 @@ package com.diplomacy.villagediplomacy.gameplay;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContractService;
+import com.diplomacy.villagediplomacy.diplomacy.TradeContractStatus;
+import com.diplomacy.villagediplomacy.diplomacy.TradeContractType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,7 +76,8 @@ public final class TradeHandoverService {
                 }
                 continue;
             }
-            if (contract.getSourceSettlementId().equals(settlementId)) {
+            boolean atSource = contract.getSourceSettlementId().equals(settlementId);
+            if (atSource) {
                 contract.getRequiredGoods().keySet().forEach(itemId -> {
                     int transferred = issueIntoInventory(
                             data, contract, carrierId, itemId, currentGameTime, inventory, rules);
@@ -82,18 +85,37 @@ public final class TradeHandoverService {
                         issued.merge(itemId, transferred, Integer::sum);
                     }
                 });
-                continue;
-            }
-
-            for (ResourceLocation itemId : contract.getRequiredGoods().keySet()) {
-                int transferred = deliverFromInventory(
-                        data, contract, carrierId, itemId, currentGameTime, inventory, rules);
-                if (transferred > 0) {
-                    delivered.merge(itemId, transferred, Integer::sum);
+                if (contract.getType() == TradeContractType.EXCHANGE
+                        && contract.isOutboundDeliveryComplete()) {
+                    for (ResourceLocation itemId : contract.getReturnGoods().keySet()) {
+                        int transferred = deliverReturnFromInventory(
+                                data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                        if (transferred > 0) {
+                            delivered.merge(itemId, transferred, Integer::sum);
+                        }
+                    }
+                }
+            } else {
+                for (ResourceLocation itemId : contract.getRequiredGoods().keySet()) {
+                    int transferred = deliverFromInventory(
+                            data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                    if (transferred > 0) {
+                        delivered.merge(itemId, transferred, Integer::sum);
+                    }
+                }
+                if (contract.getType() == TradeContractType.EXCHANGE
+                        && contract.isOutboundDeliveryComplete()) {
+                    contract.getReturnGoods().keySet().forEach(itemId -> {
+                        int transferred = issueReturnIntoInventory(
+                                data, contract, carrierId, itemId, currentGameTime, inventory, rules);
+                        if (transferred > 0) {
+                            issued.merge(itemId, transferred, Integer::sum);
+                        }
+                    });
                 }
             }
 
-            if (contract.isDeliveryComplete()) {
+            if (contract.getStatus() == TradeContractStatus.COMPLETED) {
                 completedContracts++;
                 int reward = TradeContractService.claimReward(data, contract.getId(), carrierId);
                 if (reward > 0) {
@@ -173,6 +195,65 @@ public final class TradeHandoverService {
                     currentGameTime,
                     rules
             );
+            if (result.acceptedAmount() < extracted) {
+                giveOrDrop(inventory, itemId, extracted - result.acceptedAmount());
+            }
+            return result.acceptedAmount();
+        } catch (RuntimeException exception) {
+            giveOrDrop(inventory, itemId, extracted);
+            throw exception;
+        }
+    }
+
+    private static int issueReturnIntoInventory(SettlementSavedData data,
+                                                TradeContract contract,
+                                                UUID carrierId,
+                                                ResourceLocation itemId,
+                                                long currentGameTime,
+                                                TradeInventoryPort inventory,
+                                                TradeContractService.ContractRules rules) {
+        int remaining = contract.getRemainingReturnToIssue(itemId);
+        if (remaining <= 0) {
+            return 0;
+        }
+        int inserted = inventory.insert(itemId, remaining);
+        if (inserted <= 0) {
+            return 0;
+        }
+        try {
+            int issued = TradeContractService.issueReturnGoods(
+                    data, contract.getId(), carrierId, itemId, inserted, currentGameTime, rules);
+            if (issued < inserted) {
+                restoreWarehouseMismatch(inventory, itemId, inserted - issued);
+            }
+            return issued;
+        } catch (RuntimeException exception) {
+            restoreWarehouseMismatch(inventory, itemId, inserted);
+            throw exception;
+        }
+    }
+
+    private static int deliverReturnFromInventory(SettlementSavedData data,
+                                                  TradeContract contract,
+                                                  UUID carrierId,
+                                                  ResourceLocation itemId,
+                                                  long currentGameTime,
+                                                  TradeInventoryPort inventory,
+                                                  TradeContractService.ContractRules rules) {
+        int requested = Math.min(
+                contract.getRemainingReturnToDeliver(itemId),
+                inventory.count(itemId)
+        );
+        if (requested <= 0) {
+            return 0;
+        }
+        int extracted = inventory.extract(itemId, requested);
+        if (extracted <= 0) {
+            return 0;
+        }
+        try {
+            TradeContractService.DeliveryResult result = TradeContractService.recordReturnDelivery(
+                    data, contract.getId(), carrierId, itemId, extracted, currentGameTime, rules);
             if (result.acceptedAmount() < extracted) {
                 giveOrDrop(inventory, itemId, extracted - result.acceptedAmount());
             }

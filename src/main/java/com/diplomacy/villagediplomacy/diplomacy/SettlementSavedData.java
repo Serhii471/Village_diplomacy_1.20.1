@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class SettlementSavedData extends SavedData {
     public static final String DATA_NAME = "village_diplomacy_settlements";
-    public static final int CURRENT_DATA_VERSION = 4;
+    public static final int CURRENT_DATA_VERSION = 5;
 
     private final Map<UUID, Settlement> settlements = new LinkedHashMap<>();
     private final Map<UUID, TradeContract> tradeContracts = new LinkedHashMap<>();
@@ -62,7 +62,7 @@ public class SettlementSavedData extends SavedData {
                         && contract.involves(safeSettlementId))
                         || (contract.getStatus() == TradeContractStatus.COMPLETED
                         && !contract.isRewardClaimed()
-                        && contract.getDestinationSettlementId().equals(safeSettlementId)))
+                        && contract.getRewardSettlementId().equals(safeSettlementId)))
                 .sorted(Comparator.comparingLong(TradeContract::getCreatedGameTime)
                         .thenComparing(contract -> contract.getId().toString()))
                 .toList();

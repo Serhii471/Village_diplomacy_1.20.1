@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-/** Server-authoritative lifecycle for trial delivery contracts. */
+/** Server-authoritative lifecycle for trial delivery and exchange contracts. */
 public final class TradeContractService {
     private TradeContractService() {
     }
@@ -37,6 +37,44 @@ public final class TradeContractService {
                                                          int rewardEmeralds,
                                                          long currentGameTime,
                                                          ContractRules rules) {
+        return createTrialOffer(data, sourceSettlementId, destinationSettlementId,
+                TradeContractType.DELIVERY, requiredGoods, Map.of(), rewardEmeralds,
+                currentGameTime, rules);
+    }
+
+    public static TradeContract createTrialExchangeOffer(SettlementSavedData data,
+                                                         UUID sourceSettlementId,
+                                                         UUID destinationSettlementId,
+                                                         Map<ResourceLocation, Integer> outboundGoods,
+                                                         Map<ResourceLocation, Integer> returnGoods,
+                                                         int rewardEmeralds,
+                                                         long currentGameTime) {
+        return createTrialExchangeOffer(data, sourceSettlementId, destinationSettlementId,
+                outboundGoods, returnGoods, rewardEmeralds, currentGameTime, currentRules());
+    }
+
+    public static TradeContract createTrialExchangeOffer(SettlementSavedData data,
+                                                         UUID sourceSettlementId,
+                                                         UUID destinationSettlementId,
+                                                         Map<ResourceLocation, Integer> outboundGoods,
+                                                         Map<ResourceLocation, Integer> returnGoods,
+                                                         int rewardEmeralds,
+                                                         long currentGameTime,
+                                                         ContractRules rules) {
+        return createTrialOffer(data, sourceSettlementId, destinationSettlementId,
+                TradeContractType.EXCHANGE, outboundGoods, returnGoods, rewardEmeralds,
+                currentGameTime, rules);
+    }
+
+    private static TradeContract createTrialOffer(SettlementSavedData data,
+                                                  UUID sourceSettlementId,
+                                                  UUID destinationSettlementId,
+                                                  TradeContractType type,
+                                                  Map<ResourceLocation, Integer> outboundGoods,
+                                                  Map<ResourceLocation, Integer> returnGoods,
+                                                  int rewardEmeralds,
+                                                  long currentGameTime,
+                                                  ContractRules rules) {
         Objects.requireNonNull(data, "data");
         Objects.requireNonNull(rules, "rules");
         Settlement source = requireSettlement(data, sourceSettlementId);
@@ -48,14 +86,8 @@ public final class TradeContractService {
         long createdGameTime = Math.max(0L, currentGameTime);
         long deadlineGameTime = addClamped(createdGameTime, rules.trialDurationTicks());
         TradeContract contract = new TradeContract(
-                UUID.randomUUID(),
-                source.getId(),
-                destination.getId(),
-                requiredGoods,
-                true,
-                createdGameTime,
-                deadlineGameTime,
-                rewardEmeralds
+                UUID.randomUUID(), source.getId(), destination.getId(), type,
+                outboundGoods, returnGoods, true, createdGameTime, deadlineGameTime, rewardEmeralds
         );
         data.registerTradeContract(contract);
         return contract;
@@ -76,26 +108,17 @@ public final class TradeContractService {
         }
 
         Settlement source = requireSettlement(data, contract.getSourceSettlementId());
-        boolean allAvailable = contract.getRequiredGoods().entrySet().stream().allMatch(entry ->
-                source.getWarehouse().getStock(entry.getKey()).available() >= entry.getValue());
-        if (!allAvailable) {
+        Settlement destination = requireSettlement(data, contract.getDestinationSettlementId());
+        ArrayList<Reservation> reserved = new ArrayList<>();
+        if (!reserveAll(source, contract.getRequiredGoods(), reserved)
+                || !reserveAll(destination, contract.getReturnGoods(), reserved)) {
+            releaseReservations(reserved);
             return ActivationResult.INSUFFICIENT_STOCK;
-        }
-
-        ArrayList<Map.Entry<ResourceLocation, Integer>> reserved = new ArrayList<>();
-        for (Map.Entry<ResourceLocation, Integer> entry : contract.getRequiredGoods().entrySet()) {
-            if (!source.getWarehouse().tryReserve(entry.getKey(), entry.getValue())) {
-                reserved.forEach(previous ->
-                        source.getWarehouse().releaseReservation(previous.getKey(), previous.getValue()));
-                return ActivationResult.INSUFFICIENT_STOCK;
-            }
-            reserved.add(entry);
         }
         try {
             contract.activate(safeCarrierId, currentGameTime);
         } catch (RuntimeException exception) {
-            reserved.forEach(previous ->
-                    source.getWarehouse().releaseReservation(previous.getKey(), previous.getValue()));
+            releaseReservations(reserved);
             throw exception;
         }
         return ActivationResult.ACTIVATED;
@@ -155,6 +178,33 @@ public final class TradeContractService {
         return issued;
     }
 
+    public static int issueReturnGoods(SettlementSavedData data,
+                                       UUID contractId,
+                                       UUID carrierId,
+                                       ResourceLocation itemId,
+                                       int requestedAmount,
+                                       long currentGameTime,
+                                       ContractRules rules) {
+        requirePositive(requestedAmount, "requestedAmount");
+        Objects.requireNonNull(rules, "rules");
+        TradeContract contract = requireActiveCarrierContract(
+                data, contractId, carrierId, currentGameTime, rules);
+        if (contract == null || !contract.isOutboundDeliveryComplete()) {
+            return 0;
+        }
+        requireReturnContractItem(contract, itemId);
+        int amount = Math.min(requestedAmount, contract.getRemainingReturnToIssue(itemId));
+        if (amount <= 0) {
+            return 0;
+        }
+        Settlement destination = requireSettlement(data, contract.getDestinationSettlementId());
+        int issued = destination.getWarehouse().takeReserved(itemId, amount);
+        if (issued > 0) {
+            contract.recordReturnIssued(itemId, issued);
+        }
+        return issued;
+    }
+
     /**
      * Records items already validated and removed from the carrier inventory by
      * the server interaction layer. Partial delivery is supported.
@@ -194,22 +244,47 @@ public final class TradeContractService {
             return new DeliveryResult(0, false);
         }
         contract.recordDelivered(itemId, accepted);
+        if (!contract.isOutboundDeliveryComplete()) {
+            return new DeliveryResult(accepted, false);
+        }
+        releaseOutboundRemainingReservations(data, contract);
+        if (contract.getType() == TradeContractType.EXCHANGE) {
+            return new DeliveryResult(accepted, false);
+        }
+        completeContract(data, contract, currentGameTime, rules);
+        return new DeliveryResult(accepted, true);
+    }
+
+    public static DeliveryResult recordReturnDelivery(SettlementSavedData data,
+                                                       UUID contractId,
+                                                       UUID carrierId,
+                                                       ResourceLocation itemId,
+                                                       int offeredAmount,
+                                                       long currentGameTime,
+                                                       ContractRules rules) {
+        requirePositive(offeredAmount, "offeredAmount");
+        Objects.requireNonNull(rules, "rules");
+        TradeContract contract = requireActiveCarrierContract(data, contractId, carrierId, currentGameTime, rules);
+        if (contract == null) {
+            return new DeliveryResult(0, false);
+        }
+        requireReturnContractItem(contract, itemId);
+        int requested = Math.min(offeredAmount, contract.getRemainingReturnToDeliver(itemId));
+        if (requested <= 0) {
+            return new DeliveryResult(0, false);
+        }
+
+        Settlement source = requireSettlement(data, contract.getSourceSettlementId());
+        int accepted = source.getWarehouse().addDelivered(itemId, requested);
+        if (accepted <= 0) {
+            return new DeliveryResult(0, false);
+        }
+        contract.recordReturnDelivered(itemId, accepted);
         if (!contract.isDeliveryComplete()) {
             return new DeliveryResult(accepted, false);
         }
-
-        releaseRemainingReservations(data, contract);
-        contract.complete(currentGameTime);
-        data.recordSuccessfulDeliveryBetween(
-                contract.getSourceSettlementId(),
-                contract.getDestinationSettlementId(),
-                currentGameTime
-        );
-        data.adjustReputationBetween(
-                contract.getSourceSettlementId(),
-                contract.getDestinationSettlementId(),
-                rules.successfulDeliveryReputation()
-        );
+        releaseReturnRemainingReservations(data, contract);
+        completeContract(data, contract, currentGameTime, rules);
         return new DeliveryResult(accepted, true);
     }
 
@@ -255,6 +330,11 @@ public final class TradeContractService {
     }
 
     static void releaseRemainingReservations(SettlementSavedData data, TradeContract contract) {
+        releaseOutboundRemainingReservations(data, contract);
+        releaseReturnRemainingReservations(data, contract);
+    }
+
+    private static void releaseOutboundRemainingReservations(SettlementSavedData data, TradeContract contract) {
         Settlement source = data.getSettlement(contract.getSourceSettlementId());
         if (source == null) {
             return;
@@ -263,6 +343,19 @@ public final class TradeContractService {
             int remaining = Math.max(0, required - contract.getIssuedAmount(itemId));
             if (remaining > 0) {
                 source.getWarehouse().releaseReservation(itemId, remaining);
+            }
+        });
+    }
+
+    private static void releaseReturnRemainingReservations(SettlementSavedData data, TradeContract contract) {
+        Settlement destination = data.getSettlement(contract.getDestinationSettlementId());
+        if (destination == null) {
+            return;
+        }
+        contract.getReturnGoods().forEach((itemId, required) -> {
+            int remaining = Math.max(0, required - contract.getReturnIssuedAmount(itemId));
+            if (remaining > 0) {
+                destination.getWarehouse().releaseReservation(itemId, remaining);
             }
         });
     }
@@ -301,8 +394,8 @@ public final class TradeContractService {
         if (wasActive) {
             releaseRemainingReservations(data, contract);
         }
-        contract.expire(currentGameTime);
         if (wasActive) {
+            contract.fail(currentGameTime);
             data.recordFailedContractBetween(
                     contract.getSourceSettlementId(),
                     contract.getDestinationSettlementId(),
@@ -313,6 +406,8 @@ public final class TradeContractService {
                     contract.getDestinationSettlementId(),
                     -rules.failedContractReputationPenalty()
             );
+        } else {
+            contract.expire(currentGameTime);
         }
     }
 
@@ -367,6 +462,42 @@ public final class TradeContractService {
         }
     }
 
+    private static void requireReturnContractItem(TradeContract contract, ResourceLocation itemId) {
+        ResourceLocation safeItemId = Objects.requireNonNull(itemId, "itemId");
+        if (!contract.getReturnGoods().containsKey(safeItemId)) {
+            throw new IllegalArgumentException("Item is not part of the return leg: " + safeItemId);
+        }
+    }
+
+    private static boolean reserveAll(Settlement settlement,
+                                      Map<ResourceLocation, Integer> goods,
+                                      ArrayList<Reservation> reservations) {
+        for (Map.Entry<ResourceLocation, Integer> entry : goods.entrySet()) {
+            if (!settlement.getWarehouse().tryReserve(entry.getKey(), entry.getValue())) {
+                return false;
+            }
+            reservations.add(new Reservation(settlement, entry.getKey(), entry.getValue()));
+        }
+        return true;
+    }
+
+    private static void releaseReservations(ArrayList<Reservation> reservations) {
+        reservations.forEach(reservation -> reservation.settlement().getWarehouse()
+                .releaseReservation(reservation.itemId(), reservation.amount()));
+    }
+
+    private static void completeContract(SettlementSavedData data,
+                                         TradeContract contract,
+                                         long currentGameTime,
+                                         ContractRules rules) {
+        contract.complete(currentGameTime);
+        data.recordSuccessfulDeliveryBetween(
+                contract.getSourceSettlementId(), contract.getDestinationSettlementId(), currentGameTime);
+        data.adjustReputationBetween(
+                contract.getSourceSettlementId(), contract.getDestinationSettlementId(),
+                rules.successfulDeliveryReputation());
+    }
+
     public static ContractRules currentRules() {
         return new ContractRules(
                 (long) VillageDiplomacyConfig.SERVER.trialContractDurationDays.get()
@@ -383,6 +514,9 @@ public final class TradeContractService {
     }
 
     public record DeliveryResult(int acceptedAmount, boolean completed) {
+    }
+
+    private record Reservation(Settlement settlement, ResourceLocation itemId, int amount) {
     }
 
     public record ContractRules(long trialDurationTicks,
