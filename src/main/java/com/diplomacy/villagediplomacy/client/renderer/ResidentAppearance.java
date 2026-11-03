@@ -3,6 +3,7 @@ package com.diplomacy.villagediplomacy.client.renderer;
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import com.diplomacy.villagediplomacy.garrison.ResidentData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
@@ -29,10 +30,17 @@ public final class ResidentAppearance {
         }
         String job = "worker";
         VillagerProfession profession = villager.getVillagerData().getProfession();
-        if (profession == VillagerProfession.ARMORER || profession == VillagerProfession.TOOLSMITH
-                || profession == VillagerProfession.WEAPONSMITH || profession == VillagerProfession.BUTCHER) job = "smith";
-        else if (profession == VillagerProfession.LIBRARIAN || profession == VillagerProfession.CLERIC
-                || profession == VillagerProfession.CARTOGRAPHER) job = "scholar";
+        ResourceLocation key = BuiltInRegistries.VILLAGER_PROFESSION.getKey(profession);
+        // Unknown professions from other mods keep a valid regional outfit.
+        // Resolve on every render so acquiring/changing a job updates immediately.
+        if (key != null && key.getNamespace().equals("minecraft")) {
+            job = switch (key.getPath()) {
+                case "armorer", "toolsmith", "weaponsmith", "librarian", "cartographer",
+                        "cleric", "farmer", "fisherman", "fletcher", "leatherworker",
+                        "butcher", "mason", "shepherd", "nitwit" -> key.getPath();
+                default -> "worker";
+            };
+        }
         return ResourceLocation.tryParse("villagediplomacy:textures/entity/resident/" + region + "_" + job
                 + "_" + ResidentData.face(villager.getUUID()) + ".png");
     }

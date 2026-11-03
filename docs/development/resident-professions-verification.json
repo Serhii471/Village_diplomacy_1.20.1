@@ -1,0 +1,1186 @@
+{
+  "date": "2026-11-03",
+  "version": "0.2.1",
+  "assets": {
+    "passed": true,
+    "textures": 135,
+    "uniqueAppearances": 135,
+    "professions": 15,
+    "regions": 3,
+    "faces": 3,
+    "records": [
+      {
+        "name": "plains_worker_0",
+        "sha256": "72f187a41027658d536ca077ef7a0518be4fd0db9e4f0e4f8417eb9e5d81f4c4",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_worker_1",
+        "sha256": "b4454dad63e52c5ef41ae1fd9ee49ce2339ab023c0231dbe15cda7b19dd9e962",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_worker_2",
+        "sha256": "badff93ddd10ea9da7b57dd19e67bcc7fe806b2eb87c86c05062f304e8a76ea1",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_armorer_0",
+        "sha256": "c65ff01e344befb291150d022821ae6322b43e048172badf2bc8462ebd45116c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_armorer_1",
+        "sha256": "102b1fc399d048ef8944ed815b42c1477a74d729cc467f215684afa769d3b43c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_armorer_2",
+        "sha256": "459a51b2c58ab9a1c581b8eff65f2413d84f642e5a2bb0ed69d37a0207b1a825",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_toolsmith_0",
+        "sha256": "3a06b49a478471dce4fff1b7d490c64a0bdccf5f4c332a3c78eaba5cc33daa9b",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_toolsmith_1",
+        "sha256": "70f88e1b32f631ee1eb4e8d25abfb3898c7e12cfd6789fa355bca884289fcb64",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_toolsmith_2",
+        "sha256": "23dfc5157aed2f994e8122b3ac30ad4bd42acadde2ebbaeefb6c80480cb2cdae",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_weaponsmith_0",
+        "sha256": "b4817cea6e81ef7c66a009f4962325cea3838c80a89649b1ba3bb50a6dcffab2",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_weaponsmith_1",
+        "sha256": "0e668b4e8d0c488afc47e7e65e42d1707cadb2c61465a8c435d945f52d85a3d3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_weaponsmith_2",
+        "sha256": "0999289e9e208ae27f01d518a2404b103feb17ceca1bb0c97f53ef066f3c9591",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_librarian_0",
+        "sha256": "0576b8e8ca97e55014c8b6397d51bfad374ac52c4ca968334fcf7ee061fec33c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_librarian_1",
+        "sha256": "cce02bdbffd36d0cb636263ca2b545307206fe854917396d74408eee3dec39ec",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_librarian_2",
+        "sha256": "f6c7bbe53600e97e6cf3e01eeef2a56064142431ec5653b81d959c34c16ae526",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cartographer_0",
+        "sha256": "f3feed6c65c55abee6d0d22da677cf665f462d744053cddc5bc6f515dd3f16fc",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cartographer_1",
+        "sha256": "b36aedec5c1306cfba87db2cd42d84deb2b4ee3b293dca0989b50a0b14e44b83",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cartographer_2",
+        "sha256": "3102b24aa480be7b04621c3e078a77130f7b0a2af8643f715587deab5c860da9",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cleric_0",
+        "sha256": "de7d37a4c0be373c0d90b3fe647bc879c07e305fcb5aacdefd87f4ffbc7345d5",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cleric_1",
+        "sha256": "e1a337013142dae3c86114f340c940fefbad73ba624ea4d7c4ccf74e851b812a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_cleric_2",
+        "sha256": "d3d4f3c686cd9cb676110f821a7710fab6ca7508c3f3208fff629b21a605627d",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_farmer_0",
+        "sha256": "fc4fbd756cd45d70d89be6b52bdd80353119162b5f95420c2770b91e10e9a2bd",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_farmer_1",
+        "sha256": "560ea8502ca63fe3b65e08f90ff37fcf5628805137ead3a075dd003a27c67eb6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_farmer_2",
+        "sha256": "9ac33b589a6d192976e6c43e2d73a623810a2d060bd7f8ce8303be421a019fc1",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fisherman_0",
+        "sha256": "53c513c94f63d49623cb9e88c404b6fb22bb6360d98db5f6ef7ac76b0985708f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fisherman_1",
+        "sha256": "73b04a740d2c2aca7b431e72b089205c2a39960a0664776a746ca5d3a9e12557",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fisherman_2",
+        "sha256": "40e92e9f04f47c4b1ef15ac9d1b6513c94bb6ee101d0d710abd03a8d7baad869",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fletcher_0",
+        "sha256": "16b44f2ac84ecab4add08569df5a61b9a6f8729ac0e78158311d997afbf51253",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fletcher_1",
+        "sha256": "d2a3289c67f655d538be6b0d9d6156eb9cb331c444b5019594a6ceb67d438c7a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_fletcher_2",
+        "sha256": "83b6781f573a94b5222e0d969a7f589494c1f257322c5458bbf4975da899c618",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_leatherworker_0",
+        "sha256": "deed5a39f140c094b7745caee4ec08e47eeb3c78caf371883e3648aed13cd574",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_leatherworker_1",
+        "sha256": "f6f1fde925f818f73e6a1282ff50fd708b7745026965c32c3386bd99cd1bcd81",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_leatherworker_2",
+        "sha256": "1546fc52256264292fceafc33c74d723603607e609dac986f1bb15e018408b59",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_butcher_0",
+        "sha256": "56d1acfe7bef9447fc42d495164bfd20ddba1c0b6a7cfe87c6fba4e0a2e04942",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_butcher_1",
+        "sha256": "ea8f4af9c6c687d32f7bf9cd432134b1cb191f2baf76eed03519a04ea63f95d1",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_butcher_2",
+        "sha256": "30c6c74b961e8ec8319410e5f724a27a93cbf92ea6e25bf8d06919120b951d4c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_mason_0",
+        "sha256": "b24d7963b8fb4bb26282ccb407421de7ae32ca835d2fa23715b56c5487b09d67",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_mason_1",
+        "sha256": "9eac6acdbacbf312fc3e6bbbdb46506d2305109db515bd7a1e16f34a6813ef1d",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_mason_2",
+        "sha256": "68cb28c73f873bc4b8dba816f5ea32b76e9616056f38265e0ecedda3444821a2",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_shepherd_0",
+        "sha256": "54e67f82ee41b2e803e61cd158d5ed0e812bb5535856e4ce17c878d3f3dda07c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_shepherd_1",
+        "sha256": "138013e01e06289f37b2d4e9d1fc7f32c7f3555e601617a1304f8ad2874cc3e5",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_shepherd_2",
+        "sha256": "6f11ad1ce8390af3f517a88b46dfd446c95ef100a02cdf24a13f84ac987c3e16",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_nitwit_0",
+        "sha256": "9db23ad73093aaa8c97c6afaca162daae3cd1a55f432fc5b89ca494704bf0039",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_nitwit_1",
+        "sha256": "2060bd9a5c4976aa8abc22f6aa3915663302cb7bf047733e2e092619da94b765",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "plains_nitwit_2",
+        "sha256": "6b1d3d95d9600051703e3b419bc11e702977549d0f8ae29f698fb0f1fcdcf627",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_worker_0",
+        "sha256": "980f625b2b5cceaa5295132f44fab99a49bcf1bfdb70bbadd3d809adda87ee37",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_worker_1",
+        "sha256": "ccce36c28cec42b2bbf4861c2df912c6a60f6af32e1983836ffff5563a749545",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_worker_2",
+        "sha256": "12bdb2bef80e3a77767cfafdc259ed435ce1f89d4c6dbcd6a6f7c95a4be6775d",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_armorer_0",
+        "sha256": "c4779e140547d785c57dec275463c43ddf01b2f3dad490d1502c4f0b5dcddf94",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_armorer_1",
+        "sha256": "7cac25d16665dfc3fd11101ecb8e25139b155ddee27eef41681b66bfb6a375cd",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_armorer_2",
+        "sha256": "9d55216273724b5318d76d35278c058c7942c59f71d96c5e75957114a97f64b2",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_toolsmith_0",
+        "sha256": "43c60b49371205142055d40eb6bb2bd9dbbb1d52f76703f8e75d2241257ca9c3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_toolsmith_1",
+        "sha256": "8898c882ed014629f414025331e0b65e9b52a41aa7ebb58e59edd62901e1f372",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_toolsmith_2",
+        "sha256": "0760d75546e5e12a76abe38744617a2fec74e1346709e96ba82fc6467ac23bed",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_weaponsmith_0",
+        "sha256": "3f288805374d53209ff015bb36f8968620c90671a1c44459f27ed5c9941be1d6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_weaponsmith_1",
+        "sha256": "2560bc6270bc8634d1ebac6127bd91a7eb65c8fc622909c3c0febaadb8632a6c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_weaponsmith_2",
+        "sha256": "96a931cc633b14f8edd3a287710c635fd28d24edd0f360011d00ceed1849b989",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_librarian_0",
+        "sha256": "313ed49997005c4b683c0dfd9692bed01d7b98e32924046d7eed079e8a673084",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_librarian_1",
+        "sha256": "2b6c2703c522285ca5b0cd3b399f452ebc5d00c06108aff714a7509b9b63672a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_librarian_2",
+        "sha256": "0c4cd91500c35b2b2dc7d35dcab21b566754edea13460c775b63cb7838a41cec",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cartographer_0",
+        "sha256": "de2dc874bf5ec6b53b1fc616a48253ba6323d5789e055dedd16325c012488df1",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cartographer_1",
+        "sha256": "84bc5698921a79db901e98614cdbbabe70aeea021a77fba80b4ec56866c2edb6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cartographer_2",
+        "sha256": "d466479b2e2d2c0d7cfa3dc64765694076b2148fb81d91b6b3d827134df139e8",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cleric_0",
+        "sha256": "41126f36822c65b139d62e4f3a53136eecd6b72daf6233b79ad9ad3d32254541",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cleric_1",
+        "sha256": "3000fd9e6d439e37aa2b95e23614fb688d843f79e48b5579e49063e09d3e47cd",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_cleric_2",
+        "sha256": "65c90dc162944fd4194c98023f8aa666c31da1d61b482f92093eee1d0cafd89a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_farmer_0",
+        "sha256": "80e7b113c4fa05d6f773dd138f9c3065f178c54d5b45bbdff802f24e7a962e0f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_farmer_1",
+        "sha256": "060c5c0e5859d01a08ac8e14914c3e3fa4d890eef8b0671877fb1f53e55bf6c6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_farmer_2",
+        "sha256": "c71dae3c28919f69416d9d4f7ac018e55c3e50910d9feba2963d73e7d302c015",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fisherman_0",
+        "sha256": "bb6e0d00fa74ca43d3827ce3b2a16d0d50df08347798048be935640165ecf3e0",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fisherman_1",
+        "sha256": "d600b1ee1cb86898e46490a81e405916cf7e816c2ea50d902d9c9bdc56cfdf89",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fisherman_2",
+        "sha256": "75f7f9a9dc856a4ed86831126f05906eecc6dc6ad44e8cb425f781c80d26da74",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fletcher_0",
+        "sha256": "aa0b40be9d9af4d067f5700d60aca8154fad1513e7e188cc765497e943a0a04a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fletcher_1",
+        "sha256": "eabfab3eee85a3db905a9345e8b7d5052b245165561eb78cf4ece57a88a797ef",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_fletcher_2",
+        "sha256": "30bb40f10a9197c46ce05be67b615b1f3fd65684197bf75d02b3bc73312910bc",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_leatherworker_0",
+        "sha256": "a810cddf4293393ec1957a82bb9e0c6e6f00dce7cbcc897a833b7383282870ef",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_leatherworker_1",
+        "sha256": "0abc57d0b10636e911030726168cc593935dfc133b2d12b4bd09f6092f8c8a1c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_leatherworker_2",
+        "sha256": "7b5795a3a796cd5117d31988a3e5adbf90887523d0715fe104a686f87dbceecb",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_butcher_0",
+        "sha256": "793de126e0dbe9c6dfbf15f82a6ee37d6a008b4e2e16bca8aa9900fff9691a1b",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_butcher_1",
+        "sha256": "d1cfe1a3ff4e9b176db30c7a9a4504d33c2ad7b6f51a434ebe5a9a3d392ee7a6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_butcher_2",
+        "sha256": "2a0cd72919ddbceecb965d20c42bd27aa5663d5e6962f5588997b39ef75ed72f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_mason_0",
+        "sha256": "71e69458ac84c5cdf4ea8a454ff7113a6fde58974e97563443c3fdd7de0f4216",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_mason_1",
+        "sha256": "5c0d00b06b881ebf65603154544a729ff1e112c35018a9627ba32fc87f5d0617",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_mason_2",
+        "sha256": "ffd8645c97b8951847001a2fdcd7d7b8a401f36edefd16d8a2864d48924f95ed",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_shepherd_0",
+        "sha256": "68043b6e33307e0ce99ac06698a429c63186859235524a65784acf0c099ffa86",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_shepherd_1",
+        "sha256": "62686edca18239c18d50957d5f3d415f3181061a80f7c14c0c27b94a563a997f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_shepherd_2",
+        "sha256": "7d443272cac824e96dfc30f090c497884428d148cf09b16ef063b659fc783f22",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_nitwit_0",
+        "sha256": "00b8143d2a0e5947b6408e4b376f8da1c93090fcb5c91efdb4c493da795baee3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_nitwit_1",
+        "sha256": "8f10c387b2c70f8178dc42be829de06edf79aa63a48fa11beb9f7cbc66552459",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "mountain_nitwit_2",
+        "sha256": "414151d32cd3b5bb189c90112dc3741acb5b7e7b1ccfcd8cb1c5eacefed87298",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_worker_0",
+        "sha256": "39edcfde1071b5a14ca947ae014dc6bda2a45a5e4c1e98a2136cab8fccc24d8e",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_worker_1",
+        "sha256": "a310f4511aaa8e07392ea47d2a1afafadbfb5ed8f521ac4703052535eeac497c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_worker_2",
+        "sha256": "412f2f45c064232082d97ace32a7955ccb90302d43dc9012516e1c6e8cd811ec",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_armorer_0",
+        "sha256": "71ddd2b5bc787d7604e96d2edc8002309f690f2bbe5466ef84300daf42f60b92",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_armorer_1",
+        "sha256": "9c5fd621e21a63abf5d07904650cd439389b4bf563a441e2038529af73fae2a0",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_armorer_2",
+        "sha256": "abcfc89a9cf697f766a9e3e752d6539d3f8bd9f6e70e7ea9cf3ee7fabe80a0d3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_toolsmith_0",
+        "sha256": "8a60f754df36eac873f11711457a756c55d8a8fa7ba509f17085228b65895aac",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_toolsmith_1",
+        "sha256": "aa21b7c98581f480510904f84d4371b5de3249892c83dc0dd58fda194ac66de3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_toolsmith_2",
+        "sha256": "95b5d103f6cc95354c5492f370c79ab6719a5c958c3719ae300406259004b6d6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_weaponsmith_0",
+        "sha256": "499f9789e7e227fa5d252e03b20dc9527e8fdc53c47f4601651af3230b264d34",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_weaponsmith_1",
+        "sha256": "4c498e9b0feea040871a07c9d49df2b21b0e75625a091cad8314115cdf3cbd55",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_weaponsmith_2",
+        "sha256": "87d0ae38430f47808538d85231f13bdeb8a63cbd1a17c7367df0876da3f22055",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_librarian_0",
+        "sha256": "8ad821f0935ce1a797ef2dfff020e58e32f88b7f71c0db033ffb40dd4ef8e80c",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_librarian_1",
+        "sha256": "42565ec85139b1488625f2db2c5342392a4ca0eff57dfc014089f1a13d4620e3",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_librarian_2",
+        "sha256": "858e77a800cd2a6e04524f2ababcf7ce88dc41d0a8a7c0822e843625bc445d44",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cartographer_0",
+        "sha256": "5e9d1f04742a75edafc0c861b7c9012cfcea14e8f26ca5124cad2c4e81f78b23",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cartographer_1",
+        "sha256": "e51455aa4c2315712dd261c13f990a750625ebe3bc25119f8bc0c329ff93338f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cartographer_2",
+        "sha256": "67db29728a9268ac34b4430a73a466a5d8111815c27e12015555b431aea11083",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cleric_0",
+        "sha256": "ba967691d19249e82b3536bf0404ba4104ad335e9f8c34c9a1a286f6d7c8d5e1",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cleric_1",
+        "sha256": "95a999aa6ce382497a1047142af923a75899bab6067e0b827e7a1d77c6ad1e32",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_cleric_2",
+        "sha256": "ad931efbf4ebe4d8027e0a03242442af7d4ced0bdbe8074788faad35ecc43466",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_farmer_0",
+        "sha256": "2846ec4c021b5bcfdd4484ebc02e6849f44e7869c471edde907d3f534f89dd32",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_farmer_1",
+        "sha256": "fe4cc6f92844604637ba68a09f03d1299cdc8991f6401d89572124a6c8f5c993",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_farmer_2",
+        "sha256": "a9e2a4f06482c55e43bbe857e5239eba97e446156c65d41f4c5396ff3b9163c6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fisherman_0",
+        "sha256": "8bcb35dee165bb43d26cf818ff4c624118c6e3eed29de879a0f5c0f5f02e30cc",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fisherman_1",
+        "sha256": "b9cf30dda2928a70cd640e7107c36198612f0f2a6595dbfee3da42d1bdb6a5bc",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fisherman_2",
+        "sha256": "501ecc8d146f4ddd118e52f233d504763fb5198d920733ec54b1df7898339748",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fletcher_0",
+        "sha256": "d96c3ec08bea585f941a42b65865033a9d9d28d2cafe7bd73dacc4e6bad54c8e",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fletcher_1",
+        "sha256": "741e6f19a070fc3816c9be176780d73ca3ba658833799f59e5c6bd5a8bac0856",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_fletcher_2",
+        "sha256": "f7ca7f4a23e100cc05566cd3bd4bf358d60929ca23f733f282422f02eaef3daf",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_leatherworker_0",
+        "sha256": "9b358bb99de019577282a5366c34273eea71cf5287155059c3a39f33437fd521",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_leatherworker_1",
+        "sha256": "89395136740eb46a732fe7dfcf636e15df3bf2d07fed54b2fa4f3d82b282a0e6",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_leatherworker_2",
+        "sha256": "1858e5bb82f3869a4c400fb5dcf6f463806b6f688049007af557620fb59bb145",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_butcher_0",
+        "sha256": "ba33cae56cabdd52dd88ab926c77ac97e5704d27b97cd9ac1d62bb752a916ad7",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_butcher_1",
+        "sha256": "d09aec3fe96ebd596fbd2187a533e164f3a029db503cad9ecaf6c6c309218194",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_butcher_2",
+        "sha256": "996c66f80d5008eeaec79a58c995ea71ba1c49ee5f0a9079f6a1619ce546bfa2",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_mason_0",
+        "sha256": "89ea69a9b92507c9fcd9d0e718920cfd697f565391aa696c91c7b2e0608fd97d",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_mason_1",
+        "sha256": "fbf055ecb9223ceb19ea04cd170fd73de28496bc20b5663a44ce2c7a91653a06",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_mason_2",
+        "sha256": "14d91291eb113c3a5abb2df0a9f1dfc16d15b12a2a0edbe748f0dd7906e9b4f9",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_shepherd_0",
+        "sha256": "f25ae55a6deb7dafc9963f79b7db7c50e751ecbd40ebe774832f923c156b3754",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_shepherd_1",
+        "sha256": "aba0f6c5d6719999fba1d1c99bd69afe878bb73d57b9096390b7db67e66ac17a",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_shepherd_2",
+        "sha256": "d10f8ca745f8d0383d3734aeacd01c63cce46656312f4f0a4f53c0e9fa8e5d8f",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_nitwit_0",
+        "sha256": "0d42e8ba0831c90c039465e489abc5ee4ad77ccdec623c56ad12ec1432975c94",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_nitwit_1",
+        "sha256": "76cdb6ddf92930ff9f2e60a366a0d163e26e3038055428059ffb205854a3140d",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      },
+      {
+        "name": "forest_nitwit_2",
+        "sha256": "a7fed8ad296c7530638cc1f1415a08cdd3dc47021f586e79cf4232a8154f8418",
+        "width": 64,
+        "height": 64,
+        "baseHeadMatchesSoldier": true,
+        "embeddedTextureMatches": true
+      }
+    ]
+  },
+  "unitTests": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "build": {
+    "passed": true,
+    "log": "build/profession-release-build.log"
+  },
+  "clients": {
+    "passed": true,
+    "viewers": 2,
+    "fullServerRestart": false,
+    "textures": 135,
+    "professionChanges": 15,
+    "markers": [
+      "SkinViewerOne-change-0.txt",
+      "SkinViewerOne-change-1.txt",
+      "SkinViewerOne-change-10.txt",
+      "SkinViewerOne-change-11.txt",
+      "SkinViewerOne-change-12.txt",
+      "SkinViewerOne-change-13.txt",
+      "SkinViewerOne-change-14.txt",
+      "SkinViewerOne-change-2.txt",
+      "SkinViewerOne-change-3.txt",
+      "SkinViewerOne-change-4.txt",
+      "SkinViewerOne-change-5.txt",
+      "SkinViewerOne-change-6.txt",
+      "SkinViewerOne-change-7.txt",
+      "SkinViewerOne-change-8.txt",
+      "SkinViewerOne-change-9.txt",
+      "SkinViewerOne-gallery.txt",
+      "SkinViewerTwo-change-0.txt",
+      "SkinViewerTwo-change-1.txt",
+      "SkinViewerTwo-change-10.txt",
+      "SkinViewerTwo-change-11.txt",
+      "SkinViewerTwo-change-12.txt",
+      "SkinViewerTwo-change-13.txt",
+      "SkinViewerTwo-change-14.txt",
+      "SkinViewerTwo-change-2.txt",
+      "SkinViewerTwo-change-3.txt",
+      "SkinViewerTwo-change-4.txt",
+      "SkinViewerTwo-change-5.txt",
+      "SkinViewerTwo-change-6.txt",
+      "SkinViewerTwo-change-7.txt",
+      "SkinViewerTwo-change-8.txt",
+      "SkinViewerTwo-change-9.txt",
+      "SkinViewerTwo-gallery.txt"
+    ],
+    "run": "build/profession-client-check-02",
+    "environment": "Forge development client, production renderer and assets"
+  },
+  "images": [
+    {
+      "path": "docs/development/images/resident-professions-back.png",
+      "sha256": "02d7c4b4c90bb53d4d6993c946883bcdb1749a0aca2383e11ed388b341a63f2e",
+      "nativeMinecraftFramebuffer": true,
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/development/images/resident-professions-forest.png",
+      "sha256": "520e8da11afa2ff660dbfb26bd81cb803376ff97ac083613c2c06fba817abd32",
+      "nativeMinecraftFramebuffer": true,
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/development/images/resident-professions-front.png",
+      "sha256": "bd6aa716b1a8a3ae7a9294cfdea3154ef494d9c812e6b0723b8d833bf577b477",
+      "nativeMinecraftFramebuffer": true,
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/development/images/resident-professions-mountain.png",
+      "sha256": "ea5c4c55bf052d4da51aea716087375dadbea3d4254d667a04266433dbfec7ed",
+      "nativeMinecraftFramebuffer": true,
+      "visuallyInspected": true
+    }
+  ],
+  "release": {
+    "path": "build/libs/villagediplomacy-0.2.1.jar",
+    "bytes": 937818,
+    "sha256": "474ac9e254bca48ed23a25f3198c2c63ac7fbe72abe0e30b8d0b9d8419e28547",
+    "residentTextures": 135,
+    "texturesMatch": true,
+    "testCodeAbsent": true
+  },
+  "limitations": [
+    "Extended trade, breeding and AI gameplay was not repeated for this visual change.",
+    "The packaged JAR was inspected; installation in the user game profile was not performed.",
+    "Profession hats and glasses change the outer head layer; base identity pixels match soldiers."
+  ]
+}

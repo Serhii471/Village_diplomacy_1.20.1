@@ -70,7 +70,7 @@ public final class ResidentCheckClient {
                 var renderer=mc.getEntityRenderDispatcher().getRenderer(villager);
                 if(!(renderer instanceof HumanVillagerRenderer))throw new IllegalStateException("Vanilla villager renderer was not replaced");
                 String[] parts=entry.getValue().split(":");
-                String job=parts[1].equals("0")?"worker":parts[1].equals("1")?"smith":"scholar";
+                String job=parts[1].equals("0")?"worker":parts[1].equals("1")?"armorer":"librarian";
                 String expected="villagediplomacy:textures/entity/resident/"+parts[0]+"_"+job+"_"+parts[2]+".png";
                 String actual=renderer.getTextureLocation(villager).toString();
                 if(!actual.equals(expected))return;

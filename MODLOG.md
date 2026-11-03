@@ -1,5 +1,14 @@
 # Village Diplomacy development log
 
+## 2026-11-03 — individual profession outfits (0.2.1)
+
+- Replace the three shared civilian clothing groups with individual outfits for all 13 vanilla trading professions, plus unemployed residents and nitwits: 135 textures across three regions and three stable identity palettes. Smiths wear contrasting hammer/tool/sword aprons; librarians have book motifs and glasses; the other professions receive distinct caps, cuffs, colors, straps and occupational pixel motifs.
+- Retain standard 64x64 wide-player UVs and the original base head pixels. Hats and glasses occupy only the head's outer layer. Preserve regional shirts, all matching soldier identity textures, vanilla entities, trades, inventories and recruitment behavior. Profession motifs are clothing pixels, not additional held/equipped items.
+- Select the current profession on each texture lookup, supporting immediate server-synchronized job changes. Unknown professions from other mods use the existing regional worker texture. No save schema or network protocol change.
+- Keep reproducible painting in `tools/resident_professions.cjs`, all editable Blockbench projects under `prototypes/resident-skins`, and an independent saved-file validator in `tools/verify_resident_skins.cjs`. Retire only the obsolete generated smith/scholar group files. The earlier ImageGen source and prompt remain intact.
+- Add an opt-in disposable-world profession gallery, excluded from releases, to decode all 135 resources on two real clients and exercise 15 successive server-side profession changes on the same villager. The first run passed, but normal Minecraft toasts obscured two characters in its screenshots; clear those in the test gallery and capture a second run. Current validation and package details belong in `docs/development/resident-professions-verification.json`.
+- Final results: `build/profession-client-check-02` passed on both clients with 32 completion markers, four clean native gallery images visually inspected, and all three owned test processes exiting normally. Regular `test build --offline` passed all 45 unit tests. Release 0.2.1 contains exactly 135 matching civilian textures and no optional test classes/arena; SHA-256 is recorded with package details in the verification JSON. Extended vanilla gameplay and installation in the user's game profile were not repeated.
+
 ## 2026-10-26 — human residents and resident-based recruitment
 
 - User selected human-looking residents and recruitment of actual residents into the army. Keep vanilla `minecraft:villager` entities and their trade/profession/breeding/brain behavior, replacing only their renderer. Use existing three settlement specializations and preserve `test` as read-only.

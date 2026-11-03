@@ -24,9 +24,9 @@ The roster snapshot updates when reopened or when **Оновити / Refresh** i
 
 ## Appearance and vanilla behavior
 
-Ordinary residents remain `minecraft:villager` entities. A wide human PlayerModel replaces their renderer, preserving the original trade, profession, breeding and villager AI implementation. Children use the model's baby rendering. Three regional palettes (plains/mountain/forest), three identity palettes and three clothing groups (worker/smith/scholar) provide 27 civilian textures.
+Ordinary residents remain `minecraft:villager` entities. A wide human PlayerModel replaces their renderer, preserving the original trade, profession, breeding and villager AI implementation. Children use the model's baby rendering. Since 0.2.1, three regional palettes (plains/mountain/forest), three identity palettes and 15 individual outfits provide 135 civilian textures. All 13 vanilla trading professions are distinct; unemployed residents and nitwits have their own outfits. Unknown professions added by other mods fall back to the regional worker outfit. See [profession outfits and verification](resident-professions.md).
 
-Civilian appearance uses the settlement's primary specialization, synchronized explicitly to tracking clients. Outside registered settlements, a vanilla villager type provides a regional fallback. Professions select the clothing group. UUID selects a stable head palette. Recruited guards synchronize their original resident UUID and use matching guard textures; demobilization restores the same UUID and civilian appearance.
+Civilian appearance uses the settlement's primary specialization, synchronized explicitly to tracking clients. Outside registered settlements, a vanilla villager type provides a regional fallback. The current profession selects its own outfit on each render, including after a job change. UUID selects a stable head palette. Recruited guards synchronize their original resident UUID and use matching guard textures; demobilization restores the same UUID and civilian appearance. Professional hats/glasses are drawn on the head's outer layer, keeping the base identity pixels intact.
 
 Art source, editable Blockbench projects and the ImageGen prompt are under `prototypes/resident-skins`. The generated clothing atlas is fitted deterministically to the 64x64 UV grid. The supplied guard head is preserved for palette zero, with matching head palettes generated for civilians and recruited soldiers. See `tools/create_resident_skins.cjs`.
 
@@ -69,4 +69,4 @@ The raw images below were visually inspected. The gallery is a test screen rende
 
 ![Original resident restored and equipment returned](images/garrison-demobilized.png)
 
-Final server/unit/package results are recorded in `residents-garrison-verification.json`. The new release is `build/libs/villagediplomacy-0.2.0.jar`; server and clients must use the same build. Historical guard-only 0.1.0 artifacts remain separate.
+Historical 0.2.0 server/unit/package results are recorded in `residents-garrison-verification.json`. The current profession-outfit release is `build/libs/villagediplomacy-0.2.1.jar`; server and clients must use the same build. Earlier JARs and screenshots remain separate historical artifacts.

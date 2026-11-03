@@ -6,6 +6,7 @@ const path = require('path');
 const {spawn} = require('child_process');
 const root = path.resolve(process.argv[2] || 'build/guard-skin-client-check');
 const language = process.argv[3] === 'uk_ua' ? 'uk_ua' : 'en_us';
+const gallery = process.argv[4] === '--gallery';
 const wait = ms => new Promise(resolve => setTimeout(resolve,ms));
 const children = [];
 function start(spec, name, directory, username) {
@@ -58,7 +59,14 @@ async function until(test, label, timeout=360000) {
     start(client,username,directory,username);
     await wait(3000);
   }
-  await until(()=>first.exitCode!==null,'First server stopped for full world reload');
+  await until(()=>first.exitCode!==null,gallery?'Profession test server stopped':'First server stopped for full world reload');
+  if(gallery){
+    if(!fs.existsSync(path.join(root,'server-passed.txt')))throw Error('Profession gallery checks failed; inspect server-first.log');
+    await until(()=>children.every(p=>p.exitCode!==null),'All gallery processes exited cleanly',30000);
+    fs.writeFileSync(path.join(root,'result.json'),JSON.stringify({passed:true,viewers:2,fullServerRestart:false,
+      textures:135,professionChanges:15,markers:fs.readdirSync(root).filter(n=>/^SkinViewer.*\.txt$/.test(n))},null,2));
+    console.log('RESIDENT_PROFESSION_REAL_CLIENT_CHECK_PASSED');return;
+  }
   if(!fs.existsSync(path.join(root,'reload.marker')))throw Error('Initial network checks failed; inspect server-first.log');
   start(server,'server-reload',server.directory);
   await until(()=>fs.existsSync(path.join(root,'server-passed.txt')),'Both viewers passed after server restart');

@@ -33,8 +33,9 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 | Leadership Seal | Right-click a Bell twice within 10 seconds → confirms leadership; one player can lead only one settlement |
 | Village Guard Spawn Egg | Spawns a guard for testing (Creative only) |
 
-### Residents and garrison (0.2.0)
+### Residents and garrison (0.2.1)
 - **Human residents** — vanilla villagers retain their professions, trading and breeding while using human models, regional clothing and stable identity palettes.
+- **Recognizable professions** — all 13 vanilla trading professions have individual outfits and pixel accessories: smiths wear tool aprons, librarians carry a book motif and glasses, farmers wear straw caps, and other trades have their own colors and emblems. Three regions and three identity palettes provide 135 outfits, including unemployed residents and nitwits. Clothing updates when a villager changes profession.
 - **Resident recruitment** — open the diplomacy table's Garrison, supply a chosen sword, chestplate and six bread, and train an adult unemployed resident for one game day. Queued recruits count toward the 25% military cap; at least four adult civilians must remain.
 - **Reversible service** — the soldier retains the original resident's name and face. Cancel training to refund supplies, or demobilize a recruited soldier to restore the original villager and return current equipment once. Training and origin data survive saving/loading.
 

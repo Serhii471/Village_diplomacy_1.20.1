@@ -1,6 +1,7 @@
 // Convert the generated civilian atlas to exact Minecraft UVs, retain the supplied
 // human head, and derive consistent regional/work clothes and identity palettes.
 const fs=require('fs'),path=require('path');
+const {professions,paintProfession}=require('./resident_professions.cjs');
 let sharp;try{sharp=require('sharp');}catch{sharp=require(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp'));}
 const out='prototypes/resident-skins';
 const resource='src/main/resources/assets/villagediplomacy/textures/entity/resident';
@@ -35,7 +36,7 @@ function project(png,name){return {meta:{format_version:'5.0',model_format:'skin
  head.copy(base,0,0,4096);
  // Keep the source's optional hat region intact. Clothing overlays are clear.
  const records=[];
- for(const [region,palette]of Object.entries(palettes))for(const job of ['worker','smith','scholar'])for(let face=0;face<3;face++){
+ for(const [region,palette]of Object.entries(palettes))for(const job of Object.keys(professions))for(let face=0;face<3;face++){
   const raw=Buffer.from(base);
   for(let y=0;y<64;y++)for(let x=0;x<64;x++){
    const k=(y*64+x)*4;if(!raw[k+3])continue;
@@ -51,16 +52,12 @@ function project(png,name){return {meta:{format_version:'5.0',model_format:'skin
    }
    rgb.forEach((n,i)=>raw[k+i]=n);
   }
-  const put=(x,y,c)=>{const k=(y*64+x)*4;if(raw[k+3])c.forEach((n,i)=>raw[k+i]=cap(n));};
-  if(job==='smith')for(let y=23;y<31;y++)for(let x=21;x<27;x++)put(x,y,[58+(x%2)*6,54+(y%2)*5,48]);
-  if(job==='scholar')for(let y=21;y<30;y++)for(let x=20;x<28;x++){
-   put(x,y,palette.vest.map(n=>n*.75));if(x===23||x===24)put(x,y,[181,153,86]);
-  }
+  paintProfession(raw,job,palette);
   const name=`${region}_${job}_${face}`;
   const png=await sharp(raw,{raw:{width:64,height:64,channels:4}}).png().toBuffer();
   fs.writeFileSync(`${resource}/${name}.png`,png);fs.writeFileSync(`${out}/${name}.png`,png);
   fs.writeFileSync(`${out}/${name}.bbmodel`,JSON.stringify(project(png,name),null,2));
-  records.push({name,width:64,height:64,region,job,face});
+  records.push({name,width:64,height:64,region,job,face,...professions[job]});
  }
  // Recruited soldiers use exactly the same head palette as their civilian UUID.
  for(const type of ['base','plains','mountain','forest'])for(const face of [1,2]){
@@ -72,5 +69,11 @@ function project(png,name){return {meta:{format_version:'5.0',model_format:'skin
   fs.writeFileSync(`${guardResource}/guard_${type}_face_${face}.png`,png);
  }
  fs.writeFileSync(out+'/manifest.json',JSON.stringify({source:'source/civilian-generated.png',method:'Built-in ImageGen edit, nearest-neighbour UV fitting, source-head preservation and deterministic palette/outfit variants',headSource:'../guard-skins/guard_base.png',variants:records},null,2));
+ // Retire only the two previously generated group outfits, never arbitrary
+ // files or manually authored projects in this directory.
+ for(const region of Object.keys(palettes))for(const old of ['smith','scholar'])for(let face=0;face<3;face++){
+  const name=`${region}_${old}_${face}`;
+  for(const target of [`${resource}/${name}.png`,`${out}/${name}.png`,`${out}/${name}.bbmodel`])if(fs.existsSync(target))fs.unlinkSync(target);
+ }
  console.log(`Prepared ${records.length} civilian textures/projects and 8 matching guard identity textures`);
 })();

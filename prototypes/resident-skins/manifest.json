@@ -9,7 +9,9 @@
       "height": 64,
       "region": "plains",
       "job": "worker",
-      "face": 0
+      "face": 0,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "plains_worker_1",
@@ -17,7 +19,9 @@
       "height": 64,
       "region": "plains",
       "job": "worker",
-      "face": 1
+      "face": 1,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "plains_worker_2",
@@ -25,55 +29,1023 @@
       "height": 64,
       "region": "plains",
       "job": "worker",
-      "face": 2
+      "face": 2,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
-      "name": "plains_smith_0",
+      "name": "plains_armorer_0",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "smith",
-      "face": 0
+      "job": "armorer",
+      "face": 0,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "plains_smith_1",
+      "name": "plains_armorer_1",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "smith",
-      "face": 1
+      "job": "armorer",
+      "face": 1,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "plains_smith_2",
+      "name": "plains_armorer_2",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "smith",
-      "face": 2
+      "job": "armorer",
+      "face": 2,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "plains_scholar_0",
+      "name": "plains_toolsmith_0",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "scholar",
-      "face": 0
+      "job": "toolsmith",
+      "face": 0,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "plains_scholar_1",
+      "name": "plains_toolsmith_1",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "scholar",
-      "face": 1
+      "job": "toolsmith",
+      "face": 1,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "plains_scholar_2",
+      "name": "plains_toolsmith_2",
       "width": 64,
       "height": 64,
       "region": "plains",
-      "job": "scholar",
-      "face": 2
+      "job": "toolsmith",
+      "face": 2,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
+    },
+    {
+      "name": "plains_weaponsmith_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "weaponsmith",
+      "face": 0,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "plains_weaponsmith_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "weaponsmith",
+      "face": 1,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "plains_weaponsmith_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "weaponsmith",
+      "face": 2,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "plains_librarian_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "librarian",
+      "face": 0,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "plains_librarian_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "librarian",
+      "face": 1,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "plains_librarian_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "librarian",
+      "face": 2,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "plains_cartographer_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cartographer",
+      "face": 0,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "plains_cartographer_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cartographer",
+      "face": 1,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "plains_cartographer_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cartographer",
+      "face": 2,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "plains_cleric_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cleric",
+      "face": 0,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "plains_cleric_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cleric",
+      "face": 1,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "plains_cleric_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "cleric",
+      "face": 2,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "plains_farmer_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "farmer",
+      "face": 0,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "plains_farmer_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "farmer",
+      "face": 1,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "plains_farmer_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "farmer",
+      "face": 2,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "plains_fisherman_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fisherman",
+      "face": 0,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "plains_fisherman_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fisherman",
+      "face": 1,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "plains_fisherman_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fisherman",
+      "face": 2,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "plains_fletcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fletcher",
+      "face": 0,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "plains_fletcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fletcher",
+      "face": 1,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "plains_fletcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "fletcher",
+      "face": 2,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "plains_leatherworker_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "leatherworker",
+      "face": 0,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "plains_leatherworker_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "leatherworker",
+      "face": 1,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "plains_leatherworker_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "leatherworker",
+      "face": 2,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "plains_butcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "butcher",
+      "face": 0,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "plains_butcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "butcher",
+      "face": 1,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "plains_butcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "butcher",
+      "face": 2,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "plains_mason_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "mason",
+      "face": 0,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "plains_mason_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "mason",
+      "face": 1,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "plains_mason_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "mason",
+      "face": 2,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "plains_shepherd_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "shepherd",
+      "face": 0,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "plains_shepherd_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "shepherd",
+      "face": 1,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "plains_shepherd_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "shepherd",
+      "face": 2,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "plains_nitwit_0",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "nitwit",
+      "face": 0,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "plains_nitwit_1",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "nitwit",
+      "face": 1,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "plains_nitwit_2",
+      "width": 64,
+      "height": 64,
+      "region": "plains",
+      "job": "nitwit",
+      "face": 2,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
     },
     {
       "name": "mountain_worker_0",
@@ -81,7 +1053,9 @@
       "height": 64,
       "region": "mountain",
       "job": "worker",
-      "face": 0
+      "face": 0,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "mountain_worker_1",
@@ -89,7 +1063,9 @@
       "height": 64,
       "region": "mountain",
       "job": "worker",
-      "face": 1
+      "face": 1,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "mountain_worker_2",
@@ -97,55 +1073,1023 @@
       "height": 64,
       "region": "mountain",
       "job": "worker",
-      "face": 2
+      "face": 2,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
-      "name": "mountain_smith_0",
+      "name": "mountain_armorer_0",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "smith",
-      "face": 0
+      "job": "armorer",
+      "face": 0,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "mountain_smith_1",
+      "name": "mountain_armorer_1",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "smith",
-      "face": 1
+      "job": "armorer",
+      "face": 1,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "mountain_smith_2",
+      "name": "mountain_armorer_2",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "smith",
-      "face": 2
+      "job": "armorer",
+      "face": 2,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "mountain_scholar_0",
+      "name": "mountain_toolsmith_0",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "scholar",
-      "face": 0
+      "job": "toolsmith",
+      "face": 0,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "mountain_scholar_1",
+      "name": "mountain_toolsmith_1",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "scholar",
-      "face": 1
+      "job": "toolsmith",
+      "face": 1,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "mountain_scholar_2",
+      "name": "mountain_toolsmith_2",
       "width": 64,
       "height": 64,
       "region": "mountain",
-      "job": "scholar",
-      "face": 2
+      "job": "toolsmith",
+      "face": 2,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
+    },
+    {
+      "name": "mountain_weaponsmith_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "weaponsmith",
+      "face": 0,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "mountain_weaponsmith_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "weaponsmith",
+      "face": 1,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "mountain_weaponsmith_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "weaponsmith",
+      "face": 2,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "mountain_librarian_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "librarian",
+      "face": 0,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "mountain_librarian_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "librarian",
+      "face": 1,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "mountain_librarian_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "librarian",
+      "face": 2,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "mountain_cartographer_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cartographer",
+      "face": 0,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "mountain_cartographer_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cartographer",
+      "face": 1,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "mountain_cartographer_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cartographer",
+      "face": 2,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "mountain_cleric_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cleric",
+      "face": 0,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "mountain_cleric_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cleric",
+      "face": 1,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "mountain_cleric_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "cleric",
+      "face": 2,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "mountain_farmer_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "farmer",
+      "face": 0,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "mountain_farmer_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "farmer",
+      "face": 1,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "mountain_farmer_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "farmer",
+      "face": 2,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "mountain_fisherman_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fisherman",
+      "face": 0,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "mountain_fisherman_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fisherman",
+      "face": 1,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "mountain_fisherman_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fisherman",
+      "face": 2,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "mountain_fletcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fletcher",
+      "face": 0,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "mountain_fletcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fletcher",
+      "face": 1,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "mountain_fletcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "fletcher",
+      "face": 2,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "mountain_leatherworker_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "leatherworker",
+      "face": 0,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "mountain_leatherworker_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "leatherworker",
+      "face": 1,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "mountain_leatherworker_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "leatherworker",
+      "face": 2,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "mountain_butcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "butcher",
+      "face": 0,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "mountain_butcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "butcher",
+      "face": 1,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "mountain_butcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "butcher",
+      "face": 2,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "mountain_mason_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "mason",
+      "face": 0,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "mountain_mason_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "mason",
+      "face": 1,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "mountain_mason_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "mason",
+      "face": 2,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "mountain_shepherd_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "shepherd",
+      "face": 0,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "mountain_shepherd_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "shepherd",
+      "face": 1,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "mountain_shepherd_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "shepherd",
+      "face": 2,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "mountain_nitwit_0",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "nitwit",
+      "face": 0,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "mountain_nitwit_1",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "nitwit",
+      "face": 1,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "mountain_nitwit_2",
+      "width": 64,
+      "height": 64,
+      "region": "mountain",
+      "job": "nitwit",
+      "face": 2,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
     },
     {
       "name": "forest_worker_0",
@@ -153,7 +2097,9 @@
       "height": 64,
       "region": "forest",
       "job": "worker",
-      "face": 0
+      "face": 0,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "forest_worker_1",
@@ -161,7 +2107,9 @@
       "height": 64,
       "region": "forest",
       "job": "worker",
-      "face": 1
+      "face": 1,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
       "name": "forest_worker_2",
@@ -169,55 +2117,1023 @@
       "height": 64,
       "region": "forest",
       "job": "worker",
-      "face": 2
+      "face": 2,
+      "title": "Без професії",
+      "detail": "Регіональна сорочка та жилет"
     },
     {
-      "name": "forest_smith_0",
+      "name": "forest_armorer_0",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "smith",
-      "face": 0
+      "job": "armorer",
+      "face": 0,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "forest_smith_1",
+      "name": "forest_armorer_1",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "smith",
-      "face": 1
+      "job": "armorer",
+      "face": 1,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "forest_smith_2",
+      "name": "forest_armorer_2",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "smith",
-      "face": 2
+      "job": "armorer",
+      "face": 2,
+      "title": "Броняр",
+      "detail": "Графітовий фартух, сталевий молот і наплічники",
+      "cloth": [
+        57,
+        66,
+        75
+      ],
+      "trim": [
+        172,
+        189,
+        199
+      ],
+      "icon": "hammer",
+      "cap": [
+        73,
+        82,
+        91
+      ]
     },
     {
-      "name": "forest_scholar_0",
+      "name": "forest_toolsmith_0",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "scholar",
-      "face": 0
+      "job": "toolsmith",
+      "face": 0,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "forest_scholar_1",
+      "name": "forest_toolsmith_1",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "scholar",
-      "face": 1
+      "job": "toolsmith",
+      "face": 1,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
     },
     {
-      "name": "forest_scholar_2",
+      "name": "forest_toolsmith_2",
       "width": 64,
       "height": 64,
       "region": "forest",
-      "job": "scholar",
-      "face": 2
+      "job": "toolsmith",
+      "face": 2,
+      "title": "Інструментальник",
+      "detail": "Мідно-коричневий фартух, молот, пояс інструментів",
+      "cloth": [
+        117,
+        68,
+        37
+      ],
+      "trim": [
+        226,
+        177,
+        88
+      ],
+      "icon": "hammer"
+    },
+    {
+      "name": "forest_weaponsmith_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "weaponsmith",
+      "face": 0,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "forest_weaponsmith_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "weaponsmith",
+      "face": 1,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "forest_weaponsmith_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "weaponsmith",
+      "face": 2,
+      "title": "Зброяр",
+      "detail": "Темно-червоний фартух, меч, сталеві манжети",
+      "cloth": [
+        92,
+        40,
+        38
+      ],
+      "trim": [
+        183,
+        194,
+        199
+      ],
+      "icon": "sword",
+      "cap": [
+        57,
+        42,
+        39
+      ]
+    },
+    {
+      "name": "forest_librarian_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "librarian",
+      "face": 0,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "forest_librarian_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "librarian",
+      "face": 1,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "forest_librarian_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "librarian",
+      "face": 2,
+      "title": "Бібліотекар",
+      "detail": "Бордовий камзол, розгорнута книга, окуляри",
+      "cloth": [
+        113,
+        38,
+        52
+      ],
+      "trim": [
+        230,
+        197,
+        111
+      ],
+      "icon": "book",
+      "cap": [
+        113,
+        38,
+        52
+      ],
+      "glasses": true
+    },
+    {
+      "name": "forest_cartographer_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cartographer",
+      "face": 0,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "forest_cartographer_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cartographer",
+      "face": 1,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "forest_cartographer_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cartographer",
+      "face": 2,
+      "title": "Картограф",
+      "detail": "Бірюзовий жилет, карта, діагональний ремінь",
+      "cloth": [
+        35,
+        105,
+        112
+      ],
+      "trim": [
+        217,
+        189,
+        132
+      ],
+      "icon": "map",
+      "strap": true,
+      "glasses": true
+    },
+    {
+      "name": "forest_cleric_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cleric",
+      "face": 0,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "forest_cleric_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cleric",
+      "face": 1,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "forest_cleric_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "cleric",
+      "face": 2,
+      "title": "Священник",
+      "detail": "Фіолетовий одяг із золотим оздобленням та аметистом",
+      "cloth": [
+        99,
+        52,
+        139
+      ],
+      "trim": [
+        228,
+        187,
+        81
+      ],
+      "icon": "gem",
+      "cap": [
+        99,
+        52,
+        139
+      ]
+    },
+    {
+      "name": "forest_farmer_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "farmer",
+      "face": 0,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "forest_farmer_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "farmer",
+      "face": 1,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "forest_farmer_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "farmer",
+      "face": 2,
+      "title": "Фермер",
+      "detail": "Солом’яний головний убір, комбінезон, колосся",
+      "cloth": [
+        117,
+        98,
+        46
+      ],
+      "trim": [
+        229,
+        191,
+        75
+      ],
+      "icon": "wheat",
+      "cap": [
+        200,
+        163,
+        67
+      ]
+    },
+    {
+      "name": "forest_fisherman_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fisherman",
+      "face": 0,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "forest_fisherman_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fisherman",
+      "face": 1,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "forest_fisherman_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fisherman",
+      "face": 2,
+      "title": "Рибалка",
+      "detail": "Синій фартух, срібляста риба, в’язана шапка",
+      "cloth": [
+        35,
+        81,
+        119
+      ],
+      "trim": [
+        184,
+        215,
+        219
+      ],
+      "icon": "fish",
+      "cap": [
+        32,
+        65,
+        94
+      ]
+    },
+    {
+      "name": "forest_fletcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fletcher",
+      "face": 0,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "forest_fletcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fletcher",
+      "face": 1,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "forest_fletcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "fletcher",
+      "face": 2,
+      "title": "Лучник",
+      "detail": "Зелений жилет, стріла та ремінь сагайдака",
+      "cloth": [
+        54,
+        99,
+        58
+      ],
+      "trim": [
+        222,
+        202,
+        151
+      ],
+      "icon": "arrow",
+      "strap": true
+    },
+    {
+      "name": "forest_leatherworker_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "leatherworker",
+      "face": 0,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "forest_leatherworker_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "leatherworker",
+      "face": 1,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "forest_leatherworker_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "leatherworker",
+      "face": 2,
+      "title": "Шкіряник",
+      "detail": "Рудий шкіряний фартух, латка й виразні шви",
+      "cloth": [
+        157,
+        83,
+        37
+      ],
+      "trim": [
+        235,
+        195,
+        132
+      ],
+      "icon": "hide"
+    },
+    {
+      "name": "forest_butcher_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "butcher",
+      "face": 0,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "forest_butcher_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "butcher",
+      "face": 1,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "forest_butcher_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "butcher",
+      "face": 2,
+      "title": "М’ясник",
+      "detail": "Білий фартух, червоний пояс, сікач і білий ковпак",
+      "cloth": [
+        219,
+        215,
+        193
+      ],
+      "trim": [
+        148,
+        42,
+        40
+      ],
+      "icon": "cleaver",
+      "cap": [
+        226,
+        222,
+        204
+      ]
+    },
+    {
+      "name": "forest_mason_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "mason",
+      "face": 0,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "forest_mason_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "mason",
+      "face": 1,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "forest_mason_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "mason",
+      "face": 2,
+      "title": "Каменяр",
+      "detail": "Сірий робочий фартух із цегляною кладкою",
+      "cloth": [
+        112,
+        119,
+        119
+      ],
+      "trim": [
+        197,
+        133,
+        91
+      ],
+      "icon": "bricks"
+    },
+    {
+      "name": "forest_shepherd_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "shepherd",
+      "face": 0,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "forest_shepherd_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "shepherd",
+      "face": 1,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "forest_shepherd_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "shepherd",
+      "face": 2,
+      "title": "Пастух",
+      "detail": "Вовняна накидка, овечка та кольоровий пояс",
+      "cloth": [
+        187,
+        171,
+        143
+      ],
+      "trim": [
+        64,
+        119,
+        130
+      ],
+      "icon": "sheep",
+      "cap": [
+        159,
+        143,
+        115
+      ]
+    },
+    {
+      "name": "forest_nitwit_0",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "nitwit",
+      "face": 0,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "forest_nitwit_1",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "nitwit",
+      "face": 1,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
+    },
+    {
+      "name": "forest_nitwit_2",
+      "width": 64,
+      "height": 64,
+      "region": "forest",
+      "job": "nitwit",
+      "face": 2,
+      "title": "Нероба",
+      "detail": "Зелений одяг із контрастними латками",
+      "cloth": [
+        70,
+        119,
+        62
+      ],
+      "trim": [
+        163,
+        127,
+        71
+      ],
+      "icon": "patch"
     }
   ]
 }
