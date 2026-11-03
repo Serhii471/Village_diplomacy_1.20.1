@@ -39,7 +39,7 @@ public final class TradeContractService {
                                                          ContractRules rules) {
         return createTrialOffer(data, sourceSettlementId, destinationSettlementId,
                 TradeContractType.DELIVERY, requiredGoods, Map.of(), rewardEmeralds,
-                currentGameTime, rules);
+                currentGameTime, rules, true);
     }
 
     public static TradeContract createTrialExchangeOffer(SettlementSavedData data,
@@ -63,7 +63,19 @@ public final class TradeContractService {
                                                          ContractRules rules) {
         return createTrialOffer(data, sourceSettlementId, destinationSettlementId,
                 TradeContractType.EXCHANGE, outboundGoods, returnGoods, rewardEmeralds,
-                currentGameTime, rules);
+                currentGameTime, rules, true);
+    }
+
+    static TradeContract createAgreementOffer(SettlementSavedData data, UUID sourceId, UUID targetId,
+                                               Map<ResourceLocation, Integer> outbound,
+                                               Map<ResourceLocation, Integer> returning, int reward,
+                                               long gameTime, ContractRules rules) {
+        if (!TradeAgreementService.isActive(requireSettlement(data, sourceId), requireSettlement(data, targetId))) {
+            throw new IllegalStateException("An active trade agreement is required");
+        }
+        return createTrialOffer(data, sourceId, targetId,
+                returning.isEmpty() ? TradeContractType.DELIVERY : TradeContractType.EXCHANGE,
+                outbound, returning, reward, gameTime, rules, false);
     }
 
     private static TradeContract createTrialOffer(SettlementSavedData data,
@@ -74,7 +86,8 @@ public final class TradeContractService {
                                                   Map<ResourceLocation, Integer> returnGoods,
                                                   int rewardEmeralds,
                                                   long currentGameTime,
-                                                  ContractRules rules) {
+                                                  ContractRules rules,
+                                                  boolean trial) {
         Objects.requireNonNull(data, "data");
         Objects.requireNonNull(rules, "rules");
         Settlement source = requireSettlement(data, sourceSettlementId);
@@ -87,7 +100,7 @@ public final class TradeContractService {
         long deadlineGameTime = addClamped(createdGameTime, rules.trialDurationTicks());
         TradeContract contract = new TradeContract(
                 UUID.randomUUID(), source.getId(), destination.getId(), type,
-                outboundGoods, returnGoods, true, createdGameTime, deadlineGameTime, rewardEmeralds
+                outboundGoods, returnGoods, trial, createdGameTime, deadlineGameTime, rewardEmeralds
         );
         data.registerTradeContract(contract);
         return contract;

@@ -41,7 +41,10 @@ public final class TradeOfferGenerator {
                 .filter(contract -> contract.involves(settlementId))
                 .filter(contract -> !contract.getStatus().isTerminal())
                 .count();
-        int availableSlots = Math.max(0, offerRules.maxOpenOffers() - liveOffers);
+        boolean hasAgreement = home.getRelationships().stream().anyMatch(relation ->
+                relation.getTradeAgreementStatus() == TradeAgreementStatus.ACTIVE);
+        int availableSlots = Math.max(0, offerRules.maxOpenOffers()
+                * (hasAgreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1) - liveOffers);
         if (availableSlots == 0) {
             return List.of();
         }
@@ -57,11 +60,21 @@ public final class TradeOfferGenerator {
                 break;
             }
             Settlement target = data.getSettlement(targetId);
-            if (target == null || hasLiveContractBetween(data, home.getId(), targetId)) {
+            if (target == null) {
                 continue;
             }
-            createOffer(data, home, target, gameTime, offerRules, contractRules)
-                    .ifPresent(generated::add);
+            boolean agreement = TradeAgreementService.isActive(home, target);
+            int pairLimit = agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1;
+            long liveBetween = data.getAllTradeContracts().stream()
+                    .filter(contract -> !contract.getStatus().isTerminal())
+                    .filter(contract -> contract.involves(home.getId()) && contract.involves(targetId)).count();
+            for (long slot = liveBetween; slot < pairLimit && generated.size() < availableSlots; slot++) {
+                Optional<TradeContract> offer = createOffer(data, home, target, gameTime, offerRules, contractRules);
+                if (offer.isEmpty()) {
+                    break;
+                }
+                generated.add(offer.orElseThrow());
+            }
         }
         return List.copyOf(generated);
     }
@@ -72,18 +85,25 @@ public final class TradeOfferGenerator {
                                                        long gameTime,
                                                        OfferRules offerRules,
                                                        TradeContractService.ContractRules contractRules) {
-        Optional<GoodsChoice> outbound = bestSurplus(home, target, null, offerRules.maxItemAmount());
+        boolean agreement = TradeAgreementService.isActive(home, target);
+        int maximum = offerRules.maxItemAmount() * (agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1);
+        Optional<GoodsChoice> outbound = bestSurplus(home, target, null, maximum);
         Optional<GoodsChoice> returning = bestSurplus(
                 target,
                 home,
                 outbound.map(GoodsChoice::itemId).orElse(null),
-                offerRules.maxItemAmount()
+                maximum
         );
 
         if (outbound.isPresent() && returning.isPresent()) {
             GoodsChoice sent = outbound.orElseThrow();
             GoodsChoice returned = returning.orElseThrow();
             int reward = reward(home, target, sent.amount() + returned.amount(), offerRules);
+            if (agreement) {
+                return Optional.of(TradeContractService.createAgreementOffer(data, home.getId(), target.getId(),
+                        Map.of(sent.itemId(), sent.amount()), Map.of(returned.itemId(), returned.amount()),
+                        reward, gameTime, contractRules));
+            }
             return Optional.of(TradeContractService.createTrialExchangeOffer(
                     data,
                     home.getId(),
@@ -98,16 +118,26 @@ public final class TradeOfferGenerator {
 
         if (outbound.isPresent()) {
             GoodsChoice sent = outbound.orElseThrow();
+            if (agreement) {
+                return Optional.of(TradeContractService.createAgreementOffer(data, home.getId(), target.getId(),
+                        Map.of(sent.itemId(), sent.amount()), Map.of(),
+                        reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+            }
             return Optional.of(TradeContractService.createTrialDeliveryOffer(
                     data, home.getId(), target.getId(), Map.of(sent.itemId(), sent.amount()),
                     reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
         }
 
-        Optional<GoodsChoice> reverse = bestSurplus(target, home, null, offerRules.maxItemAmount());
+        Optional<GoodsChoice> reverse = bestSurplus(target, home, null, maximum);
         if (reverse.isEmpty()) {
             return Optional.empty();
         }
         GoodsChoice sent = reverse.orElseThrow();
+        if (agreement) {
+            return Optional.of(TradeContractService.createAgreementOffer(data, target.getId(), home.getId(),
+                    Map.of(sent.itemId(), sent.amount()), Map.of(),
+                    reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+        }
         return Optional.of(TradeContractService.createTrialDeliveryOffer(
                 data, target.getId(), home.getId(), Map.of(sent.itemId(), sent.amount()),
                 reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
@@ -120,7 +150,7 @@ public final class TradeOfferGenerator {
         return source.getWarehouse().getContents().entrySet().stream()
                 .filter(entry -> entry.getValue().available() > 0)
                 .filter(entry -> !entry.getKey().equals(excludedItem))
-                .filter(entry -> receiver.getWarehouse().getStock(entry.getKey()).available() == 0)
+                .filter(entry -> entry.getValue().available() > receiver.getWarehouse().getStock(entry.getKey()).available())
                 .sorted(Comparator
                         .<Map.Entry<ResourceLocation, VirtualWarehouse.StockView>>comparingInt(
                                 entry -> entry.getValue().available())
@@ -133,12 +163,6 @@ public final class TradeOfferGenerator {
                 ));
     }
 
-    private static boolean hasLiveContractBetween(SettlementSavedData data, UUID firstId, UUID secondId) {
-        return data.getAllTradeContracts().stream()
-                .filter(contract -> !contract.getStatus().isTerminal())
-                .anyMatch(contract -> contract.involves(firstId) && contract.involves(secondId));
-    }
-
     private static int reward(Settlement first,
                               Settlement second,
                               int totalItems,
@@ -147,7 +171,9 @@ public final class TradeOfferGenerator {
         long calculated = (long) rules.baseRewardEmeralds()
                 + (distance + 255L) / 256L
                 + Math.max(0, totalItems - 1) / 16L;
-        return (int) Math.min(rules.maxRewardEmeralds(), calculated);
+        int bonus = TradeAgreementService.isActive(first, second)
+                ? DiplomacyBalance.AGREEMENT_REWARD_BONUS_EMERALDS : 0;
+        return (int) Math.min((long) rules.maxRewardEmeralds() + bonus, calculated + bonus);
     }
 
     private record GoodsChoice(ResourceLocation itemId, int amount) {

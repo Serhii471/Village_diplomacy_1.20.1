@@ -7,6 +7,7 @@ import com.diplomacy.villagediplomacy.diplomacy.DiplomacyTableAccess;
 import com.diplomacy.villagediplomacy.diplomacy.DiplomacyTableContractService;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
 import com.diplomacy.villagediplomacy.diplomacy.Settlement;
+import com.diplomacy.villagediplomacy.diplomacy.TradeAgreementService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,7 @@ import java.util.Objects;
 
 public final class DiplomacyTableMenu extends AbstractContainerMenu {
     private static final int ACCEPT_CONTRACT_BUTTON_BASE = 1_000;
+    private static final int AGREEMENT_BUTTON_BASE = 2_000;
     private final BlockPos tablePos;
     private final DiplomacyTableSnapshot snapshot;
 
@@ -55,8 +57,12 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int buttonId) {
         if (!(player instanceof ServerPlayer serverPlayer)
+                || serverPlayer.containerMenu != this || !stillValid(player)
                 || buttonId < ACCEPT_CONTRACT_BUTTON_BASE) {
             return false;
+        }
+        if (buttonId >= AGREEMENT_BUTTON_BASE) {
+            return handleAgreement(serverPlayer, buttonId);
         }
         int contractIndex = buttonId - ACCEPT_CONTRACT_BUTTON_BASE;
         if (contractIndex < 0 || contractIndex >= snapshot.contracts().size()) {
@@ -82,6 +88,30 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
         };
         serverPlayer.displayClientMessage(Component.translatable(messageKey), true);
         DiplomacyTableBlock.openFor(serverPlayer, tablePos);
+        return true;
+    }
+
+    public int buttonIdForAgreement(int relationIndex, TradeAgreementService.Action action) {
+        return AGREEMENT_BUTTON_BASE + relationIndex * TradeAgreementService.Action.values().length + action.ordinal();
+    }
+
+    private boolean handleAgreement(ServerPlayer player, int buttonId) {
+        int encoded = buttonId - AGREEMENT_BUTTON_BASE;
+        TradeAgreementService.Action[] actions = TradeAgreementService.Action.values();
+        int index = encoded / actions.length;
+        if (index < 0 || index >= snapshot.relations().size()) {
+            return false;
+        }
+        SettlementSavedData data = SettlementSavedData.get(player.serverLevel());
+        DiplomacyTableAccess.Result access = DiplomacyTableAccess.evaluate(data, tablePos);
+        if (!access.allowed()) {
+            return false;
+        }
+        TradeAgreementService.Result result = TradeAgreementService.act(data, access.settlement().getId(),
+                snapshot.relations().get(index).settlementId(), player.getUUID(), actions[encoded % actions.length]);
+        player.displayClientMessage(Component.translatable(
+                "message.villagediplomacy.agreement." + result.name().toLowerCase(java.util.Locale.ROOT)), false);
+        DiplomacyTableBlock.openFor(player, tablePos);
         return true;
     }
 

@@ -12,6 +12,7 @@ import com.diplomacy.villagediplomacy.entity.VillageGuardEntity;
 import com.diplomacy.villagediplomacy.gameplay.VillageBellInteractionHandler;
 import com.diplomacy.villagediplomacy.gameplay.SettlementProductionTicker;
 import com.diplomacy.villagediplomacy.gameplay.TradeContractTicker;
+import com.diplomacy.villagediplomacy.network.DiplomacyNetwork;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -57,6 +58,7 @@ public class VillageDiplomacyMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(DiplomacyNetwork::register);
         LOGGER.info("Village Diplomacy: common setup initialized");
     }
 

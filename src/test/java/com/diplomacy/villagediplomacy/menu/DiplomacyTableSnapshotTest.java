@@ -55,6 +55,7 @@ class DiplomacyTableSnapshotTest {
         assertFalse(snapshot.production().isEmpty());
         assertEquals(1, snapshot.warehouse().size());
         assertEquals(1, snapshot.relations().size());
+        assertEquals(neighbor.getId(), snapshot.relations().get(0).settlementId());
         assertEquals(190L, snapshot.relations().get(0).distanceBlocks());
         assertEquals(1, snapshot.contracts().size());
         assertEquals(contract.getId(), snapshot.contracts().get(0).contractId());

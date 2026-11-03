@@ -25,6 +25,7 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 - **Virtual production** — day-based resources accrue into a capped five-day trade warehouse, including catch-up while settlement chunks are unloaded
 - **Trial delivery contracts** — persisted offers reserve warehouse stock, track partial handover, expire safely, and prevent duplicate rewards
 - **Physical contract handover** — an assigned carrier uses an empty hand on each settlement's central Bell to open a server-authoritative representative screen, receive or partially deliver ordinary Minecraft item stacks, complete exchanges, and redeem one-time rewards
+- **Trade agreements** — leaders propose, accept, decline, withdraw, or confirm termination in the Relations tab; settlements without a player leader evaluate mutual surplus, relations, distance, and delivery history. Active agreements double offer limits and shipment caps and add two emeralds to rewards; existing contracts survive termination.
 
 ### Items
 | Item | Action |

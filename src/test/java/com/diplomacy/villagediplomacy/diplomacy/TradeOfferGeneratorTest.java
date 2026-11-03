@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TradeOfferGeneratorTest {
     private static final ResourceLocation WHEAT = id("minecraft:wheat");
@@ -52,6 +53,34 @@ class TradeOfferGeneratorTest {
         assertEquals(TradeContractType.DELIVERY, offer.getType());
         assertEquals(6, offer.getRequiredGoods().get(WHEAT));
         assertTrue(offer.getReturnGoods().isEmpty());
+    }
+
+    @Test
+    void activeAgreementCreatesLargerBetterPaidRegularOffersWithoutExceedingPairLimit() {
+        Fixture trial = fixture();
+        stock(trial.home(), WHEAT, 200, 100);
+        stock(trial.target(), COAL, 200, 100);
+        TradeContract baseline = TradeOfferGenerator.ensureOffers(trial.data(), trial.home().getId(),
+                0L, OFFER_RULES, CONTRACT_RULES).get(0);
+
+        Fixture regular = fixture();
+        stock(regular.home(), WHEAT, 200, 100);
+        stock(regular.target(), COAL, 200, 100);
+        regular.data().setTradeAgreementStatusBetween(regular.home().getId(), regular.target().getId(), TradeAgreementStatus.ACTIVE);
+        List<TradeContract> offers = TradeOfferGenerator.ensureOffers(regular.data(), regular.home().getId(),
+                0L, OFFER_RULES, CONTRACT_RULES);
+        assertEquals(2, offers.size());
+        for (TradeContract offer : offers) {
+            assertFalse(offer.isTrial());
+            assertEquals(32, offer.getRequiredGoods().get(WHEAT));
+            assertEquals(32, offer.getReturnGoods().get(COAL));
+            assertTrue(offer.getRewardEmeralds() >= baseline.getRewardEmeralds() + 2);
+        }
+        assertTrue(TradeOfferGenerator.ensureOffers(regular.data(), regular.home().getId(),
+                1L, OFFER_RULES, CONTRACT_RULES).isEmpty());
+        regular.data().setTradeAgreementStatusBetween(regular.home().getId(), regular.target().getId(), TradeAgreementStatus.NONE);
+        assertTrue(TradeOfferGenerator.ensureOffers(regular.data(), regular.home().getId(),
+                2L, OFFER_RULES, CONTRACT_RULES).isEmpty());
     }
 
     @Test

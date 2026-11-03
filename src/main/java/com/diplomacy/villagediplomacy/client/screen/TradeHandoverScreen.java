@@ -1,5 +1,7 @@
 package com.diplomacy.villagediplomacy.client.screen;
 
+import com.diplomacy.villagediplomacy.network.DiplomacyNetwork;
+
 import com.diplomacy.villagediplomacy.menu.TradeHandoverMenu;
 import com.diplomacy.villagediplomacy.menu.TradeHandoverSnapshot;
 import net.minecraft.client.Minecraft;
@@ -141,7 +143,7 @@ public final class TradeHandoverScreen extends AbstractContainerScreen<TradeHand
         int buttonId = menu.buttonIdForContract(selectedContract().contractId());
         if (buttonId >= 0) {
             actionButton.active = false;
-            Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, buttonId);
+            DiplomacyNetwork.sendMenuAction(menu.containerId, buttonId);
         }
     }
 

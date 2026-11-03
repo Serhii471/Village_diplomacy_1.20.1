@@ -102,6 +102,7 @@ public record DiplomacyTableSnapshot(
                             ? ""
                             : leaderNameResolver.apply(target.getLeaderUuid());
                     return new RelationEntry(
+                            relationship.getTargetSettlementId(),
                             targetName,
                             target == null ? 0L : roundedDistance(settlement.getCenter(), target.getCenter()),
                             target == null ? "unassigned" : target.getPrimarySpecialization().getSerializedName(),
@@ -234,7 +235,8 @@ public record DiplomacyTableSnapshot(
         }
     }
 
-    public record RelationEntry(String settlementName,
+    public record RelationEntry(UUID settlementId,
+                                String settlementName,
                                 long distanceBlocks,
                                 String specialization,
                                 String leaderName,
@@ -245,6 +247,7 @@ public record DiplomacyTableSnapshot(
                                 int successfulDeliveries,
                                 int failedContracts) {
         void write(FriendlyByteBuf buffer) {
+            buffer.writeUUID(settlementId);
             buffer.writeUtf(settlementName);
             buffer.writeLong(distanceBlocks);
             buffer.writeUtf(specialization);
@@ -258,7 +261,7 @@ public record DiplomacyTableSnapshot(
         }
 
         static RelationEntry read(FriendlyByteBuf buffer) {
-            return new RelationEntry(buffer.readUtf(), buffer.readLong(), buffer.readUtf(), buffer.readUtf(),
+            return new RelationEntry(buffer.readUUID(), buffer.readUtf(), buffer.readLong(), buffer.readUtf(), buffer.readUtf(),
                     buffer.readInt(), buffer.readUtf(), buffer.readUtf(), buffer.readUtf(),
                     buffer.readVarInt(), buffer.readVarInt());
         }
