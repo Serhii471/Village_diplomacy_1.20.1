@@ -24,6 +24,7 @@ import java.util.Objects;
 public final class DiplomacyTableMenu extends AbstractContainerMenu {
     private static final int ACCEPT_CONTRACT_BUTTON_BASE = 1_000;
     private static final int AGREEMENT_BUTTON_BASE = 2_000;
+    private static final int ALLIANCE_BUTTON_BASE = 4_000;
     private final BlockPos tablePos;
     private final DiplomacyTableSnapshot snapshot;
 
@@ -95,8 +96,13 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
         return AGREEMENT_BUTTON_BASE + relationIndex * TradeAgreementService.Action.values().length + action.ordinal();
     }
 
+    public int buttonIdForAlliance(int relationIndex, TradeAgreementService.Action action) {
+        return ALLIANCE_BUTTON_BASE + relationIndex * TradeAgreementService.Action.values().length + action.ordinal();
+    }
+
     private boolean handleAgreement(ServerPlayer player, int buttonId) {
-        int encoded = buttonId - AGREEMENT_BUTTON_BASE;
+        boolean alliance = buttonId >= ALLIANCE_BUTTON_BASE;
+        int encoded = buttonId - (alliance ? ALLIANCE_BUTTON_BASE : AGREEMENT_BUTTON_BASE);
         TradeAgreementService.Action[] actions = TradeAgreementService.Action.values();
         int index = encoded / actions.length;
         if (index < 0 || index >= snapshot.relations().size()) {
@@ -107,10 +113,15 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
         if (!access.allowed()) {
             return false;
         }
-        TradeAgreementService.Result result = TradeAgreementService.act(data, access.settlement().getId(),
-                snapshot.relations().get(index).settlementId(), player.getUUID(), actions[encoded % actions.length]);
+        var homeId = access.settlement().getId();
+        var targetId = snapshot.relations().get(index).settlementId();
+        TradeAgreementService.Action action = actions[encoded % actions.length];
+        TradeAgreementService.Result result = alliance
+                ? TradeAgreementService.actAlliance(data, homeId, targetId, player.getUUID(), action, player.serverLevel().getGameTime())
+                : TradeAgreementService.act(data, homeId, targetId, player.getUUID(), action);
         player.displayClientMessage(Component.translatable(
-                "message.villagediplomacy.agreement." + result.name().toLowerCase(java.util.Locale.ROOT)), false);
+                "message.villagediplomacy." + (alliance ? "alliance." : "agreement.")
+                        + result.name().toLowerCase(java.util.Locale.ROOT)), false);
         DiplomacyTableBlock.openFor(player, tablePos);
         return true;
     }

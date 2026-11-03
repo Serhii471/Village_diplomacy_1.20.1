@@ -33,10 +33,13 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     private Button nextOfferButton;
     private int selectedRelationIndex;
     private boolean confirmTermination;
+    private boolean confirmAllianceTermination;
     private Button previousRelationButton;
     private Button agreementButton;
     private Button declineAgreementButton;
     private Button nextRelationButton;
+    private Button allianceButton;
+    private Button declineAllianceButton;
 
     public DiplomacyTableScreen(DiplomacyTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -79,6 +82,11 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
                 ignored -> actOnAgreement(true)).bounds(leftPos + 176, topPos + 207, 88, 20).build());
         nextRelationButton = addRenderableWidget(Button.builder(Component.literal(">"),
                 ignored -> changeRelation(1)).bounds(leftPos + 268, topPos + 207, 24, 20).build());
+        allianceButton = addRenderableWidget(Button.builder(Component.empty(),
+                ignored -> actOnAlliance(false)).bounds(leftPos + 32, topPos + 183, 140, 20).build());
+        declineAllianceButton = addRenderableWidget(Button.builder(
+                Component.translatable("screen.villagediplomacy.agreement.decline"),
+                ignored -> actOnAlliance(true)).bounds(leftPos + 176, topPos + 183, 88, 20).build());
         updateOfferControls();
     }
 
@@ -119,7 +127,8 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     }
 
     private void renderLines(GuiGraphics guiGraphics, List<Component> lines) {
-        int rows = lines.size() > MAX_LINES ? MAX_LINES - 1 : MAX_LINES;
+        int limit = selectedTab == Tab.RELATIONS ? 9 : MAX_LINES;
+        int rows = lines.size() > limit ? limit - 1 : limit;
         int maximumOffset = Math.max(0, lines.size() - rows);
         scrollOffset = Math.min(scrollOffset, maximumOffset);
         int shown = Math.min(rows, lines.size() - scrollOffset);
@@ -129,7 +138,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
             guiGraphics.drawString(font, clipped, 14, 60 + index * 13,
                     index + scrollOffset == 0 ? TEXT_COLOR : MUTED_COLOR, false);
         }
-        if (lines.size() > MAX_LINES) {
+        if (lines.size() > limit) {
             Component position = Component.translatable(
                     "screen.villagediplomacy.table.scroll",
                     scrollOffset + 1,
@@ -143,7 +152,8 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         List<Component> lines = currentLines(menu.getSnapshot());
-        int rows = lines.size() > MAX_LINES ? MAX_LINES - 1 : MAX_LINES;
+        int limit = selectedTab == Tab.RELATIONS ? 9 : MAX_LINES;
+        int rows = lines.size() > limit ? limit - 1 : limit;
         int maximumOffset = Math.max(0, lines.size() - rows);
         if (maximumOffset == 0) {
             return super.mouseScrolled(mouseX, mouseY, delta);
@@ -157,6 +167,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         selectedTab = tab;
         scrollOffset = 0;
         confirmTermination = false;
+        confirmAllianceTermination = false;
         updateOfferControls();
     }
 
@@ -198,12 +209,21 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         int count = menu.getSnapshot().relations().size();
         selectedRelationIndex = count == 0 ? 0 : Math.floorMod(selectedRelationIndex + delta, count);
         confirmTermination = false;
+        confirmAllianceTermination = false;
         scrollOffset = 0;
         updateAgreementControls();
     }
 
     private TradeAgreementService.Action agreementAction() {
-        return switch (menu.getSnapshot().relations().get(selectedRelationIndex).tradeAgreement()) {
+        return actionForStatus(menu.getSnapshot().relations().get(selectedRelationIndex).tradeAgreement());
+    }
+
+    private TradeAgreementService.Action allianceAction() {
+        return actionForStatus(menu.getSnapshot().relations().get(selectedRelationIndex).alliance());
+    }
+
+    private static TradeAgreementService.Action actionForStatus(String status) {
+        return switch (status) {
             case "proposed_by_other" -> TradeAgreementService.Action.ACCEPT;
             case "proposed_by_us" -> TradeAgreementService.Action.CANCEL;
             case "active" -> TradeAgreementService.Action.TERMINATE;
@@ -224,26 +244,46 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         agreementButton.active = visible && menu.getSnapshot().canManage();
         declineAgreementButton.visible = visible && agreementAction() == TradeAgreementService.Action.ACCEPT;
         declineAgreementButton.active = menu.getSnapshot().canManage();
+        allianceButton.visible = visible;
+        allianceButton.active = visible && menu.getSnapshot().canManage();
+        declineAllianceButton.visible = visible && allianceAction() == TradeAgreementService.Action.ACCEPT;
+        declineAllianceButton.active = menu.getSnapshot().canManage();
         if (visible) {
             agreementButton.setMessage(Component.translatable("screen.villagediplomacy.agreement."
                     + (confirmTermination ? "confirm_terminate" : agreementAction().name().toLowerCase(Locale.ROOT))));
+            allianceButton.setMessage(Component.translatable("screen.villagediplomacy.alliance."
+                    + (confirmAllianceTermination ? "confirm_terminate" : allianceAction().name().toLowerCase(Locale.ROOT))));
         }
     }
 
     private void actOnAgreement(boolean decline) {
+        actOnRelation(decline, false);
+    }
+
+    private void actOnAlliance(boolean decline) {
+        actOnRelation(decline, true);
+    }
+
+    private void actOnRelation(boolean decline, boolean alliance) {
         if (menu.getSnapshot().relations().isEmpty() || Minecraft.getInstance().gameMode == null) {
             return;
         }
-        TradeAgreementService.Action action = decline ? TradeAgreementService.Action.DECLINE : agreementAction();
-        if (action == TradeAgreementService.Action.TERMINATE && !confirmTermination) {
-            confirmTermination = true;
+        TradeAgreementService.Action action = decline ? TradeAgreementService.Action.DECLINE
+                : alliance ? allianceAction() : agreementAction();
+        if (action == TradeAgreementService.Action.TERMINATE
+                && !(alliance ? confirmAllianceTermination : confirmTermination)) {
+            confirmTermination = !alliance;
+            confirmAllianceTermination = alliance;
             updateAgreementControls();
             return;
         }
         agreementButton.active = false;
         declineAgreementButton.active = false;
+        allianceButton.active = false;
+        declineAllianceButton.active = false;
         DiplomacyNetwork.sendMenuAction(menu.containerId,
-                menu.buttonIdForAgreement(selectedRelationIndex, action));
+                alliance ? menu.buttonIdForAlliance(selectedRelationIndex, action)
+                        : menu.buttonIdForAgreement(selectedRelationIndex, action));
     }
 
     private void acceptSelectedOffer() {
@@ -316,6 +356,13 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
             lines.add(Component.translatable("screen.villagediplomacy.table.relation.details",
                     status("trade", entry.tradeAgreement()), status("alliance", entry.alliance()),
                     entry.successfulDeliveries(), entry.failedContracts()));
+            if ("active".equals(entry.alliance())) {
+                lines.add(Component.translatable("screen.villagediplomacy.alliance.benefits"));
+                lines.add(Component.translatable("screen.villagediplomacy.table.production"));
+                entry.production().forEach(production -> lines.add(Component.translatable(
+                        "screen.villagediplomacy.table.production.entry", itemName(production.itemId()),
+                        decimal(production.grossPerDay()), decimal(production.tradePerDay()))));
+            }
         }
         return lines;
     }

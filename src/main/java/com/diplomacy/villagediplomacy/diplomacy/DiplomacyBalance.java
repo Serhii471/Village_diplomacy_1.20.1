@@ -42,6 +42,8 @@ public final class DiplomacyBalance {
     public static final int TRIAL_OFFER_MAX_REWARD_EMERALDS = 12;
     public static final int AGREEMENT_OFFER_MULTIPLIER = 2;
     public static final int AGREEMENT_REWARD_BONUS_EMERALDS = 2;
+    public static final int ALLIANCE_OFFER_MULTIPLIER = 3;
+    public static final int ALLIANCE_REWARD_BONUS_EMERALDS = 2;
 
     private DiplomacyBalance() {
     }

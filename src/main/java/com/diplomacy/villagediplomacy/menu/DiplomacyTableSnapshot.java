@@ -5,6 +5,7 @@ import com.diplomacy.villagediplomacy.diplomacy.SettlementRelationship;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementSavedData;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementProductionService;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
+import com.diplomacy.villagediplomacy.diplomacy.TradeAgreementService;
 import com.diplomacy.villagediplomacy.diplomacy.VirtualWarehouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -81,20 +82,11 @@ public record DiplomacyTableSnapshot(
                 .map(entry -> WarehouseEntry.from(entry.getKey(), entry.getValue()))
                 .toList();
 
-        Map<ResourceLocation, Double> tradeProduction =
-                SettlementProductionService.calculateDailyTradeProduction(settlement, productionSettings);
-        List<ProductionEntry> production = SettlementProductionService
-                .calculateDailyGrossProduction(settlement, productionSettings)
-                .entrySet().stream()
-                .map(entry -> new ProductionEntry(
-                        entry.getKey().toString(),
-                        entry.getValue(),
-                        tradeProduction.getOrDefault(entry.getKey(), 0.0D)
-                ))
-                .toList();
+        List<ProductionEntry> production = productionEntries(settlement, productionSettings);
 
         List<RelationEntry> relations = settlement.getRelationships().stream()
-                .filter(SettlementRelationship::isKnown)
+                .filter(relationship -> relationship.isKnown()
+                        || TradeAgreementService.isAllied(settlement, data.getSettlement(relationship.getTargetSettlementId())))
                 .map(relationship -> {
                     Settlement target = data.getSettlement(relationship.getTargetSettlementId());
                     String targetName = target == null ? shortUuid(relationship.getTargetSettlementId()) : target.getName();
@@ -112,10 +104,14 @@ public record DiplomacyTableSnapshot(
                             relationship.getTradeAgreementStatus().getSerializedName(),
                             relationship.getAllianceStatus().getSerializedName(),
                             relationship.getSuccessfulDeliveries(),
-                            relationship.getFailedContracts()
+                            relationship.getFailedContracts(),
+                            TradeAgreementService.isAllied(settlement, target)
+                                    ? productionEntries(target, productionSettings) : List.of()
                     );
                 })
-                .sorted(Comparator.comparing(RelationEntry::settlementName, String.CASE_INSENSITIVE_ORDER))
+                .sorted(Comparator.comparing((RelationEntry entry) -> !"active".equals(entry.alliance()))
+                        .thenComparing(RelationEntry::settlementName, String.CASE_INSENSITIVE_ORDER))
+                .limit(MAX_NETWORK_ENTRIES)
                 .toList();
 
         List<ContractEntry> contracts = data.getAllTradeContracts().stream()
@@ -161,6 +157,14 @@ public record DiplomacyTableSnapshot(
         relations.forEach(entry -> entry.write(buffer));
         buffer.writeVarInt(contracts.size());
         contracts.forEach(entry -> entry.write(buffer));
+    }
+
+    private static List<ProductionEntry> productionEntries(Settlement settlement,
+                SettlementProductionService.ProductionSettings settings) {
+        Map<ResourceLocation, Double> trade = SettlementProductionService.calculateDailyTradeProduction(settlement, settings);
+        return SettlementProductionService.calculateDailyGrossProduction(settlement, settings).entrySet().stream()
+                .map(entry -> new ProductionEntry(entry.getKey().toString(), entry.getValue(),
+                        trade.getOrDefault(entry.getKey(), 0.0D))).toList();
     }
 
     public static DiplomacyTableSnapshot read(FriendlyByteBuf buffer) {
@@ -245,7 +249,12 @@ public record DiplomacyTableSnapshot(
                                 String tradeAgreement,
                                 String alliance,
                                 int successfulDeliveries,
-                                int failedContracts) {
+                                int failedContracts,
+                                List<ProductionEntry> production) {
+        public RelationEntry {
+            production = List.copyOf(production);
+        }
+
         void write(FriendlyByteBuf buffer) {
             buffer.writeUUID(settlementId);
             buffer.writeUtf(settlementName);
@@ -258,12 +267,14 @@ public record DiplomacyTableSnapshot(
             buffer.writeUtf(alliance);
             buffer.writeVarInt(successfulDeliveries);
             buffer.writeVarInt(failedContracts);
+            buffer.writeVarInt(production.size());
+            production.forEach(entry -> entry.write(buffer));
         }
 
         static RelationEntry read(FriendlyByteBuf buffer) {
             return new RelationEntry(buffer.readUUID(), buffer.readUtf(), buffer.readLong(), buffer.readUtf(), buffer.readUtf(),
                     buffer.readInt(), buffer.readUtf(), buffer.readUtf(), buffer.readUtf(),
-                    buffer.readVarInt(), buffer.readVarInt());
+                    buffer.readVarInt(), buffer.readVarInt(), readEntries(buffer, ProductionEntry::read));
         }
     }
 

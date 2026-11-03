@@ -26,6 +26,7 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 - **Trial delivery contracts** — persisted offers reserve warehouse stock, track partial handover, expire safely, and prevent duplicate rewards
 - **Physical contract handover** — an assigned carrier uses an empty hand on each settlement's central Bell to open a server-authoritative representative screen, receive or partially deliver ordinary Minecraft item stacks, complete exchanges, and redeem one-time rewards
 - **Trade agreements** — leaders propose, accept, decline, withdraw, or confirm termination in the Relations tab; settlements without a player leader evaluate mutual surplus, relations, distance, and delivery history. Active agreements double offer limits and shipment caps and add two emeralds to rewards; existing contracts survive termination.
+- **Diplomatic alliances** — require an active trade agreement, mutual friendly relations, three deliveries, and no overdue active contracts or failures since the last successful delivery. Leaders confirm proposals; leaderless settlements accept eligible alliances automatically. Allies share production information, remain listed, unlock triple base offer/shipment caps and two extra emeralds beyond trade-agreement rewards. Ending an alliance preserves trade; ending trade clears the alliance. Route/signpost presentation belongs to the route implementation step; passive reputation decay is not currently implemented.
 
 ### Items
 | Item | Action |

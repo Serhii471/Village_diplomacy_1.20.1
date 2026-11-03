@@ -8,6 +8,16 @@ public final class TradeAgreementService {
 
     public static Result act(SettlementSavedData data, UUID homeId, UUID targetId,
                              UUID playerId, Action action) {
+        return act(data, homeId, targetId, playerId, action, false, 0L);
+    }
+
+    public static Result actAlliance(SettlementSavedData data, UUID homeId, UUID targetId,
+                                     UUID playerId, Action action, long gameTime) {
+        return act(data, homeId, targetId, playerId, action, true, gameTime);
+    }
+
+    private static Result act(SettlementSavedData data, UUID homeId, UUID targetId,
+                              UUID playerId, Action action, boolean alliance, long gameTime) {
         Settlement home = data.getSettlement(homeId);
         Settlement target = data.getSettlement(targetId);
         if (home == null || target == null || homeId.equals(targetId)) {
@@ -18,8 +28,8 @@ public final class TradeAgreementService {
         }
         SettlementRelationship relation = home.getOrCreateRelationship(targetId);
         SettlementRelationship reverse = target.getOrCreateRelationship(homeId);
-        TradeAgreementStatus status = relation.getTradeAgreementStatus();
-        if (reverse.getTradeAgreementStatus() != status.oppositePerspective()) {
+        TradeAgreementStatus status = status(relation, alliance);
+        if (status(reverse, alliance) != status.oppositePerspective()) {
             return Result.UNAVAILABLE;
         }
         switch (action) {
@@ -28,17 +38,17 @@ public final class TradeAgreementService {
                         || action == Action.ACCEPT && status != TradeAgreementStatus.PROPOSED_BY_OTHER) {
                     return Result.UNAVAILABLE;
                 }
-                Result eligibility = eligibility(home, target);
+                Result eligibility = alliance ? allianceEligibility(data, home, target, gameTime) : eligibility(home, target);
                 if (eligibility != Result.ELIGIBLE) {
                     return eligibility;
                 }
                 boolean activate = action == Action.ACCEPT || target.getLeaderUuid() == null;
-                if (activate && target.getLeaderUuid() == null && !acceptsAutomatically(home, target)) {
+                if (!alliance && activate && target.getLeaderUuid() == null && !acceptsAutomatically(home, target)) {
                     return Result.DECLINED;
                 }
                 data.discoverSettlement(targetId, homeId);
-                data.setTradeAgreementStatusBetween(homeId, targetId,
-                        activate ? TradeAgreementStatus.ACTIVE : TradeAgreementStatus.PROPOSED_BY_US);
+                setStatus(data, homeId, targetId,
+                        activate ? TradeAgreementStatus.ACTIVE : TradeAgreementStatus.PROPOSED_BY_US, alliance);
                 return activate ? Result.ACTIVATED : Result.PROPOSED;
             }
             case DECLINE -> {
@@ -55,11 +65,59 @@ public final class TradeAgreementService {
                 if (status != TradeAgreementStatus.ACTIVE) {
                     return Result.UNAVAILABLE;
                 }
-                data.setAllianceStatusBetween(homeId, targetId, AllianceStatus.NONE);
+                if (!alliance) {
+                    data.setAllianceStatusBetween(homeId, targetId, AllianceStatus.NONE);
+                }
             }
         }
-        data.setTradeAgreementStatusBetween(homeId, targetId, TradeAgreementStatus.NONE);
+        setStatus(data, homeId, targetId, TradeAgreementStatus.NONE, alliance);
         return Result.CLOSED;
+    }
+
+    private static TradeAgreementStatus status(SettlementRelationship relationship, boolean alliance) {
+        return alliance ? TradeAgreementStatus.valueOf(relationship.getAllianceStatus().name())
+                : relationship.getTradeAgreementStatus();
+    }
+
+    private static void setStatus(SettlementSavedData data, UUID homeId, UUID targetId,
+                                   TradeAgreementStatus status, boolean alliance) {
+        if (alliance) {
+            data.setAllianceStatusBetween(homeId, targetId, AllianceStatus.valueOf(status.name()));
+        } else {
+            data.setTradeAgreementStatusBetween(homeId, targetId, status);
+        }
+    }
+
+    public static boolean isAllied(Settlement first, Settlement second) {
+        return first != null && second != null && isActive(first, second)
+                && first.findRelationship(second.getId()).map(relation ->
+                relation.getAllianceStatus() == AllianceStatus.ACTIVE).orElse(false)
+                && second.findRelationship(first.getId()).map(relation ->
+                relation.getAllianceStatus() == AllianceStatus.ACTIVE).orElse(false);
+    }
+
+    private static Result allianceEligibility(SettlementSavedData data, Settlement home,
+                                               Settlement target, long gameTime) {
+        if (!isActive(home, target)) {
+            return Result.AGREEMENT_REQUIRED;
+        }
+        SettlementRelationship relation = home.getOrCreateRelationship(target.getId());
+        SettlementRelationship reverse = target.getOrCreateRelationship(home.getId());
+        if (Math.min(relation.getReputation(), reverse.getReputation()) < DiplomacyRelation.FRIENDLY.getMinScore()) {
+            return Result.RELATIONS_TOO_LOW;
+        }
+        if (Math.min(relation.getSuccessfulDeliveries(), reverse.getSuccessfulDeliveries())
+                < DiplomacyBalance.DELIVERIES_FOR_ALLIANCE) {
+            return Result.DELIVERIES_REQUIRED;
+        }
+        var contracts = data.getAllTradeContracts().stream()
+                .filter(contract -> contract.involves(home.getId()) && contract.involves(target.getId())).toList();
+        long lastSuccess = contracts.stream().filter(contract -> contract.getStatus() == TradeContractStatus.COMPLETED)
+                .mapToLong(TradeContract::getCompletedGameTime).max().orElse(-1L);
+        boolean unresolved = contracts.stream().anyMatch(contract ->
+                contract.getStatus() == TradeContractStatus.FAILED && contract.getCompletedGameTime() >= lastSuccess
+                        || contract.getStatus() == TradeContractStatus.ACTIVE && gameTime > contract.getDeadlineGameTime());
+        return unresolved ? Result.UNRESOLVED_FAILURES : Result.ELIGIBLE;
     }
 
     public static boolean isActive(Settlement first, Settlement second) {
@@ -109,6 +167,7 @@ public final class TradeAgreementService {
 
     public enum Result {
         ELIGIBLE, PROPOSED, ACTIVATED, CLOSED, NOT_LEADER, UNAVAILABLE,
-        UNDISCOVERED, RELATIONS_TOO_LOW, TRIAL_REQUIRED, NO_MUTUAL_SURPLUS, DECLINED
+        UNDISCOVERED, RELATIONS_TOO_LOW, TRIAL_REQUIRED, NO_MUTUAL_SURPLUS, DECLINED,
+        AGREEMENT_REQUIRED, DELIVERIES_REQUIRED, UNRESOLVED_FAILURES
     }
 }

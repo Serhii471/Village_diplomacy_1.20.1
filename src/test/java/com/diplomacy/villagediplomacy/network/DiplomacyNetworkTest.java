@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DiplomacyNetworkTest {
     @Test
     void actionIdsSurviveTransportWithoutByteTruncation() {
-        for (int action : new int[]{1_000, 1_127, 2_000, 3_279}) {
+        for (int action : new int[]{1_000, 1_127, 2_000, 3_279, 4_000, 5_279}) {
             FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
             try {
                 var message = new DiplomacyNetwork.MenuAction(100, action);

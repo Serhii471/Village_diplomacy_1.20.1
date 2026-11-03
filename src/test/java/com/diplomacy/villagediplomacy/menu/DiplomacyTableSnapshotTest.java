@@ -6,6 +6,8 @@ import com.diplomacy.villagediplomacy.diplomacy.SettlementSpecialization;
 import com.diplomacy.villagediplomacy.diplomacy.SettlementProductionService;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContractType;
+import com.diplomacy.villagediplomacy.diplomacy.TradeAgreementStatus;
+import com.diplomacy.villagediplomacy.diplomacy.AllianceStatus;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -56,6 +58,7 @@ class DiplomacyTableSnapshotTest {
         assertEquals(1, snapshot.warehouse().size());
         assertEquals(1, snapshot.relations().size());
         assertEquals(neighbor.getId(), snapshot.relations().get(0).settlementId());
+        assertTrue(snapshot.relations().get(0).production().isEmpty());
         assertEquals(190L, snapshot.relations().get(0).distanceBlocks());
         assertEquals(1, snapshot.contracts().size());
         assertEquals(contract.getId(), snapshot.contracts().get(0).contractId());
@@ -69,6 +72,35 @@ class DiplomacyTableSnapshotTest {
         DiplomacyTableSnapshot decoded = DiplomacyTableSnapshot.read(buffer);
 
         assertEquals(snapshot, decoded);
+    }
+
+    @Test
+    void activeAllyRemainsListedAndSharesProductionOnlyWhileAllianceIsActive() {
+        SettlementSavedData data = new SettlementSavedData();
+        UUID leader = UUID.randomUUID();
+        Settlement home = new Settlement(UUID.randomUUID(), "Home", BlockPos.ZERO, 64);
+        Settlement ally = new Settlement(UUID.randomUUID(), "Ally", new BlockPos(200, 64, 0), 64);
+        home.setLeaderUuid(leader);
+        ally.setSpecializations(SettlementSpecialization.MOUNTAIN, null);
+        data.registerSettlement(home);
+        data.registerSettlement(ally);
+        data.setTradeAgreementStatusBetween(home.getId(), ally.getId(), TradeAgreementStatus.ACTIVE);
+        data.setAllianceStatusBetween(home.getId(), ally.getId(), AllianceStatus.ACTIVE);
+        home.getOrCreateRelationship(ally.getId()).setKnown(false);
+        var snapshot = DiplomacyTableSnapshot.create(data, home, leader, 0L, ignored -> "Leader", productionSettings());
+        assertEquals(1, snapshot.relations().size());
+        assertFalse(snapshot.relations().get(0).production().isEmpty());
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            snapshot.write(buffer);
+            assertEquals(snapshot, DiplomacyTableSnapshot.read(buffer));
+        } finally {
+            buffer.release();
+        }
+        home.getOrCreateRelationship(ally.getId()).setKnown(true);
+        data.setAllianceStatusBetween(home.getId(), ally.getId(), AllianceStatus.NONE);
+        var closed = DiplomacyTableSnapshot.create(data, home, leader, 0L, ignored -> "Leader", productionSettings());
+        assertTrue(closed.relations().get(0).production().isEmpty());
     }
 
     @Test

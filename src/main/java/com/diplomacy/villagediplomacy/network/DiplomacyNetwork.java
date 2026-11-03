@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class DiplomacyNetwork {
-    private static final String VERSION = "1";
+    private static final String VERSION = "2";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.tryParse("villagediplomacy:menu_actions"), () -> VERSION,
             VERSION::equals, VERSION::equals);

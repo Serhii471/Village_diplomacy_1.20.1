@@ -43,8 +43,11 @@ public final class TradeOfferGenerator {
                 .count();
         boolean hasAgreement = home.getRelationships().stream().anyMatch(relation ->
                 relation.getTradeAgreementStatus() == TradeAgreementStatus.ACTIVE);
+        boolean hasAlliance = home.getRelationships().stream().anyMatch(relation ->
+                TradeAgreementService.isAllied(home, data.getSettlement(relation.getTargetSettlementId())));
         int availableSlots = Math.max(0, offerRules.maxOpenOffers()
-                * (hasAgreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1) - liveOffers);
+                * (hasAlliance ? DiplomacyBalance.ALLIANCE_OFFER_MULTIPLIER
+                : hasAgreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1) - liveOffers);
         if (availableSlots == 0) {
             return List.of();
         }
@@ -64,7 +67,8 @@ public final class TradeOfferGenerator {
                 continue;
             }
             boolean agreement = TradeAgreementService.isActive(home, target);
-            int pairLimit = agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1;
+            int pairLimit = TradeAgreementService.isAllied(home, target) ? DiplomacyBalance.ALLIANCE_OFFER_MULTIPLIER
+                    : agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1;
             long liveBetween = data.getAllTradeContracts().stream()
                     .filter(contract -> !contract.getStatus().isTerminal())
                     .filter(contract -> contract.involves(home.getId()) && contract.involves(targetId)).count();
@@ -86,7 +90,8 @@ public final class TradeOfferGenerator {
                                                        OfferRules offerRules,
                                                        TradeContractService.ContractRules contractRules) {
         boolean agreement = TradeAgreementService.isActive(home, target);
-        int maximum = offerRules.maxItemAmount() * (agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1);
+        int maximum = offerRules.maxItemAmount() * (TradeAgreementService.isAllied(home, target)
+                ? DiplomacyBalance.ALLIANCE_OFFER_MULTIPLIER : agreement ? DiplomacyBalance.AGREEMENT_OFFER_MULTIPLIER : 1);
         Optional<GoodsChoice> outbound = bestSurplus(home, target, null, maximum);
         Optional<GoodsChoice> returning = bestSurplus(
                 target,
@@ -173,6 +178,9 @@ public final class TradeOfferGenerator {
                 + Math.max(0, totalItems - 1) / 16L;
         int bonus = TradeAgreementService.isActive(first, second)
                 ? DiplomacyBalance.AGREEMENT_REWARD_BONUS_EMERALDS : 0;
+        if (TradeAgreementService.isAllied(first, second)) {
+            bonus += DiplomacyBalance.ALLIANCE_REWARD_BONUS_EMERALDS;
+        }
         return (int) Math.min((long) rules.maxRewardEmeralds() + bonus, calculated + bonus);
     }
 
