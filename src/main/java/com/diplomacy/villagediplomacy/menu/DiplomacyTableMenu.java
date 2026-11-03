@@ -62,6 +62,9 @@ public final class DiplomacyTableMenu extends AbstractContainerMenu {
                 || buttonId < ACCEPT_CONTRACT_BUTTON_BASE) {
             return false;
         }
+        if (buttonId == 6_000) {
+            return RouteMenu.open(serverPlayer, tablePos, false, null);
+        }
         if (buttonId >= AGREEMENT_BUTTON_BASE) {
             return handleAgreement(serverPlayer, buttonId);
         }

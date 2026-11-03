@@ -20,10 +20,40 @@ import java.util.UUID;
 
 public class SettlementSavedData extends SavedData {
     public static final String DATA_NAME = "village_diplomacy_settlements";
-    public static final int CURRENT_DATA_VERSION = 5;
+    public static final int CURRENT_DATA_VERSION = 6;
 
     private final Map<UUID, Settlement> settlements = new LinkedHashMap<>();
     private final Map<UUID, TradeContract> tradeContracts = new LinkedHashMap<>();
+    private final Map<UUID, TradeRoute> tradeRoutes = new LinkedHashMap<>();
+    private final Map<BlockPos, TradeRouteService.SignpostLink> signposts = new LinkedHashMap<>();
+
+    public Collection<TradeRoute> getTradeRoutes() {
+        return Collections.unmodifiableCollection(tradeRoutes.values());
+    }
+
+    public TradeRoute findTradeRoute(UUID first, UUID second) {
+        return tradeRoutes.values().stream().filter(route -> route.connects(first, second)).findFirst().orElse(null);
+    }
+
+    void putTradeRoute(TradeRoute route) {
+        tradeRoutes.put(route.id(), route);
+        setDirty();
+    }
+
+    public Map<BlockPos, TradeRouteService.SignpostLink> getSignposts() {
+        return Collections.unmodifiableMap(signposts);
+    }
+
+    void putSignpost(BlockPos pos, TradeRouteService.SignpostLink link) {
+        signposts.put(pos.immutable(), link);
+        setDirty();
+    }
+
+    public void removeSignpost(BlockPos pos) {
+        if (signposts.remove(pos) != null) {
+            setDirty();
+        }
+    }
 
     public SettlementSavedData() {
     }
@@ -103,6 +133,8 @@ public class SettlementSavedData extends SavedData {
     }
 
     public void removeSettlement(UUID id) {
+        tradeRoutes.values().removeIf(route -> route.sourceId().equals(id) || route.targetId().equals(id));
+        signposts.values().removeIf(link -> link.homeId().equals(id) || link.targetId().equals(id));
         tradeContracts.values().stream()
                 .filter(contract -> contract.involves(id))
                 .filter(contract -> contract.getStatus() == TradeContractStatus.ACTIVE)
@@ -209,6 +241,18 @@ public class SettlementSavedData extends SavedData {
                 .sorted((left, right) -> left.getId().toString().compareTo(right.getId().toString()))
                 .forEach(contract -> contractList.add(contract.saveNBT()));
         compoundTag.put("TradeContracts", contractList);
+        ListTag routeList = new ListTag();
+        tradeRoutes.values().forEach(route -> routeList.add(route.save()));
+        compoundTag.put("TradeRoutes", routeList);
+        ListTag signList = new ListTag();
+        signposts.forEach((pos, link) -> {
+            CompoundTag sign = new CompoundTag();
+            sign.putLong("Pos", pos.asLong());
+            sign.putUUID("Home", link.homeId());
+            sign.putUUID("Target", link.targetId());
+            signList.add(sign);
+        });
+        compoundTag.put("RouteSignposts", signList);
         return compoundTag;
     }
 
@@ -259,6 +303,30 @@ public class SettlementSavedData extends SavedData {
                 } catch (IllegalArgumentException exception) {
                     VillageDiplomacyMod.LOGGER.warn("Skipping invalid trade contract data", exception);
                 }
+            }
+        }
+        for (var value : compoundTag.getList("TradeRoutes", Tag.TAG_COMPOUND)) {
+            CompoundTag routeTag = (CompoundTag) value;
+            if (!routeTag.hasUUID("Id") || !routeTag.hasUUID("Source") || !routeTag.hasUUID("Target")) {
+                continue;
+            }
+            try {
+                TradeRoute route = TradeRoute.load(routeTag);
+                if (data.settlements.containsKey(route.sourceId()) && data.settlements.containsKey(route.targetId())
+                        && data.findTradeRoute(route.sourceId(), route.targetId()) == null) {
+                    data.tradeRoutes.put(route.id(), route);
+                }
+            } catch (IllegalArgumentException exception) {
+                VillageDiplomacyMod.LOGGER.warn("Skipping invalid route data", exception);
+            }
+        }
+        for (var value : compoundTag.getList("RouteSignposts", Tag.TAG_COMPOUND)) {
+            CompoundTag sign = (CompoundTag) value;
+            if (sign.contains("Pos", Tag.TAG_LONG) && sign.hasUUID("Home") && sign.hasUUID("Target")
+                    && !sign.getUUID("Home").equals(sign.getUUID("Target"))
+                    && data.settlements.containsKey(sign.getUUID("Home")) && data.settlements.containsKey(sign.getUUID("Target"))) {
+                data.signposts.put(BlockPos.of(sign.getLong("Pos")),
+                        new TradeRouteService.SignpostLink(sign.getUUID("Home"), sign.getUUID("Target")));
             }
         }
         if (storedDataVersion < CURRENT_DATA_VERSION) {

@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy.core;
 
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import com.diplomacy.villagediplomacy.block.DiplomacyTableBlock;
+import com.diplomacy.villagediplomacy.block.RouteSignpostBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -21,4 +22,7 @@ public final class ModBlocks {
 
     private ModBlocks() {
     }
+
+    public static final RegistryObject<Block> ROUTE_SIGNPOST = BLOCKS.register("route_signpost",
+            () -> new RouteSignpostBlock(BlockBehaviour.Properties.copy(Blocks.OAK_FENCE).strength(2.0F).noOcclusion()));
 }

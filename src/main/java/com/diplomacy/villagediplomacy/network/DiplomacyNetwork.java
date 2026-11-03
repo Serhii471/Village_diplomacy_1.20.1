@@ -2,6 +2,7 @@ package com.diplomacy.villagediplomacy.network;
 
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
 import com.diplomacy.villagediplomacy.menu.TradeHandoverMenu;
+import com.diplomacy.villagediplomacy.menu.RouteMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class DiplomacyNetwork {
-    private static final String VERSION = "2";
+    private static final String VERSION = "3";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.tryParse("villagediplomacy:menu_actions"), () -> VERSION,
             VERSION::equals, VERSION::equals);
@@ -25,6 +26,37 @@ public final class DiplomacyNetwork {
     public static void register() {
         CHANNEL.registerMessage(0, MenuAction.class, MenuAction::write, MenuAction::read,
                 MenuAction::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(1, RouteAction.class, RouteAction::write, RouteAction::read,
+                RouteAction::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+    }
+
+    public static void sendRouteAction(int containerId, int targetIndex, RouteMenu.Action action, String name) {
+        CHANNEL.sendToServer(new RouteAction(containerId, targetIndex, action, name));
+    }
+
+    public record RouteAction(int containerId, int targetIndex, RouteMenu.Action action, String name) {
+        void write(FriendlyByteBuf buffer) {
+            buffer.writeVarInt(containerId);
+            buffer.writeVarInt(targetIndex);
+            buffer.writeEnum(action);
+            buffer.writeUtf(name, 64);
+        }
+
+        static RouteAction read(FriendlyByteBuf buffer) {
+            return new RouteAction(buffer.readVarInt(), buffer.readVarInt(), buffer.readEnum(RouteMenu.Action.class), buffer.readUtf(64));
+        }
+
+        void handle(Supplier<NetworkEvent.Context> supplier) {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> {
+                ServerPlayer player = context.getSender();
+                if (player != null && player.isAlive() && !player.isSpectator()
+                        && player.containerMenu instanceof RouteMenu menu && menu.containerId == containerId) {
+                    menu.act(player, targetIndex, action, name);
+                }
+            });
+            context.setPacketHandled(true);
+        }
     }
 
     public static void sendMenuAction(int containerId, int actionId) {

@@ -103,7 +103,7 @@ public final class TradeOfferGenerator {
         if (outbound.isPresent() && returning.isPresent()) {
             GoodsChoice sent = outbound.orElseThrow();
             GoodsChoice returned = returning.orElseThrow();
-            int reward = reward(home, target, sent.amount() + returned.amount(), offerRules);
+            int reward = reward(data, home, target, sent.amount() + returned.amount(), offerRules);
             if (agreement) {
                 return Optional.of(TradeContractService.createAgreementOffer(data, home.getId(), target.getId(),
                         Map.of(sent.itemId(), sent.amount()), Map.of(returned.itemId(), returned.amount()),
@@ -126,11 +126,11 @@ public final class TradeOfferGenerator {
             if (agreement) {
                 return Optional.of(TradeContractService.createAgreementOffer(data, home.getId(), target.getId(),
                         Map.of(sent.itemId(), sent.amount()), Map.of(),
-                        reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+                        reward(data, home, target, sent.amount(), offerRules), gameTime, contractRules));
             }
             return Optional.of(TradeContractService.createTrialDeliveryOffer(
                     data, home.getId(), target.getId(), Map.of(sent.itemId(), sent.amount()),
-                    reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+                    reward(data, home, target, sent.amount(), offerRules), gameTime, contractRules));
         }
 
         Optional<GoodsChoice> reverse = bestSurplus(target, home, null, maximum);
@@ -141,11 +141,11 @@ public final class TradeOfferGenerator {
         if (agreement) {
             return Optional.of(TradeContractService.createAgreementOffer(data, target.getId(), home.getId(),
                     Map.of(sent.itemId(), sent.amount()), Map.of(),
-                    reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+                    reward(data, home, target, sent.amount(), offerRules), gameTime, contractRules));
         }
         return Optional.of(TradeContractService.createTrialDeliveryOffer(
                 data, target.getId(), home.getId(), Map.of(sent.itemId(), sent.amount()),
-                reward(home, target, sent.amount(), offerRules), gameTime, contractRules));
+                reward(data, home, target, sent.amount(), offerRules), gameTime, contractRules));
     }
 
     private static Optional<GoodsChoice> bestSurplus(Settlement source,
@@ -168,7 +168,7 @@ public final class TradeOfferGenerator {
                 ));
     }
 
-    private static int reward(Settlement first,
+    private static int reward(SettlementSavedData data, Settlement first,
                               Settlement second,
                               int totalItems,
                               OfferRules rules) {
@@ -180,6 +180,9 @@ public final class TradeOfferGenerator {
                 ? DiplomacyBalance.AGREEMENT_REWARD_BONUS_EMERALDS : 0;
         if (TradeAgreementService.isAllied(first, second)) {
             bonus += DiplomacyBalance.ALLIANCE_REWARD_BONUS_EMERALDS;
+        }
+        if (TradeRouteService.isMarked(data, first.getId(), second.getId())) {
+            bonus += DiplomacyBalance.MARKED_ROUTE_REWARD_BONUS_EMERALDS;
         }
         return (int) Math.min((long) rules.maxRewardEmeralds() + bonus, calculated + bonus);
     }

@@ -3,6 +3,9 @@ package com.diplomacy.villagediplomacy;
 import com.diplomacy.villagediplomacy.client.renderer.VillageGuardRenderer;
 import com.diplomacy.villagediplomacy.client.screen.DiplomacyTableScreen;
 import com.diplomacy.villagediplomacy.client.screen.TradeHandoverScreen;
+import com.diplomacy.villagediplomacy.client.screen.RouteScreen;
+import com.diplomacy.villagediplomacy.client.renderer.RouteSignpostRenderer;
+import com.diplomacy.villagediplomacy.core.ModBlockEntities;
 import com.diplomacy.villagediplomacy.config.VillageDiplomacyConfig;
 import com.diplomacy.villagediplomacy.core.ModEntities;
 import com.diplomacy.villagediplomacy.core.ModBlocks;
@@ -39,6 +42,7 @@ public class VillageDiplomacyMod {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.TYPES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
@@ -82,12 +86,14 @@ public class VillageDiplomacyMod {
             event.enqueueWork(() -> {
                 MenuScreens.register(ModMenus.DIPLOMACY_TABLE.get(), DiplomacyTableScreen::new);
                 MenuScreens.register(ModMenus.TRADE_HANDOVER.get(), TradeHandoverScreen::new);
+                MenuScreens.register(ModMenus.ROUTES.get(), RouteScreen::new);
             });
         }
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.VILLAGE_GUARD.get(), VillageGuardRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.ROUTE_SIGNPOST.get(), RouteSignpostRenderer::new);
         }
     }
 }

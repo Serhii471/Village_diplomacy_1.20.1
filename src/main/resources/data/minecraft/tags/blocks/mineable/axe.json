@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "villagediplomacy:diplomacy_table"
+    "villagediplomacy:diplomacy_table",
+    "villagediplomacy:route_signpost"
   ]
 }

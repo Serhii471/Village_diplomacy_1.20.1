@@ -1,6 +1,7 @@
 package com.diplomacy.villagediplomacy.core;
 
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
+import com.diplomacy.villagediplomacy.item.TradeRouteMapItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -27,13 +28,20 @@ public class ModItems {
     public static final RegistryObject<Item> VILLAGE_GUARD_SPAWN_EGG = ITEMS.register("village_guard_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.VILLAGE_GUARD, 0x4f5d73, 0x8b3a3a, new Item.Properties()));
 
+    public static final RegistryObject<Item> TRADE_ROUTE_MAP = ITEMS.register("trade_route_map",
+            () -> new TradeRouteMapItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ROUTE_SIGNPOST = ITEMS.register("route_signpost",
+            () -> new BlockItem(ModBlocks.ROUTE_SIGNPOST.get(), new Item.Properties()));
+
     public static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(DIPLOMATIC_SCROLL.get());
             event.accept(LEADERSHIP_SEAL.get());
+            event.accept(TRADE_ROUTE_MAP.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(DIPLOMACY_TABLE.get());
+            event.accept(ROUTE_SIGNPOST.get());
         }
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(VILLAGE_GUARD_SPAWN_EGG.get());

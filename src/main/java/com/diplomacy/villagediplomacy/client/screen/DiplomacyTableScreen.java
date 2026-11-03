@@ -40,6 +40,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     private Button nextRelationButton;
     private Button allianceButton;
     private Button declineAllianceButton;
+    private Button routesButton;
 
     public DiplomacyTableScreen(DiplomacyTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -87,6 +88,9 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         declineAllianceButton = addRenderableWidget(Button.builder(
                 Component.translatable("screen.villagediplomacy.agreement.decline"),
                 ignored -> actOnAlliance(true)).bounds(leftPos + 176, topPos + 183, 88, 20).build());
+        routesButton = addRenderableWidget(Button.builder(Component.translatable("screen.villagediplomacy.routes.manage"),
+                ignored -> DiplomacyNetwork.sendMenuAction(menu.containerId, 6_000))
+                .bounds(leftPos + 40, topPos + 207, 220, 20).build());
         updateOfferControls();
     }
 
@@ -193,6 +197,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         }
         List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
         boolean tradeTab = selectedTab == Tab.TRADE;
+        routesButton.visible = selectedTab == Tab.ROUTES;
         selectedOfferIndex = offers.isEmpty() ? 0 : Math.min(selectedOfferIndex, offers.size() - 1);
         previousOfferButton.visible = tradeTab && offers.size() > 1;
         nextOfferButton.visible = tradeTab && offers.size() > 1;
@@ -396,27 +401,9 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     }
 
     private List<Component> routeLines(DiplomacyTableSnapshot snapshot) {
-        List<Component> lines = new ArrayList<>();
-        lines.add(Component.translatable("screen.villagediplomacy.table.routes.count", snapshot.contracts().size()));
-        if (snapshot.contracts().isEmpty()) {
-            lines.add(Component.translatable("screen.villagediplomacy.table.routes.empty"));
-        } else {
-            snapshot.contracts().forEach(contract -> {
-                long days = (contract.remainingTicks() + 23_999L) / 24_000L;
-                lines.add(Component.translatable("screen.villagediplomacy.table.route",
-                        contract.sourceName(), contract.destinationName()));
-                lines.add(Component.translatable("screen.villagediplomacy.table.route.details",
-                        contractStatus(contract.status()), contract.distanceBlocks(), contract.successfulDeliveries(),
-                        status("trade", contract.tradeAgreement())));
-                lines.add(Component.translatable("screen.villagediplomacy.table.route.delivery",
-                        days,
-                        contract.trial()
-                                ? Component.translatable("screen.villagediplomacy.table.yes")
-                                : Component.translatable("screen.villagediplomacy.table.no"),
-                        Component.translatable("screen.villagediplomacy.table.none")));
-            });
-        }
-        return lines;
+        return List.of(Component.translatable("screen.villagediplomacy.routes.intro"),
+                Component.translatable("screen.villagediplomacy.routes.intro_map"),
+                Component.translatable("screen.villagediplomacy.routes.intro_signs"));
     }
 
     private static Component specialization(String serializedName) {

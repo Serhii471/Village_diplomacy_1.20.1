@@ -3,6 +3,7 @@ package com.diplomacy.villagediplomacy.core;
 import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
 import com.diplomacy.villagediplomacy.menu.TradeHandoverMenu;
+import com.diplomacy.villagediplomacy.menu.RouteMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -25,4 +26,7 @@ public final class ModMenus {
 
     private ModMenus() {
     }
+
+    public static final RegistryObject<MenuType<RouteMenu>> ROUTES = MENUS.register("routes",
+            () -> IForgeMenuType.create(RouteMenu::fromNetwork));
 }
