@@ -177,6 +177,7 @@
   "screen.villagediplomacy.table.contract.carrier": "Carrier: %s",
   "screen.villagediplomacy.table.contract.accept": "Accept offer",
   "screen.villagediplomacy.table.contract.accept_number": "Accept %s/%s",
+  "screen.villagediplomacy.table.contract.selected": "Offer %s / %s",
   "screen.villagediplomacy.table.contract.no_offers": "No offers",
   "screen.villagediplomacy.table.goods": "%s: issued %s, delivered %s of %s",
   "screen.villagediplomacy.table.goods.return": "Return %s: issued %s, delivered %s of %s",

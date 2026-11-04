@@ -176,9 +176,30 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
     }
 
     private List<DiplomacyTableSnapshot.ContractEntry> offeredContracts() {
-        return menu.getSnapshot().contracts().stream()
+        return offeredContracts(menu.getSnapshot().contracts());
+    }
+
+    private static List<DiplomacyTableSnapshot.ContractEntry> offeredContracts(
+            List<DiplomacyTableSnapshot.ContractEntry> contracts) {
+        return contracts.stream()
                 .filter(contract -> "offered".equals(contract.status()))
                 .toList();
+    }
+
+    static List<DiplomacyTableSnapshot.ContractEntry> visibleTradeContracts(
+            List<DiplomacyTableSnapshot.ContractEntry> contracts,
+            int selectedOfferIndex) {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts(contracts);
+        if (offers.isEmpty()) {
+            return List.copyOf(contracts);
+        }
+        DiplomacyTableSnapshot.ContractEntry selected = offers.get(Math.floorMod(selectedOfferIndex, offers.size()));
+        List<DiplomacyTableSnapshot.ContractEntry> visible = new ArrayList<>();
+        visible.add(selected);
+        contracts.stream()
+                .filter(contract -> !"offered".equals(contract.status()))
+                .forEach(visible::add);
+        return List.copyOf(visible);
     }
 
     private void changeOffer(int delta) {
@@ -188,6 +209,7 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         } else {
             selectedOfferIndex = Math.floorMod(selectedOfferIndex + delta, offers.size());
         }
+        scrollOffset = 0;
         updateOfferControls();
     }
 
@@ -378,7 +400,13 @@ public final class DiplomacyTableScreen extends AbstractContainerScreen<Diplomac
         if (snapshot.contracts().isEmpty()) {
             lines.add(Component.translatable("screen.villagediplomacy.table.contracts.empty"));
         } else {
-            snapshot.contracts().forEach(contract -> {
+            List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts(snapshot.contracts());
+            if (!offers.isEmpty()) {
+                int safeIndex = Math.floorMod(selectedOfferIndex, offers.size());
+                lines.add(Component.translatable("screen.villagediplomacy.table.contract.selected",
+                        safeIndex + 1, offers.size()));
+            }
+            visibleTradeContracts(snapshot.contracts(), selectedOfferIndex).forEach(contract -> {
                 lines.add(Component.translatable("screen.villagediplomacy.table.contract",
                         contract.sourceName(), contract.destinationName(), contractType(contract.type()),
                         contractStatus(contract.status()),

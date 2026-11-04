@@ -177,6 +177,7 @@
   "screen.villagediplomacy.table.contract.carrier": "Перевізник: %s",
   "screen.villagediplomacy.table.contract.accept": "Прийняти",
   "screen.villagediplomacy.table.contract.accept_number": "Прийняти %s/%s",
+  "screen.villagediplomacy.table.contract.selected": "Пропозиція %s / %s",
   "screen.villagediplomacy.table.contract.no_offers": "Немає пропозицій",
   "screen.villagediplomacy.table.goods": "%s: видано %s, доставлено %s із %s",
   "screen.villagediplomacy.table.goods.return": "Зустрічний %s: видано %s, доставлено %s із %s",
