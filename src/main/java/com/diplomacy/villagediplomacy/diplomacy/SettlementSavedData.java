@@ -1,5 +1,6 @@
 package com.diplomacy.villagediplomacy.diplomacy;
 
+import com.diplomacy.villagediplomacy.VillageDiplomacyMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -8,13 +9,54 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class SettlementSavedData extends SavedData {
     public static final String DATA_NAME = "village_diplomacy_settlements";
-    private final Map<UUID, Settlement> settlements = new HashMap<>();
+    public static final int CURRENT_DATA_VERSION = 7;
 
-    public SettlementSavedData() {}
+    private final Map<UUID, Settlement> settlements = new LinkedHashMap<>();
+    private final Map<UUID, TradeContract> tradeContracts = new LinkedHashMap<>();
+    private final Map<UUID, TradeRoute> tradeRoutes = new LinkedHashMap<>();
+    private final Map<BlockPos, TradeRouteService.SignpostLink> signposts = new LinkedHashMap<>();
+
+    public Collection<TradeRoute> getTradeRoutes() {
+        return Collections.unmodifiableCollection(tradeRoutes.values());
+    }
+
+    public TradeRoute findTradeRoute(UUID first, UUID second) {
+        return tradeRoutes.values().stream().filter(route -> route.connects(first, second)).findFirst().orElse(null);
+    }
+
+    void putTradeRoute(TradeRoute route) {
+        tradeRoutes.put(route.id(), route);
+        setDirty();
+    }
+
+    public Map<BlockPos, TradeRouteService.SignpostLink> getSignposts() {
+        return Collections.unmodifiableMap(signposts);
+    }
+
+    void putSignpost(BlockPos pos, TradeRouteService.SignpostLink link) {
+        signposts.put(pos.immutable(), link);
+        setDirty();
+    }
+
+    public void removeSignpost(BlockPos pos) {
+        if (signposts.remove(pos) != null) {
+            setDirty();
+        }
+    }
+
+    public SettlementSavedData() {
+    }
 
     public static SettlementSavedData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(
@@ -24,8 +66,36 @@ public class SettlementSavedData extends SavedData {
         );
     }
 
+    public int getDataVersion() {
+        return CURRENT_DATA_VERSION;
+    }
+
     public Collection<Settlement> getAllSettlements() {
         return Collections.unmodifiableCollection(settlements.values());
+    }
+
+    public Collection<TradeContract> getAllTradeContracts() {
+        return Collections.unmodifiableCollection(tradeContracts.values());
+    }
+
+    @Nullable
+    public TradeContract getTradeContract(UUID id) {
+        return tradeContracts.get(id);
+    }
+
+    public List<TradeContract> getTradeContractsForHandover(UUID carrierId, UUID settlementId) {
+        UUID safeCarrierId = Objects.requireNonNull(carrierId, "carrierId");
+        UUID safeSettlementId = Objects.requireNonNull(settlementId, "settlementId");
+        return tradeContracts.values().stream()
+                .filter(contract -> safeCarrierId.equals(contract.getCarrierId()))
+                .filter(contract -> (contract.getStatus() == TradeContractStatus.ACTIVE
+                        && contract.involves(safeSettlementId))
+                        || (contract.getStatus() == TradeContractStatus.COMPLETED
+                        && !contract.isRewardClaimed()
+                        && contract.getRewardSettlementId().equals(safeSettlementId)))
+                .sorted(Comparator.comparingLong(TradeContract::getCreatedGameTime)
+                        .thenComparing(contract -> contract.getId().toString()))
+                .toList();
     }
 
     @Nullable
@@ -33,16 +103,47 @@ public class SettlementSavedData extends SavedData {
         return settlements.get(id);
     }
 
+    @Nullable
+    public Settlement findSettlementLedBy(UUID playerId) {
+        for (Settlement settlement : settlements.values()) {
+            if (settlement.isPlayerLeader(playerId)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
+
     public void registerSettlement(Settlement settlement) {
-        settlements.put(settlement.getId(), settlement);
+        Settlement safeSettlement = Objects.requireNonNull(settlement, "settlement");
+        attachDirtyTracking(safeSettlement);
+        settlements.put(safeSettlement.getId(), safeSettlement);
+        setDirty();
+    }
+
+    public void registerTradeContract(TradeContract contract) {
+        TradeContract safeContract = Objects.requireNonNull(contract, "contract");
+        requireSettlement(safeContract.getSourceSettlementId());
+        requireOtherSettlement(safeContract.getDestinationSettlementId(), safeContract.getSourceSettlementId());
+        if (tradeContracts.containsKey(safeContract.getId())) {
+            throw new IllegalArgumentException("Duplicate trade contract: " + safeContract.getId());
+        }
+        attachDirtyTracking(safeContract);
+        tradeContracts.put(safeContract.getId(), safeContract);
         setDirty();
     }
 
     public void removeSettlement(UUID id) {
+        tradeRoutes.values().removeIf(route -> route.sourceId().equals(id) || route.targetId().equals(id));
+        signposts.values().removeIf(link -> link.homeId().equals(id) || link.targetId().equals(id));
+        tradeContracts.values().stream()
+                .filter(contract -> contract.involves(id))
+                .filter(contract -> contract.getStatus() == TradeContractStatus.ACTIVE)
+                .forEach(contract -> TradeContractService.releaseRemainingReservations(this, contract));
+        if (tradeContracts.entrySet().removeIf(entry -> entry.getValue().involves(id))) {
+            setDirty();
+        }
         if (settlements.remove(id) != null) {
-            for (Settlement s : settlements.values()) {
-                s.setReputationWith(id, 0);
-            }
+            settlements.values().forEach(settlement -> settlement.removeRelationship(id));
             setDirty();
         }
     }
@@ -68,25 +169,196 @@ public class SettlementSavedData extends SavedData {
         return newSettlement;
     }
 
+    public Settlement getOrCreateSettlementNear(BlockPos pos, String defaultName) {
+        return getOrCreateSettlementNear(pos, DiplomacyBalance.DEFAULT_SETTLEMENT_RADIUS, defaultName);
+    }
+
+    public void discoverSettlement(UUID observerId, UUID targetId) {
+        Settlement observer = requireSettlement(observerId);
+        requireDistinctSettlement(targetId, observerId);
+        requireSettlement(targetId);
+        observer.discoverSettlement(targetId);
+    }
+
+    public void adjustReputationBetween(UUID firstId, UUID secondId, int delta) {
+        Settlement first = requireSettlement(firstId);
+        Settlement second = requireOtherSettlement(secondId, firstId);
+        first.adjustReputationWith(secondId, delta);
+        second.adjustReputationWith(firstId, delta);
+    }
+
+    public void setTradeAgreementStatusBetween(UUID firstId, UUID secondId,
+                                               TradeAgreementStatus statusFromFirstPerspective) {
+        TradeAgreementStatus safeStatus = Objects.requireNonNull(statusFromFirstPerspective, "statusFromFirstPerspective");
+        Settlement first = requireSettlement(firstId);
+        Settlement second = requireOtherSettlement(secondId, firstId);
+        first.getOrCreateRelationship(secondId).setTradeAgreementStatus(safeStatus);
+        second.getOrCreateRelationship(firstId).setTradeAgreementStatus(safeStatus.oppositePerspective());
+    }
+
+    public void setAllianceStatusBetween(UUID firstId, UUID secondId,
+                                         AllianceStatus statusFromFirstPerspective) {
+        AllianceStatus safeStatus = Objects.requireNonNull(statusFromFirstPerspective, "statusFromFirstPerspective");
+        Settlement first = requireSettlement(firstId);
+        Settlement second = requireOtherSettlement(secondId, firstId);
+
+        if (safeStatus == AllianceStatus.ACTIVE
+                && (first.getOrCreateRelationship(secondId).getTradeAgreementStatus() != TradeAgreementStatus.ACTIVE
+                || second.getOrCreateRelationship(firstId).getTradeAgreementStatus() != TradeAgreementStatus.ACTIVE)) {
+            throw new IllegalStateException("An active alliance requires an active trade agreement");
+        }
+
+        first.getOrCreateRelationship(secondId).setAllianceStatus(safeStatus);
+        second.getOrCreateRelationship(firstId).setAllianceStatus(safeStatus.oppositePerspective());
+    }
+
+    public void recordSuccessfulDeliveryBetween(UUID firstId, UUID secondId, long gameTime) {
+        Settlement first = requireSettlement(firstId);
+        Settlement second = requireOtherSettlement(secondId, firstId);
+        first.getOrCreateRelationship(secondId).recordSuccessfulDelivery(gameTime);
+        second.getOrCreateRelationship(firstId).recordSuccessfulDelivery(gameTime);
+    }
+
+    public void recordFailedContractBetween(UUID firstId, UUID secondId, long gameTime) {
+        Settlement first = requireSettlement(firstId);
+        Settlement second = requireOtherSettlement(secondId, firstId);
+        first.getOrCreateRelationship(secondId).recordFailedContract(gameTime);
+        second.getOrCreateRelationship(firstId).recordFailedContract(gameTime);
+    }
+
     @Override
     public CompoundTag save(CompoundTag compoundTag) {
+        compoundTag.putInt("DataVersion", CURRENT_DATA_VERSION);
+
         ListTag list = new ListTag();
-        for (Settlement settlement : settlements.values()) {
-            list.add(settlement.saveNBT());
-        }
+        settlements.values().stream()
+                .sorted((left, right) -> left.getId().toString().compareTo(right.getId().toString()))
+                .forEach(settlement -> list.add(settlement.saveNBT()));
         compoundTag.put("Settlements", list);
+
+        ListTag contractList = new ListTag();
+        tradeContracts.values().stream()
+                .sorted((left, right) -> left.getId().toString().compareTo(right.getId().toString()))
+                .forEach(contract -> contractList.add(contract.saveNBT()));
+        compoundTag.put("TradeContracts", contractList);
+        ListTag routeList = new ListTag();
+        tradeRoutes.values().forEach(route -> routeList.add(route.save()));
+        compoundTag.put("TradeRoutes", routeList);
+        ListTag signList = new ListTag();
+        signposts.forEach((pos, link) -> {
+            CompoundTag sign = new CompoundTag();
+            sign.putLong("Pos", pos.asLong());
+            sign.putUUID("Home", link.homeId());
+            sign.putUUID("Target", link.targetId());
+            signList.add(sign);
+        });
+        compoundTag.put("RouteSignposts", signList);
         return compoundTag;
     }
 
     public static SettlementSavedData load(CompoundTag compoundTag) {
         SettlementSavedData data = new SettlementSavedData();
+        // A missing DataVersion is the legacy version 0 format. New fields are
+        // deliberately optional, so migration happens while each settlement loads.
+        int storedDataVersion = compoundTag.contains("DataVersion", Tag.TAG_INT)
+                ? compoundTag.getInt("DataVersion")
+                : 0;
+        if (storedDataVersion > CURRENT_DATA_VERSION) {
+            VillageDiplomacyMod.LOGGER.warn(
+                    "Settlement data version {} is newer than supported version {}; unknown fields may be ignored",
+                    storedDataVersion,
+                    CURRENT_DATA_VERSION
+            );
+        }
+
         if (compoundTag.contains("Settlements", Tag.TAG_LIST)) {
             ListTag list = compoundTag.getList("Settlements", Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                Settlement s = Settlement.loadNBT(list.getCompound(i));
-                data.settlements.put(s.getId(), s);
+                CompoundTag settlementTag = list.getCompound(i);
+                if (!settlementTag.hasUUID("Id")) {
+                    continue;
+                }
+                Settlement settlement = Settlement.loadNBT(settlementTag);
+                data.attachDirtyTracking(settlement);
+                data.settlements.put(settlement.getId(), settlement);
             }
         }
+        if (compoundTag.contains("TradeContracts", Tag.TAG_LIST)) {
+            ListTag list = compoundTag.getList("TradeContracts", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundTag contractTag = list.getCompound(i);
+                if (!contractTag.hasUUID("Id")
+                        || !contractTag.hasUUID("SourceSettlement")
+                        || !contractTag.hasUUID("DestinationSettlement")) {
+                    continue;
+                }
+                try {
+                    TradeContract contract = TradeContract.loadNBT(contractTag);
+                    if (data.settlements.containsKey(contract.getSourceSettlementId())
+                            && data.settlements.containsKey(contract.getDestinationSettlementId())
+                            && !data.tradeContracts.containsKey(contract.getId())) {
+                        data.attachDirtyTracking(contract);
+                        data.tradeContracts.put(contract.getId(), contract);
+                    }
+                } catch (IllegalArgumentException exception) {
+                    VillageDiplomacyMod.LOGGER.warn("Skipping invalid trade contract data", exception);
+                }
+            }
+        }
+        for (var value : compoundTag.getList("TradeRoutes", Tag.TAG_COMPOUND)) {
+            CompoundTag routeTag = (CompoundTag) value;
+            if (!routeTag.hasUUID("Id") || !routeTag.hasUUID("Source") || !routeTag.hasUUID("Target")) {
+                continue;
+            }
+            try {
+                TradeRoute route = TradeRoute.load(routeTag);
+                if (data.settlements.containsKey(route.sourceId()) && data.settlements.containsKey(route.targetId())
+                        && data.findTradeRoute(route.sourceId(), route.targetId()) == null) {
+                    data.tradeRoutes.put(route.id(), route);
+                }
+            } catch (IllegalArgumentException exception) {
+                VillageDiplomacyMod.LOGGER.warn("Skipping invalid route data", exception);
+            }
+        }
+        for (var value : compoundTag.getList("RouteSignposts", Tag.TAG_COMPOUND)) {
+            CompoundTag sign = (CompoundTag) value;
+            if (sign.contains("Pos", Tag.TAG_LONG) && sign.hasUUID("Home") && sign.hasUUID("Target")
+                    && !sign.getUUID("Home").equals(sign.getUUID("Target"))
+                    && data.settlements.containsKey(sign.getUUID("Home")) && data.settlements.containsKey(sign.getUUID("Target"))) {
+                data.signposts.put(BlockPos.of(sign.getLong("Pos")),
+                        new TradeRouteService.SignpostLink(sign.getUUID("Home"), sign.getUUID("Target")));
+            }
+        }
+        if (storedDataVersion < CURRENT_DATA_VERSION) {
+            data.setDirty();
+        }
         return data;
+    }
+
+    private Settlement requireSettlement(UUID settlementId) {
+        Settlement settlement = settlements.get(Objects.requireNonNull(settlementId, "settlementId"));
+        if (settlement == null) {
+            throw new IllegalArgumentException("Unknown settlement: " + settlementId);
+        }
+        return settlement;
+    }
+
+    private Settlement requireOtherSettlement(UUID settlementId, UUID firstId) {
+        requireDistinctSettlement(settlementId, firstId);
+        return requireSettlement(settlementId);
+    }
+
+    private static void requireDistinctSettlement(UUID settlementId, UUID firstId) {
+        if (Objects.requireNonNull(settlementId, "settlementId").equals(firstId)) {
+            throw new IllegalArgumentException("A settlement cannot target itself");
+        }
+    }
+
+    private void attachDirtyTracking(Settlement settlement) {
+        settlement.setDirtyCallback(this::setDirty);
+    }
+
+    private void attachDirtyTracking(TradeContract contract) {
+        contract.setDirtyCallback(this::setDirty);
     }
 }

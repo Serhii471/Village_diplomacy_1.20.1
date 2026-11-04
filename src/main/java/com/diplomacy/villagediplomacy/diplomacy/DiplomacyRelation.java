@@ -1,5 +1,7 @@
 package com.diplomacy.villagediplomacy.diplomacy;
 
+import java.util.Locale;
+
 public enum DiplomacyRelation {
     ALLY(100, 50),
     FRIENDLY(49, 20),
@@ -29,6 +31,10 @@ public enum DiplomacyRelation {
 
     public boolean isAggressive() {
         return this == HOSTILE;
+    }
+
+    public String getTranslationKey() {
+        return "relation.villagediplomacy." + name().toLowerCase(Locale.ROOT);
     }
 
     public static DiplomacyRelation fromScore(int score) {

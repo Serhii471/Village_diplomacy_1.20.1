@@ -1,0 +1,478 @@
+package com.diplomacy.villagediplomacy.client.screen;
+
+import com.diplomacy.villagediplomacy.menu.DiplomacyTableMenu;
+import com.diplomacy.villagediplomacy.menu.DiplomacyTableSnapshot;
+import com.diplomacy.villagediplomacy.diplomacy.TradeAgreementService;
+import com.diplomacy.villagediplomacy.network.DiplomacyNetwork;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public final class DiplomacyTableScreen extends AbstractContainerScreen<DiplomacyTableMenu> {
+    private static final int PANEL_COLOR = 0xFFE3D2AD;
+    private static final int PANEL_DARK = 0xFF3A2A1E;
+    private static final int TEXT_COLOR = 0xFF2A1B12;
+    private static final int MUTED_COLOR = 0xFF6A5648;
+    private static final int MAX_LINES = 11;
+
+    private Tab selectedTab = Tab.SETTLEMENT;
+    private int scrollOffset;
+    private int selectedOfferIndex;
+    private Button previousOfferButton;
+    private Button acceptOfferButton;
+    private Button nextOfferButton;
+    private int selectedRelationIndex;
+    private boolean confirmTermination;
+    private boolean confirmAllianceTermination;
+    private Button previousRelationButton;
+    private Button agreementButton;
+    private Button declineAgreementButton;
+    private Button nextRelationButton;
+    private Button allianceButton;
+    private Button declineAllianceButton;
+    private Button routesButton;
+
+    public DiplomacyTableScreen(DiplomacyTableMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+        imageWidth = 300;
+        imageHeight = 236;
+        inventoryLabelY = 10_000;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        int tabWidth = 68;
+        for (int index = 0; index < Tab.values().length; index++) {
+            Tab tab = Tab.values()[index];
+            addRenderableWidget(Button.builder(
+                            Component.translatable(tab.translationKey),
+                            ignored -> selectTab(tab))
+                    .bounds(leftPos + 8 + index * (tabWidth + 4), topPos + 28, tabWidth, 20)
+                    .build());
+        }
+        previousOfferButton = addRenderableWidget(Button.builder(
+                        Component.literal("<"), ignored -> changeOffer(-1))
+                .bounds(leftPos + 82, topPos + 207, 24, 20)
+                .build());
+        acceptOfferButton = addRenderableWidget(Button.builder(
+                        Component.translatable("screen.villagediplomacy.table.contract.accept"),
+                        ignored -> acceptSelectedOffer())
+                .bounds(leftPos + 110, topPos + 207, 104, 20)
+                .build());
+        nextOfferButton = addRenderableWidget(Button.builder(
+                        Component.literal(">"), ignored -> changeOffer(1))
+                .bounds(leftPos + 218, topPos + 207, 24, 20)
+                .build());
+        previousRelationButton = addRenderableWidget(Button.builder(Component.literal("<"),
+                ignored -> changeRelation(-1)).bounds(leftPos + 8, topPos + 207, 20, 20).build());
+        agreementButton = addRenderableWidget(Button.builder(Component.empty(),
+                ignored -> actOnAgreement(false)).bounds(leftPos + 32, topPos + 207, 140, 20).build());
+        declineAgreementButton = addRenderableWidget(Button.builder(
+                Component.translatable("screen.villagediplomacy.agreement.decline"),
+                ignored -> actOnAgreement(true)).bounds(leftPos + 176, topPos + 207, 88, 20).build());
+        nextRelationButton = addRenderableWidget(Button.builder(Component.literal(">"),
+                ignored -> changeRelation(1)).bounds(leftPos + 268, topPos + 207, 24, 20).build());
+        allianceButton = addRenderableWidget(Button.builder(Component.empty(),
+                ignored -> actOnAlliance(false)).bounds(leftPos + 32, topPos + 183, 140, 20).build());
+        declineAllianceButton = addRenderableWidget(Button.builder(
+                Component.translatable("screen.villagediplomacy.agreement.decline"),
+                ignored -> actOnAlliance(true)).bounds(leftPos + 176, topPos + 183, 88, 20).build());
+        routesButton = addRenderableWidget(Button.builder(Component.translatable("screen.villagediplomacy.routes.manage"),
+                ignored -> DiplomacyNetwork.sendMenuAction(menu.containerId, 6_000))
+                .bounds(leftPos + 40, topPos + 207, 220, 20).build());
+        updateOfferControls();
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, PANEL_DARK);
+        guiGraphics.fill(leftPos + 3, topPos + 3, leftPos + imageWidth - 3, topPos + imageHeight - 3, PANEL_COLOR);
+        guiGraphics.fill(leftPos + 7, topPos + 52, leftPos + imageWidth - 7, topPos + imageHeight - 8, 0x55FFFFFF);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        DiplomacyTableSnapshot snapshot = menu.getSnapshot();
+        guiGraphics.drawString(font, title, 8, 9, TEXT_COLOR, false);
+        Component access = Component.translatable(snapshot.canManage()
+                ? "screen.villagediplomacy.table.access.manage"
+                : "screen.villagediplomacy.table.access.view");
+        guiGraphics.drawString(font, access, imageWidth - 8 - font.width(access), 9,
+                snapshot.canManage() ? 0xFF236523 : 0xFF765A25, false);
+
+        renderLines(guiGraphics, currentLines(snapshot));
+    }
+
+    private List<Component> currentLines(DiplomacyTableSnapshot snapshot) {
+        return switch (selectedTab) {
+            case SETTLEMENT -> settlementLines(snapshot);
+            case RELATIONS -> relationLines(snapshot);
+            case TRADE -> tradeLines(snapshot);
+            case ROUTES -> routeLines(snapshot);
+        };
+    }
+
+    private void renderLines(GuiGraphics guiGraphics, List<Component> lines) {
+        int limit = selectedTab == Tab.RELATIONS ? 9 : MAX_LINES;
+        int rows = lines.size() > limit ? limit - 1 : limit;
+        int maximumOffset = Math.max(0, lines.size() - rows);
+        scrollOffset = Math.min(scrollOffset, maximumOffset);
+        int shown = Math.min(rows, lines.size() - scrollOffset);
+        for (int index = 0; index < shown; index++) {
+            Component line = lines.get(index + scrollOffset);
+            String clipped = font.plainSubstrByWidth(line.getString(), imageWidth - 28);
+            guiGraphics.drawString(font, clipped, 14, 60 + index * 13,
+                    index + scrollOffset == 0 ? TEXT_COLOR : MUTED_COLOR, false);
+        }
+        if (lines.size() > limit) {
+            Component position = Component.translatable(
+                    "screen.villagediplomacy.table.scroll",
+                    scrollOffset + 1,
+                    scrollOffset + shown,
+                    lines.size()
+            );
+            guiGraphics.drawString(font, position, 14, 60 + shown * 13, MUTED_COLOR, false);
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        List<Component> lines = currentLines(menu.getSnapshot());
+        int limit = selectedTab == Tab.RELATIONS ? 9 : MAX_LINES;
+        int rows = lines.size() > limit ? limit - 1 : limit;
+        int maximumOffset = Math.max(0, lines.size() - rows);
+        if (maximumOffset == 0) {
+            return super.mouseScrolled(mouseX, mouseY, delta);
+        }
+        int direction = delta > 0.0D ? -1 : 1;
+        scrollOffset = Math.max(0, Math.min(maximumOffset, scrollOffset + direction));
+        return true;
+    }
+
+    private void selectTab(Tab tab) {
+        selectedTab = tab;
+        scrollOffset = 0;
+        confirmTermination = false;
+        confirmAllianceTermination = false;
+        updateOfferControls();
+    }
+
+    private List<DiplomacyTableSnapshot.ContractEntry> offeredContracts() {
+        return offeredContracts(menu.getSnapshot().contracts());
+    }
+
+    private static List<DiplomacyTableSnapshot.ContractEntry> offeredContracts(
+            List<DiplomacyTableSnapshot.ContractEntry> contracts) {
+        return contracts.stream()
+                .filter(contract -> "offered".equals(contract.status()))
+                .toList();
+    }
+
+    static List<DiplomacyTableSnapshot.ContractEntry> visibleTradeContracts(
+            List<DiplomacyTableSnapshot.ContractEntry> contracts,
+            int selectedOfferIndex) {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts(contracts);
+        if (offers.isEmpty()) {
+            return List.copyOf(contracts);
+        }
+        DiplomacyTableSnapshot.ContractEntry selected = offers.get(Math.floorMod(selectedOfferIndex, offers.size()));
+        List<DiplomacyTableSnapshot.ContractEntry> visible = new ArrayList<>();
+        visible.add(selected);
+        contracts.stream()
+                .filter(contract -> !"offered".equals(contract.status()))
+                .forEach(visible::add);
+        return List.copyOf(visible);
+    }
+
+    private void changeOffer(int delta) {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        if (offers.isEmpty()) {
+            selectedOfferIndex = 0;
+        } else {
+            selectedOfferIndex = Math.floorMod(selectedOfferIndex + delta, offers.size());
+        }
+        scrollOffset = 0;
+        updateOfferControls();
+    }
+
+    private void updateOfferControls() {
+        if (acceptOfferButton == null) {
+            return;
+        }
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        boolean tradeTab = selectedTab == Tab.TRADE;
+        routesButton.visible = selectedTab == Tab.ROUTES;
+        selectedOfferIndex = offers.isEmpty() ? 0 : Math.min(selectedOfferIndex, offers.size() - 1);
+        previousOfferButton.visible = tradeTab && offers.size() > 1;
+        nextOfferButton.visible = tradeTab && offers.size() > 1;
+        acceptOfferButton.visible = tradeTab;
+        acceptOfferButton.active = tradeTab && menu.getSnapshot().canManage() && !offers.isEmpty();
+        acceptOfferButton.setMessage(offers.isEmpty()
+                ? Component.translatable("screen.villagediplomacy.table.contract.no_offers")
+                : Component.translatable("screen.villagediplomacy.table.contract.accept_number",
+                        selectedOfferIndex + 1, offers.size()));
+        updateAgreementControls();
+    }
+
+    private void changeRelation(int delta) {
+        int count = menu.getSnapshot().relations().size();
+        selectedRelationIndex = count == 0 ? 0 : Math.floorMod(selectedRelationIndex + delta, count);
+        confirmTermination = false;
+        confirmAllianceTermination = false;
+        scrollOffset = 0;
+        updateAgreementControls();
+    }
+
+    private TradeAgreementService.Action agreementAction() {
+        return actionForStatus(menu.getSnapshot().relations().get(selectedRelationIndex).tradeAgreement());
+    }
+
+    private TradeAgreementService.Action allianceAction() {
+        return actionForStatus(menu.getSnapshot().relations().get(selectedRelationIndex).alliance());
+    }
+
+    private static TradeAgreementService.Action actionForStatus(String status) {
+        return switch (status) {
+            case "proposed_by_other" -> TradeAgreementService.Action.ACCEPT;
+            case "proposed_by_us" -> TradeAgreementService.Action.CANCEL;
+            case "active" -> TradeAgreementService.Action.TERMINATE;
+            default -> TradeAgreementService.Action.PROPOSE;
+        };
+    }
+
+    private void updateAgreementControls() {
+        if (agreementButton == null) {
+            return;
+        }
+        int count = menu.getSnapshot().relations().size();
+        selectedRelationIndex = count == 0 ? 0 : Math.min(selectedRelationIndex, count - 1);
+        boolean visible = selectedTab == Tab.RELATIONS && count > 0;
+        previousRelationButton.visible = visible && count > 1;
+        nextRelationButton.visible = visible && count > 1;
+        agreementButton.visible = visible;
+        agreementButton.active = visible && menu.getSnapshot().canManage();
+        declineAgreementButton.visible = visible && agreementAction() == TradeAgreementService.Action.ACCEPT;
+        declineAgreementButton.active = menu.getSnapshot().canManage();
+        allianceButton.visible = visible;
+        allianceButton.active = visible && menu.getSnapshot().canManage();
+        declineAllianceButton.visible = visible && allianceAction() == TradeAgreementService.Action.ACCEPT;
+        declineAllianceButton.active = menu.getSnapshot().canManage();
+        if (visible) {
+            agreementButton.setMessage(Component.translatable("screen.villagediplomacy.agreement."
+                    + (confirmTermination ? "confirm_terminate" : agreementAction().name().toLowerCase(Locale.ROOT))));
+            allianceButton.setMessage(Component.translatable("screen.villagediplomacy.alliance."
+                    + (confirmAllianceTermination ? "confirm_terminate" : allianceAction().name().toLowerCase(Locale.ROOT))));
+        }
+    }
+
+    private void actOnAgreement(boolean decline) {
+        actOnRelation(decline, false);
+    }
+
+    private void actOnAlliance(boolean decline) {
+        actOnRelation(decline, true);
+    }
+
+    private void actOnRelation(boolean decline, boolean alliance) {
+        if (menu.getSnapshot().relations().isEmpty() || Minecraft.getInstance().gameMode == null) {
+            return;
+        }
+        TradeAgreementService.Action action = decline ? TradeAgreementService.Action.DECLINE
+                : alliance ? allianceAction() : agreementAction();
+        if (action == TradeAgreementService.Action.TERMINATE
+                && !(alliance ? confirmAllianceTermination : confirmTermination)) {
+            confirmTermination = !alliance;
+            confirmAllianceTermination = alliance;
+            updateAgreementControls();
+            return;
+        }
+        agreementButton.active = false;
+        declineAgreementButton.active = false;
+        allianceButton.active = false;
+        declineAllianceButton.active = false;
+        DiplomacyNetwork.sendMenuAction(menu.containerId,
+                alliance ? menu.buttonIdForAlliance(selectedRelationIndex, action)
+                        : menu.buttonIdForAgreement(selectedRelationIndex, action));
+    }
+
+    private void acceptSelectedOffer() {
+        List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts();
+        if (offers.isEmpty() || Minecraft.getInstance().gameMode == null) {
+            return;
+        }
+        int buttonId = menu.buttonIdForContract(offers.get(selectedOfferIndex).contractId());
+        if (buttonId >= 0) {
+            acceptOfferButton.active = false;
+            DiplomacyNetwork.sendMenuAction(menu.containerId, buttonId);
+        }
+    }
+
+    private List<Component> settlementLines(DiplomacyTableSnapshot snapshot) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("screen.villagediplomacy.table.settlement.name", snapshot.settlementName()));
+        lines.add(Component.translatable("screen.villagediplomacy.table.settlement.center",
+                snapshot.center().getX(), snapshot.center().getY(), snapshot.center().getZ(), snapshot.radius()));
+        lines.add(Component.translatable("screen.villagediplomacy.table.settlement.leader",
+                snapshot.leaderName().isBlank()
+                        ? Component.translatable("screen.villagediplomacy.table.none")
+                        : Component.literal(snapshot.leaderName())));
+        Component primary = specialization(snapshot.primarySpecialization());
+        if (snapshot.secondarySpecialization().isBlank()) {
+            lines.add(Component.translatable("screen.villagediplomacy.table.settlement.specialization", primary));
+        } else {
+            lines.add(Component.translatable("screen.villagediplomacy.table.settlement.specializations",
+                    primary, specialization(snapshot.secondarySpecialization())));
+        }
+        lines.add(Component.translatable("screen.villagediplomacy.table.settlement.wood", itemName(snapshot.localWood())));
+        lines.add(Component.translatable("screen.villagediplomacy.table.production"));
+        if (snapshot.production().isEmpty()) {
+            lines.add(Component.translatable("screen.villagediplomacy.table.production.empty"));
+        } else {
+            snapshot.production().forEach(entry -> lines.add(Component.translatable(
+                    "screen.villagediplomacy.table.production.entry",
+                    itemName(entry.itemId()), decimal(entry.grossPerDay()), decimal(entry.tradePerDay())
+            )));
+        }
+        lines.add(Component.translatable("screen.villagediplomacy.table.warehouse"));
+        if (snapshot.warehouse().isEmpty()) {
+            lines.add(Component.translatable("screen.villagediplomacy.table.empty"));
+        } else {
+            snapshot.warehouse().forEach(entry -> lines.add(Component.translatable(
+                    "screen.villagediplomacy.table.stock",
+                    itemName(entry.itemId()), entry.stored(), entry.reserved(), entry.capacity()
+            )));
+        }
+        return lines;
+    }
+
+    private List<Component> relationLines(DiplomacyTableSnapshot snapshot) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("screen.villagediplomacy.table.relations.count", snapshot.relations().size()));
+        if (snapshot.relations().isEmpty()) {
+            lines.add(Component.translatable("screen.villagediplomacy.table.relations.empty"));
+        } else {
+            lines.add(Component.translatable("screen.villagediplomacy.agreement.selected",
+                    selectedRelationIndex + 1, snapshot.relations().size()));
+            var entry = snapshot.relations().get(selectedRelationIndex);
+            lines.add(Component.translatable("screen.villagediplomacy.table.relation",
+                    entry.settlementName(), entry.reputation(),
+                    Component.translatable("relation.villagediplomacy." + entry.relation())));
+            lines.add(Component.translatable("screen.villagediplomacy.table.relation.location",
+                    entry.distanceBlocks(), specialization(entry.specialization()),
+                    entry.leaderName().isBlank()
+                            ? Component.translatable("screen.villagediplomacy.table.none")
+                            : Component.literal(entry.leaderName())));
+            lines.add(Component.translatable("screen.villagediplomacy.table.relation.details",
+                    status("trade", entry.tradeAgreement()), status("alliance", entry.alliance()),
+                    entry.successfulDeliveries(), entry.failedContracts()));
+            if ("active".equals(entry.alliance())) {
+                lines.add(Component.translatable("screen.villagediplomacy.alliance.benefits"));
+                lines.add(Component.translatable("screen.villagediplomacy.table.production"));
+                entry.production().forEach(production -> lines.add(Component.translatable(
+                        "screen.villagediplomacy.table.production.entry", itemName(production.itemId()),
+                        decimal(production.grossPerDay()), decimal(production.tradePerDay()))));
+            }
+        }
+        return lines;
+    }
+
+    private List<Component> tradeLines(DiplomacyTableSnapshot snapshot) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("screen.villagediplomacy.table.contracts.count", snapshot.contracts().size()));
+        if (snapshot.contracts().isEmpty()) {
+            lines.add(Component.translatable("screen.villagediplomacy.table.contracts.empty"));
+        } else {
+            List<DiplomacyTableSnapshot.ContractEntry> offers = offeredContracts(snapshot.contracts());
+            if (!offers.isEmpty()) {
+                int safeIndex = Math.floorMod(selectedOfferIndex, offers.size());
+                lines.add(Component.translatable("screen.villagediplomacy.table.contract.selected",
+                        safeIndex + 1, offers.size()));
+            }
+            visibleTradeContracts(snapshot.contracts(), selectedOfferIndex).forEach(contract -> {
+                lines.add(Component.translatable("screen.villagediplomacy.table.contract",
+                        contract.sourceName(), contract.destinationName(), contractType(contract.type()),
+                        contractStatus(contract.status()),
+                        contract.rewardEmeralds()));
+                lines.add(Component.translatable("screen.villagediplomacy.table.contract.carrier",
+                        contract.carrierName().isBlank()
+                                ? Component.translatable("screen.villagediplomacy.table.none")
+                                : Component.literal(contract.carrierName())));
+                for (DiplomacyTableSnapshot.GoodsEntry goods : contract.goods()) {
+                    lines.add(Component.translatable("screen.villagediplomacy.table.goods",
+                            itemName(goods.itemId()), goods.issued(), goods.delivered(), goods.required()));
+                }
+                for (DiplomacyTableSnapshot.GoodsEntry goods : contract.returnGoods()) {
+                    lines.add(Component.translatable("screen.villagediplomacy.table.goods.return",
+                            itemName(goods.itemId()), goods.issued(), goods.delivered(), goods.required()));
+                }
+            });
+        }
+        return lines;
+    }
+
+    private List<Component> routeLines(DiplomacyTableSnapshot snapshot) {
+        return List.of(Component.translatable("screen.villagediplomacy.routes.intro"),
+                Component.translatable("screen.villagediplomacy.routes.intro_map"),
+                Component.translatable("screen.villagediplomacy.routes.intro_signs"));
+    }
+
+    private static Component specialization(String serializedName) {
+        return Component.translatable("specialization.villagediplomacy." + serializedName.toLowerCase(Locale.ROOT));
+    }
+
+    private static Component status(String category, String serializedName) {
+        return Component.translatable("status.villagediplomacy." + category + "." + serializedName);
+    }
+
+    private static Component contractStatus(String serializedName) {
+        return Component.translatable("status.villagediplomacy.contract." + serializedName);
+    }
+
+    private static Component contractType(String serializedName) {
+        return Component.translatable("type.villagediplomacy.contract." + serializedName);
+    }
+
+    private static Component itemName(String itemId) {
+        ResourceLocation id = ResourceLocation.tryParse(itemId);
+        if (id == null) {
+            return Component.literal(itemId);
+        }
+        Item item = BuiltInRegistries.ITEM.get(id);
+        return item == null ? Component.literal(itemId) : item.getDescription();
+    }
+
+    private static String decimal(double value) {
+        return String.format(Locale.ROOT, "%.1f", value);
+    }
+
+    private enum Tab {
+        SETTLEMENT("screen.villagediplomacy.table.tab.settlement"),
+        RELATIONS("screen.villagediplomacy.table.tab.relations"),
+        TRADE("screen.villagediplomacy.table.tab.trade"),
+        ROUTES("screen.villagediplomacy.table.tab.routes");
+
+        private final String translationKey;
+
+        Tab(String translationKey) {
+            this.translationKey = translationKey;
+        }
+    }
+}

@@ -19,14 +19,22 @@ Open the folder in IntelliJ IDEA, trust the Gradle project, then run the **`runC
 
 ### Diplomacy Core
 - **`DiplomacyRelation`** — five-tier relation scale: `ALLY → FRIENDLY → NEUTRAL → TENSION → HOSTILE`
-- **`Settlement`** — per-village data: name, center, radius, leader UUID, relation scores
+- **`Settlement`** — per-village data: name, center, radius, leader UUID, specializations, local wood, warehouse, and relations
 - **`SettlementSavedData`** — world-level NBT persistence via Forge `SavedData`
+- **Terrain specialization** — one-time sampled analysis assigns plains, mountain, forest, or a mixed profile when a settlement is registered
+- **Virtual production** — day-based resources accrue into a capped five-day trade warehouse, including catch-up while settlement chunks are unloaded
+- **Trial delivery contracts** — persisted offers reserve warehouse stock, track partial handover, expire safely, and prevent duplicate rewards
+- **Physical contract handover** — an assigned carrier uses an empty hand on each settlement's central Bell to open a server-authoritative representative screen, receive or partially deliver ordinary Minecraft item stacks, complete exchanges, and redeem one-time rewards
+- **Trade agreements** — leaders propose, accept, decline, withdraw, or confirm termination in the Relations tab; settlements without a player leader evaluate mutual surplus, relations, distance, and delivery history. Active agreements double offer limits and shipment caps and add two emeralds to rewards; existing contracts survive termination.
+- **Diplomatic alliances** — require an active trade agreement, mutual friendly relations, three deliveries, and no overdue active contracts or failures since the last successful delivery. Leaders confirm proposals; leaderless settlements accept eligible alliances automatically. Allies share production information, remain listed, unlock triple base offer/shipment caps and two extra emeralds beyond trade-agreement rewards. Ending an alliance preserves trade; ending trade clears the alliance. Allied routes and signpost labels use green text; passive reputation decay is not currently implemented.
+- **Persistent routes and maps** — open Routes → Manage routes at a diplomacy table to create, rename, close/reopen a route or issue a map. Only the local leader can modify routes; closure requires confirmation. Maps record both settlement IDs, names, coordinates, dimension, distance, route ID and status. Right-click a map in the air to refresh its recorded status; use it on a signpost to configure its destination.
+- **Road signposts** — craft two with three planks above two sticks, place near a road, then right-click to select a known destination. Only the signpost owner or local leader may configure it. World labels show the destination, compass bearing and distance; the configuration screen adds relations and route status. Reciprocal signs within each endpoint's settlement radius + 32 blocks mark an open route and add one emerald to newly generated offers. Breaking/rebinding a sign or closing a route removes the marked status; existing contracts retain their promised rewards. Unloaded signs remain registered without loading their chunks. No road-continuity check is performed.
 
 ### Items
 | Item | Action |
 |---|---|
-| Diplomatic Scroll | Right-click a Bell → shows settlement name, leader, and known settlement count |
-| Leadership Seal | Right-click a Bell → claims player as settlement leader |
+| Diplomatic Scroll | Right-click a foreign Bell → discovers the settlement and shows its coordinates, specialization, resources, leader, relations, and distance |
+| Leadership Seal | Right-click a Bell twice within 10 seconds → confirms leadership; one player can lead only one settlement |
 | Village Guard Spawn Egg | Spawns a guard for testing (Creative only) |
 
 ### Entities

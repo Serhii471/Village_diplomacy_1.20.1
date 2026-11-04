@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "villagediplomacy:block/route_signpost"
+    },
+    "facing=east": {
+      "model": "villagediplomacy:block/route_signpost",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "villagediplomacy:block/route_signpost",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "villagediplomacy:block/route_signpost",
+      "y": 270
+    }
+  }
+}
