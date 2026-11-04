@@ -85,10 +85,40 @@ class TradeExchangeContractTest {
         assertEquals(0, restored.getReturnDeliveredAmount(COAL));
     }
 
+    @Test
+    void completedOutboundLegCannotConsumeOrReleaseAnotherContractsReservation() {
+        Fixture fixture = fixture(8, 2);
+        UUID firstCarrier = UUID.randomUUID();
+        UUID secondCarrier = UUID.randomUUID();
+        TradeContract first = offer(fixture, 4, 1);
+        TradeContract second = offer(fixture, 4, 1);
+
+        assertEquals(TradeContractService.ActivationResult.ACTIVATED,
+                TradeContractService.acceptContract(fixture.data(), first.getId(), firstCarrier, 1L));
+        assertEquals(TradeContractService.ActivationResult.ACTIVATED,
+                TradeContractService.acceptContract(fixture.data(), second.getId(), secondCarrier, 1L));
+        assertEquals(8, fixture.source().getWarehouse().getStock(WHEAT).reserved());
+
+        TradeContractService.recordDelivery(
+                fixture.data(), first.getId(), firstCarrier, WHEAT, 4, 2L, RULES);
+        assertEquals(4, fixture.source().getWarehouse().getStock(WHEAT).reserved());
+        assertEquals(0, TradeContractService.issueGoods(
+                fixture.data(), first.getId(), firstCarrier, WHEAT, 4, 3L, RULES));
+
+        TradeContractService.cancelContract(fixture.data(), first.getId(), 4L);
+        assertEquals(4, fixture.source().getWarehouse().getStock(WHEAT).reserved());
+        assertEquals(4, TradeContractService.issueGoods(
+                fixture.data(), second.getId(), secondCarrier, WHEAT, 4, 5L, RULES));
+    }
+
     private static TradeContract offer(Fixture fixture) {
+        return offer(fixture, 16, 8);
+    }
+
+    private static TradeContract offer(Fixture fixture, int wheat, int coal) {
         return TradeContractService.createTrialExchangeOffer(
                 fixture.data(), fixture.source().getId(), fixture.destination().getId(),
-                Map.of(WHEAT, 16), Map.of(COAL, 8), 3, 0L, RULES);
+                Map.of(WHEAT, wheat), Map.of(COAL, coal), 3, 0L, RULES);
     }
 
     private static Fixture fixture(int wheat, int coal) {

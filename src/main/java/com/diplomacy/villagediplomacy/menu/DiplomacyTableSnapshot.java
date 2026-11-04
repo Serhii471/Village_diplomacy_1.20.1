@@ -7,6 +7,7 @@ import com.diplomacy.villagediplomacy.diplomacy.SettlementProductionService;
 import com.diplomacy.villagediplomacy.diplomacy.TradeContract;
 import com.diplomacy.villagediplomacy.diplomacy.TradeAgreementService;
 import com.diplomacy.villagediplomacy.diplomacy.VirtualWarehouse;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +37,7 @@ public record DiplomacyTableSnapshot(
         List<RelationEntry> relations,
         List<ContractEntry> contracts
 ) {
+    static final int MAX_NETWORK_BYTES = 30_000;
     private static final int MAX_NETWORK_ENTRIES = 256;
     private static final int MAX_VISIBLE_CONTRACT_HISTORY = 128;
 
@@ -123,7 +125,7 @@ public record DiplomacyTableSnapshot(
                 .map(contract -> ContractEntry.from(data, settlement, contract, gameTime, leaderNameResolver))
                 .toList();
 
-        return new DiplomacyTableSnapshot(
+        return fitNetworkBudget(new DiplomacyTableSnapshot(
                 settlement.getName(),
                 settlement.getCenter(),
                 settlement.getRadius(),
@@ -136,7 +138,65 @@ public record DiplomacyTableSnapshot(
                 warehouse,
                 relations,
                 contracts
-        );
+        ));
+    }
+
+    private static DiplomacyTableSnapshot fitNetworkBudget(DiplomacyTableSnapshot snapshot) {
+        if (networkSize(snapshot) <= MAX_NETWORK_BYTES) {
+            return snapshot;
+        }
+
+        DiplomacyTableSnapshot withoutContracts = snapshot.withEntries(snapshot.relations(), List.of());
+        if (networkSize(withoutContracts) <= MAX_NETWORK_BYTES) {
+            int low = 0;
+            int high = snapshot.contracts().size();
+            while (low < high) {
+                int middle = (low + high + 1) >>> 1;
+                DiplomacyTableSnapshot candidate = snapshot.withEntries(
+                        snapshot.relations(), snapshot.contracts().subList(0, middle));
+                if (networkSize(candidate) <= MAX_NETWORK_BYTES) {
+                    low = middle;
+                } else {
+                    high = middle - 1;
+                }
+            }
+            return snapshot.withEntries(snapshot.relations(), snapshot.contracts().subList(0, low));
+        }
+
+        int low = 0;
+        int high = snapshot.relations().size();
+        while (low < high) {
+            int middle = (low + high + 1) >>> 1;
+            DiplomacyTableSnapshot candidate = snapshot.withEntries(
+                    snapshot.relations().subList(0, middle), List.of());
+            if (networkSize(candidate) <= MAX_NETWORK_BYTES) {
+                low = middle;
+            } else {
+                high = middle - 1;
+            }
+        }
+        DiplomacyTableSnapshot bounded = snapshot.withEntries(snapshot.relations().subList(0, low), List.of());
+        if (networkSize(bounded) > MAX_NETWORK_BYTES) {
+            throw new IllegalStateException("Diplomacy table base snapshot exceeds the network budget");
+        }
+        return bounded;
+    }
+
+    private DiplomacyTableSnapshot withEntries(List<RelationEntry> boundedRelations,
+                                               List<ContractEntry> boundedContracts) {
+        return new DiplomacyTableSnapshot(settlementName, center, radius, leaderName, canManage,
+                primarySpecialization, secondarySpecialization, localWood, production, warehouse,
+                boundedRelations, boundedContracts);
+    }
+
+    static int networkSize(DiplomacyTableSnapshot snapshot) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            snapshot.write(buffer);
+            return buffer.readableBytes();
+        } finally {
+            buffer.release();
+        }
     }
 
     public void write(FriendlyByteBuf buffer) {

@@ -117,6 +117,42 @@ class DiplomacyTableSnapshotTest {
         assertFalse(snapshot.canManage());
     }
 
+    @Test
+    void largeSnapshotStaysBelowForgeMenuPayloadLimit() {
+        SettlementSavedData data = new SettlementSavedData();
+        UUID leader = UUID.randomUUID();
+        Settlement home = new Settlement(UUID.randomUUID(), "H".repeat(1_000), BlockPos.ZERO, 64);
+        Settlement neighbor = new Settlement(
+                UUID.randomUUID(), "N".repeat(1_000), new BlockPos(200, 64, 0), 64);
+        home.setLeaderUuid(leader);
+        data.registerSettlement(home);
+        data.registerSettlement(neighbor);
+        data.discoverSettlement(home.getId(), neighbor.getId());
+        ResourceLocation wheat = Objects.requireNonNull(ResourceLocation.tryParse("minecraft:wheat"));
+        for (int index = 0; index < 128; index++) {
+            data.registerTradeContract(new TradeContract(
+                    UUID.randomUUID(), home.getId(), neighbor.getId(),
+                    Map.of(wheat, 1), true, index, 72_000L + index, 1));
+        }
+
+        DiplomacyTableSnapshot snapshot = DiplomacyTableSnapshot.create(
+                data, home, leader, 0L, ignored -> "Leader", productionSettings());
+
+        assertTrue(snapshot.contracts().size() < 128);
+        assertTrue(snapshot.contracts().size() > 0);
+        assertTrue(DiplomacyTableSnapshot.networkSize(snapshot) <= DiplomacyTableSnapshot.MAX_NETWORK_BYTES);
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            buffer.writeBlockPos(BlockPos.ZERO);
+            snapshot.write(buffer);
+            assertTrue(buffer.readableBytes() < 32_600);
+            buffer.readBlockPos();
+            assertEquals(snapshot, DiplomacyTableSnapshot.read(buffer));
+        } finally {
+            buffer.release();
+        }
+    }
+
     private static SettlementProductionService.ProductionSettings productionSettings() {
         return new SettlementProductionService.ProductionSettings(0.7D, 0.5D, 5);
     }

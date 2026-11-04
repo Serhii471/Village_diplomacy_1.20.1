@@ -38,6 +38,7 @@ public final class TradeContract {
     private long activatedGameTime;
     private long completedGameTime;
     private boolean rewardClaimed;
+    private boolean outboundReservationReleased;
     private Runnable dirtyCallback = () -> { };
 
     public TradeContract(UUID id,
@@ -198,6 +199,17 @@ public final class TradeContract {
         return rewardClaimed;
     }
 
+    boolean isOutboundReservationReleased() {
+        return outboundReservationReleased;
+    }
+
+    void markOutboundReservationReleased() {
+        if (!outboundReservationReleased) {
+            outboundReservationReleased = true;
+            markDirty();
+        }
+    }
+
     public boolean isOutboundDeliveryComplete() {
         return requiredGoods.entrySet().stream()
                 .allMatch(entry -> getDeliveredAmount(entry.getKey()) >= entry.getValue());
@@ -340,6 +352,7 @@ public final class TradeContract {
         tag.putLong("ActivatedGameTime", activatedGameTime);
         tag.putLong("CompletedGameTime", completedGameTime);
         tag.putBoolean("RewardClaimed", rewardClaimed);
+        tag.putBoolean("OutboundReservationReleased", outboundReservationReleased);
 
         ListTag goods = new ListTag();
         requiredGoods.forEach((itemId, required) -> {
@@ -409,6 +422,9 @@ public final class TradeContract {
                 contract.returnDeliveredGoods.put(itemId, amount);
             }
         });
+        contract.outboundReservationReleased = tag.contains("OutboundReservationReleased", Tag.TAG_BYTE)
+                ? tag.getBoolean("OutboundReservationReleased")
+                : contract.isOutboundDeliveryComplete();
         if ((contract.status == TradeContractStatus.ACTIVE
                 || contract.status == TradeContractStatus.COMPLETED)
                 && contract.carrierId == null) {

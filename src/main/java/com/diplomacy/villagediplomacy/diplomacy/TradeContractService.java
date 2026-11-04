@@ -178,6 +178,9 @@ public final class TradeContractService {
                                   ResourceLocation itemId,
                                   int requestedAmount) {
         requireContractItem(contract, itemId);
+        if (contract.isOutboundDeliveryComplete() || contract.isOutboundReservationReleased()) {
+            return 0;
+        }
         int amount = Math.min(requestedAmount, contract.getRemainingToIssue(itemId));
         if (amount <= 0) {
             return 0;
@@ -348,6 +351,9 @@ public final class TradeContractService {
     }
 
     private static void releaseOutboundRemainingReservations(SettlementSavedData data, TradeContract contract) {
+        if (contract.isOutboundReservationReleased()) {
+            return;
+        }
         Settlement source = data.getSettlement(contract.getSourceSettlementId());
         if (source == null) {
             return;
@@ -358,6 +364,7 @@ public final class TradeContractService {
                 source.getWarehouse().releaseReservation(itemId, remaining);
             }
         });
+        contract.markOutboundReservationReleased();
     }
 
     private static void releaseReturnRemainingReservations(SettlementSavedData data, TradeContract contract) {
